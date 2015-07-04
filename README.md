@@ -18,13 +18,14 @@ The system requires:
 </ul>
 
 Once you have these installed and ready to go then you can download all of these aplos systems modules:
-
-aplos-archetype
-aplos-root
-aplos-parentroot
-aplos-common
-aplos-core
-aplos-cms (Optional)
+<ul>
+<li>aplos-archetype</li>
+<li>aplos-root</li>
+<li>aplos-parentroot</li>
+<li>aplos-common</li>
+<li>aplos-core</li>
+<li>aplos-cms (Optional)</li>
+</ul>
 
 Once you have checked these out then you'll need to convert them to maven projects and run the maven install on them.  
 
