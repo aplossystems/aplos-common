@@ -1,0 +1,121 @@
+<ui:composition template="#{ themeManager.basicTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:p="http://primefaces.org/ui"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+	
+	
+	
+	<ui:define name="body" >
+		<h:outputStylesheet library="styles" name="fullyResponsive.css" target="head" />
+		<h:form id="editForm">
+			<div style="background-color:#{commonConfiguration.mainHeaderColour}">
+				<div class="container">
+			        <div class="row">
+			            <div class="grid_12">
+							<aploscc:windowIdUpdater />
+							<aplos:ajaxJsFunction name="registerScan" action="#{backingPage.registerScan}" >
+								<aplos:param name="scannedStr" assignTo="#{backingPage.scannedStr}" readAndWrite="true" />
+							</aplos:ajaxJsFunction>
+							<div class="outerWebsiteHeaderBar">
+								<div class="websiteHeaderBar">
+									<img src="#{request.contextPath}/resources/images/mainLogo.png" style="height:54px;padding-top:10px;style:float:left"/>
+												
+									<aploscc:loggedInUserControls  goToSiteBtn="#{ siteTabPanel.siteHasFrontend }" >
+										<f:facet name="loggedInText">
+											#{currentUser.displayName}&#160;<h:commandLink value="#{ currentUser.upgradeText }" action="#{ currentUser.goToUpgradeScreen }" rendered="#{ currentUser.class.simpleName == 'SubscribedCompanyUser' and currentUser.showingUpgradeText }" />
+										</f:facet>
+									</aploscc:loggedInUserControls>
+								</div>
+							</div>
+						</div>
+		            </div>
+		        </div>
+		   	</div>
+			<div style="background-color:#{commonConfiguration.subHeaderColour}">
+				<div class="container">
+			        <div class="row">
+			            <div class="grid_12">
+							<aplos:panel rendered="#{ currentUser.userLevel.name == 'Subscribed company' or currentUser.userLevel.name == 'Super User' }">
+								<div class="aplosNavigationBar">
+									
+									<h:panelGroup id="siteTabPanelGroup2" class="siteTabPanelBar aplosMainMenu" layout="block" rendered="#{ currentUser.superuser }">
+										<aploscc:menubar tabPanel="#{ contextListener.siteTabPanel }" rendered="#{currentUser.superuser}"/>
+									</h:panelGroup>
+									
+									<aplos:panel id="mainTabPanelOuterGroup" rendered="#{ aplosRequestContext.mainTabPanel != null and aplosRequestContext.getProcessedMenuTabs( aplosRequestContext.mainTabPanel ).size() > 0 }">
+										<h:panelGroup id="mainTabPanelGroup" class="mainTabPanelBar aplosMainMenu" layout="block">
+											<aploscc:menubar tabPanel="#{ aplosRequestContext.mainTabPanel }" rendered="#{currentUser.loggedIn}"/>
+										</h:panelGroup>
+									</aplos:panel>
+								
+									<aplos:panel id="subTabPanelOuterGroup" rendered="#{ aplosRequestContext.subTabPanel != null and aplosRequestContext.getProcessedMenuTabs( aplosRequestContext.subTabPanel ).size() > 0 }">
+										<div id="aploraSubNavigationBar" class="subTabPanelBar aplosMainMenu">
+											<aploscc:menubar tabPanel="#{ aplosRequestContext.subTabPanel }" rendered="#{currentUser.superuser}"/>
+										</div>
+									</aplos:panel>
+									
+								</div>
+							</aplos:panel>
+			            </div>
+			        </div>
+				</div>
+		    </div>
+			<div style="background-color:#FFFFFF">
+				<div class="container">
+			        <div class="row">
+			            <div class="grid_12">
+							<aplos:panel rendered="#{ currentUser.userLevel.name == 'Subscribed company' or currentUser.userLevel.name == 'Super User' }">
+								<div id="backendBreadCrumbs">
+									<aplos:breadCrumbs />
+								</div>
+							</aplos:panel>
+			            </div>
+			        </div>
+				</div>
+		    </div>
+		</h:form>
+		<h:form id="edit" prependId="#{ backingPage.prependMainFormId }" enctype="multipart/form-data" onkeypress="#{ backingPage.formOnKeyPress }">
+			<div class="container" style="padding-bottom:50px">
+		        <div class="row">
+		            <div class="grid_12">		
+						<table cellpadding="0" cellspacing="0" id="content" style="width:100% ; margin:auto auto">
+							<tr>
+								<td id="aplos-modern-page-padding-cell" style="padding: 10px 0px 20px 0px">
+									
+								<table class="centreContent">
+									<tr>
+										<td>
+											<table style="width: 100%;">
+												<tr>
+													<td>
+														<div style="margin: 0px 4px 10px 4px;" id="listAndEditHeading" class="aplos-listAndEditHeading">
+															<ui:insert name="heading">#{ backingPage.pageHeading }</ui:insert>
+														</div>
+													</td>
+					
+												</tr>
+											</table>
+											<ui:insert name="editContent" />
+												
+										</td>
+									</tr>
+								</table>
+									<ui:insert name="editButtons">
+										<div class="aplos-command-button-thin footer">
+											<aploscc:controlPanel id="aplosControlPanel" />
+										</div>
+									</ui:insert>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

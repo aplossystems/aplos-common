@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	<body>
+		<!-- common/quickview/default -->
+		<table class="aplos-form-table" >
+			 <tr>
+ 				<td class="aplos-label">Display Name</td>
+ 				<td class="aplos-field">#{cc.attrs.bean.displayName}</td>
+ 			</tr>
+ 			<tr>
+ 				<td class="aplos-label">Type</td>
+ 				<td class="aplos-field">#{cc.beanTypeString}</td>
+ 			</tr>
+ 			<tr>
+ 				<td class="aplos-label">Id</td>
+ 				<td class="aplos-field">#{cc.attrs.bean.infoDialogIdText}</td>
+ 			</tr>
+			<tr><td style="border-bottom:1px solid #BBBBBB" colspan="2"></td></tr>
+		</table>
+		<ui:insert name="specificContent" />
+		<table class="aplos-form-table" >
+ 			<tr>
+ 				<td class="aplos-label">Last Modified</td>
+ 				<td class="aplos-field">#{cc.attrs.bean.dateModifiedStdStr}</td>
+ 			</tr>
+ 			<tr>
+ 				<td class="aplos-label">Modified By</td>
+ 				<td class="aplos-field">#{cc.attrs.bean.infoDialogModifiedByText}</td>
+ 			</tr>
+		</table>
+	</body>
+</html>

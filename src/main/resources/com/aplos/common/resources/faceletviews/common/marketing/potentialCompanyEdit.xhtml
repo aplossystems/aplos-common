@@ -1,0 +1,197 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	
+	<ui:define name="editContent">
+	
+		<table class="aplos-form-table aplos-form-table-with-required">
+			<tr>
+				<td>
+					<b>Contact name:</b>&#160;<h:outputText value="#{ potentialCompany.address.getContactFullName( true ) }" />
+					<aplos:panel layout="none" value="#{ potentialCompany.address.mobile }" >
+						&#160;&#160;<b>M:</b>&#160;<h:outputText value="#{ potentialCompany.address.mobile }" />
+					</aplos:panel>
+					<aplos:panel layout="none" value="#{ potentialCompany.address.mobile }">
+						&#160;&#160;<b>T:</b>&#160;<h:outputText value="#{ potentialCompany.address.phone }" />
+					</aplos:panel>
+					<aplos:panel layout="none" value="#{ potentialCompany.address.mobile }">
+						&#160;&#160;<b>E:</b>&#160;<h:outputText value="#{ potentialCompany.address.subscriber.emailAddress }" />
+					</aplos:panel>
+					<br/>
+					<b>A:</b>&#160;<h:outputText value="#{ potentialCompany.address.addressString }" />
+					<aplos:panel rendered="#{ potentialCompany.reminderDate != null }">
+						<div style="font-weight:bold;font-size:16px;padding-top:10px;#{ backingPage.reminderDateStyle }">
+							Reminder : #{ potentialCompany.reminderDateTimeStr }
+						</div>
+					</aplos:panel>
+				</td>
+			</tr>
+		</table>
+		<h3>New Note</h3>
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Contact date / time</td>
+				<td class="aplos-required-asterisk"></td>
+				<td>
+					<aploscc:dateTime id="startDateInput"
+						showTime="true"
+						showCheckbox="#{false}" startYearDiff="#{-2}" endYearDiff="#{0}"
+						value="#{ backingPage.newInteraction.contactDateTime }">
+					</aploscc:dateTime>
+				</td>
+				<td class="aplos-label" style="width:100px;min-width:100px">Method</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectOneMenu label="Method" value="#{ backingPage.newInteraction.method }">
+						<f:selectItems value="#{ backingPage.methodSelectItems }" />
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Outcome / notes</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field"><h:inputTextarea label="Outcome" value="#{ backingPage.newInteraction.notes }" required="#{ backingPage.interactionValidationRequired }" style="width:250px"/></td>
+				<td class="aplos-label" style="width:100px;min-width:100px">Next step</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputTextarea label="Next step" value="#{ backingPage.newInteraction.nextStep }" style="width:250px" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Status</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:outputText value="#{ backingPage.newInteraction.potentialCompanyStatus.label }"  rendered="#{ !backingPage.newInteraction.isNew }"/>
+					<h:selectOneMenu label="status" value="#{ backingPage.newInteraction.potentialCompanyStatus }" rendered="#{ backingPage.newInteraction.isNew }">
+						<f:selectItems value="#{ backingPage.statusSelectItems }" />
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Reminder date</td>
+				<td class="aplos-required-asterisk"></td>
+				<td colspan="4" class="aplos-command-button-thin">
+					<aploscc:ajaxButton value="Tomorrow" action="#{ backingPage.remindInDays( 1 ) }" /><aploscc:ajaxButton value="Next week" action="#{ backingPage.remindInDays( 7 ) }" /><aploscc:dateTime id="reminderDateInput"  label="Reminder date" showCheckbox="#{true}"
+						startYearDiff="#{0}" endYearDiff="#{5}" value="#{potentialCompany.reminderDate}" showTime="true" minuteStep="5" >
+					</aploscc:dateTime>
+				</td>
+			</tr>
+		</table>
+		<div style="float:right;clear:both;padding-top:10px" class="aplos-command-button-thin">
+			<aploscc:ajaxButton id="applyInteractionBtn" value="Apply" action="#{ backingPage.applyInteraction }" />
+			<aploscc:ajaxButton id="copyLastInteractionBtn" value="Copy last interaction" action="#{ backingPage.copyLastInteraction }" />
+			<aploscc:ajaxButton id="newInteractionBtn" value="New interaction" action="#{ backingPage.newInteraction }" />
+		</div>
+		<h3>Quick interaction buttons</h3>
+		<div class="aplos-command-button-thin">
+			<aploscc:ajaxButton id="noAnswerBtn" value="No answer" action="#{ backingPage.createNoAnswerInteraction }" />
+			<aploscc:ajaxButton id="answerMachineBtn" value="Answer machine" action="#{ backingPage.createAnswerMachineInteraction }" />
+			<aploscc:ajaxButton id="numberNotWorkingBtn" value="Number not working" action="#{ backingPage.createNumberNotWorkingInteraction }" />
+		</div>
+		<div style="clear:both"></div>
+		<h3>Previous Note</h3>
+		<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.interactionDataTableState }">
+			<p:column>
+				<f:facet name="header">Date / Time</f:facet>
+				#{tableBean.contactDateTimeStr}
+			</p:column>
+			<p:column>
+				<f:facet name="header">Method</f:facet>
+				#{tableBean.method.label}
+			</p:column>
+			<p:column>
+				<f:facet name="header">Status</f:facet>
+				#{tableBean.potentialCompanyStatus.label}
+			</p:column>
+			<p:column>
+				<f:facet name="header">Notes / Outcome</f:facet>
+				#{tableBean.notes}
+			</p:column>
+			<p:column>
+				<f:facet name="header">Next step</f:facet>
+				#{tableBean.nextStep}
+			</p:column>
+		</aploscc:wrappedDataTable2>
+		<h3>Edit</h3>
+		<aploscc:address bean="#{ potentialCompany.address }" validation="#{ backingPage.validationRequired }" companyName="true" contactTitle="true" contactName="true" email="true" phone="true" phone2="true" mobile="true" state="true" updateSubscriber="true"/>
+		<table class="aplos-form-table aplos-form-table-with-required">
+			<tr>
+				<td class="aplos-label">Subscribed</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox label="Is subscribed" value="#{ potentialCompany.address.subscriber.subscribed }" >
+						<p:ajax event="change" update="unsubscribeTypePnl" />
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
+		</table>
+		<aplos:panel id="unsubscribeTypePnl">
+			<aplos:panel rendered="#{ !potentialCompany.address.subscriber.subscribed }">
+				<table class="aplos-form-table aplos-form-table-with-required">
+					<tr>
+						<td class="aplos-label">Unsubscribe type</td>
+						<td class="aplos-required-asterisk"></td>
+						<td class="aplos-field">
+							<h:selectOneMenu label="Unsubscribe type" value="#{ potentialCompany.address.subscriber.unsubscribeType }">
+								<f:selectItems value="#{ backingPage.unsubscribeTypeSelectItems }" />
+							</h:selectOneMenu>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+		</aplos:panel>
+		<table class="aplos-form-table aplos-form-table-with-required">
+			<tr>
+				<td class="aplos-label">Web address</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:inputText label="Web address" value="#{ potentialCompany.webAddress }" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Category</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<aploscc:aplosBeanMenu label="Category" value="#{ potentialCompany.mainCategory }" selectItems="#{ backingPage.categorySelectItems }" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Status</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:outputText value="#{ potentialCompany.potentialCompanyStatus.label }" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Can call?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox value="#{ potentialCompany.callingAllowed }"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Notes</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:inputTextarea label="Notes" value="#{ potentialCompany.notes }"/>
+				</td>
+			</tr>
+		</table>
+		<div style="float:right" class="aplos-command-button-thin">
+			<aploscc:editButtons ajaxApplyButton="false" />
+		</div>
+	</ui:define>
+	<ui:define name="editButtons">
+		<aploscc:controlPanel id="aplosControlPanel" >
+			<f:facet name="upperRightControlPanel">
+				<aplos:panel rendered="#{ salesCallTask != null }">
+					<aploscc:ajaxButton value="Previous" action="#{ salesCallTask.previousTask }" />
+					<aploscc:ajaxButton value="Next" action="#{ salesCallTask.nextTask }" />
+				</aplos:panel>
+			</f:facet>
+		</aploscc:controlPanel>
+	</ui:define>
+</ui:composition>	

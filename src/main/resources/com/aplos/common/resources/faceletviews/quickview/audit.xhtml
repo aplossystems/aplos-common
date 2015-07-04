@@ -1,0 +1,78 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	<body>
+		<!-- common/quickview/audit -->
+		<table>
+			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Type</td>
+ 				<td style="text-align:left;">#{cc.beanTypeString}</td>
+ 			</tr>
+		    <tr>
+ 				<td style="font-weight:bold;padding-right:10px">Display Name</td>
+ 				<td style="text-align:left;">#{cc.attrs.bean.displayName}</td>
+ 			</tr>
+ 			<tr><td style="border-bottom:1px solid #BBBBBB" colspan="2"></td></tr>
+ 			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Id</td>
+ 				<td style="text-align:left;">#{cc.attrs.bean.infoDialogIdText}</td>
+ 			</tr>
+ 			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Status</td>
+ 				<td style="text-align:left;">
+ 					#{cc.attrs.bean.infoDialogActiveText}
+ 				</td>
+ 			</tr>
+ 			<tr><td style="border-bottom:1px solid #BBBBBB" colspan="2"></td></tr>
+ 			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Date Created</td>
+ 				<td style="text-align:left;">
+ 					#{cc.attrs.bean.dateTimeCreatedStdStr}
+ 				</td>
+ 			</tr>
+ 			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Created By</td>
+ 				<td style="text-align:left;">
+ 					#{cc.attrs.bean.infoDialogCreatedByText}
+ 				</td>
+ 			</tr>	
+ 			<tr><td style="border-bottom:1px solid #BBBBBB" colspan="2"></td></tr>      			 			
+ 			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Deleted</td>
+ 				<td style="text-align:left;">
+ 					#{cc.attrs.bean.infoDialogDeletedOnText}
+ 				</td>
+ 			</tr>
+ 			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Deleted By</td>
+ 				<td style="text-align:left;">
+ 					#{cc.attrs.bean.infoDialogDeletedByText}
+ 				</td>
+ 			</tr>
+			<tr><td style="border-bottom:1px solid #BBBBBB" colspan="2"></td></tr>
+ 			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Last Modified</td>
+ 				<td style="text-align:left;">#{cc.attrs.bean.dateTimeModifiedStdStr}</td>
+ 			</tr>
+ 			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Modified By</td>
+ 				<td style="text-align:left;">#{cc.attrs.bean.infoDialogModifiedByText}</td>
+ 			</tr>
+ 			<tr><td style="border-bottom:1px solid #BBBBBB" colspan="2"></td></tr>
+ 			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Editable</td>
+ 				<td style="text-align:left;">
+ 					#{cc.attrs.bean.infoDialogEditableYesNoText}
+ 				</td>
+ 			</tr>
+ 			<tr>
+ 				<td style="font-weight:bold;padding-right:10px">Deletable</td>
+ 				<td style="text-align:left;">
+ 					#{cc.attrs.bean.infoDialogDeletableYesNoText}
+ 				</td>
+ 			</tr>
+		</table>
+	</body>
+</html> 			 		

@@ -1,0 +1,98 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">With</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">#{ potentialCompanyInteraction.potentialCompany.displayName }</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Contact date / time</td>
+				<td class="aplos-required-asterisk"></td>
+				<td>
+					<aploscc:dateTime id="startDateInput"
+						showTime="true"
+						showCheckbox="#{false}" startYearDiff="#{-2}" endYearDiff="#{0}"
+						value="#{ potentialCompanyInteraction.contactDateTime }">
+					</aploscc:dateTime>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Method</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectOneMenu label="Method" value="#{ potentialCompanyInteraction.method }">
+						<f:selectItems value="#{ backingPage.methodSelectItems }" />
+					</h:selectOneMenu>
+				</td>
+			</tr>
+		</table>
+		<aplos:panel rendered="#{ potentialCompanyInteraction.aplosEmail != null }">
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Email</td>
+					<td class="aplos-required-asterisk"></td>
+					<td class="aplos-field">
+						<aploscc:quickView text="#{potentialCompanyInteraction.aplosEmail.subject}" bean="#{potentialCompanyInteraction.aplosEmail}" />
+					</td>
+				</tr>
+			</table>
+			<aplos:panel rendered="#{ backingPage.singleEmailRecord != null }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Read</td>
+						<td class="aplos-required-asterisk"></td>
+						<td class="aplos-field">
+							#{ backingPage.singleEmailRecord.openedDateTimeStr }
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Actioned</td>
+						<td class="aplos-required-asterisk"></td>
+						<td class="aplos-field">
+							#{ backingPage.singleEmailRecord.actionedDateTimeStr }
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+		</aplos:panel>
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Outcome / notes</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field"><h:inputTextarea label="Outcome" value="#{ potentialCompanyInteraction.notes }" required="#{ backingPage.validationRequired }"/></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Next step</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputTextarea label="Next step" value="#{ potentialCompanyInteraction.nextStep }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Status</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:outputText value="#{ potentialCompanyInteraction.potentialCompanyStatus.label }"  rendered="#{ !potentialCompanyInteraction.isNew }"/>
+					<h:selectOneMenu label="status" value="#{ potentialCompanyInteraction.potentialCompanyStatus }" rendered="#{ potentialCompanyInteraction.isNew }">
+						<f:selectItems value="#{ backingPage.statusSelectItems }" />
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Reminder date</td>
+				<td class="aplos-required-asterisk"></td>
+				<td>
+					<aploscc:dateTime id="reminderDateInput"  label="Reminder date" showCheckbox="#{true}"
+						startYearDiff="#{0}" endYearDiff="#{5}" value="#{potentialCompanyInteraction.potentialCompany.reminderDate}" showTime="true" >
+					</aploscc:dateTime><aploscc:ajaxButton value="Tomorrow" action="#{ backingPage.remindInDays( 1 ) }" /><aploscc:ajaxButton value="Next week" action="#{ backingPage.remindInDays( 7 ) }" />
+				</td>
+			</tr>
+		</table>
+	</ui:define>
+</ui:composition>

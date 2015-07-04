@@ -1,0 +1,29 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	<table class="centreContent"><tr><td>
+	
+		<h:form id="edit" enctype="multipart/form-data" prependId="#{ backingPage.prependMainFormId }" >
+			<table>
+				<tr>
+					<td style='padding: 40px;'>
+						Your session timed out due to inactivity.  Any information that you entered onto the last page you were on before this message
+						may have been lost.
+						<br/><br/>
+						The current session is set to timeout after #{ sessionTimeoutPage.maxSessionInterval } minutes, keeping this low 
+						improves security and server performance.  If you feel that your session ended before this time or would like to raise this 
+						limit please contact support.	
+					</td>
+				</tr>
+			</table>
+			<br style="clear:both;" />	
+			
+		</h:form>
+
+	</td></tr></table>
+</ui:composition>

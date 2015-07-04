@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+
+<head>
+	<title><ui:insert name="title">Aplos Content Management</ui:insert></title>
+	<script src="#{request.contextPath}/scripts/jquery/jquery-1.10.2.min.js"></script>
+	<script src="#{request.contextPath}/scripts/jquery/jquery-migrate-1.2.1.min.js"></script>
+	<script type="text/javascript">
+    	window.RICH_FACES_EXTENDED_SKINNING_ON = true;
+	</script>	
+	<script type="text/javascript" >
+		$j = jQuery.noConflict();
+		function fadeMessages() {
+			$j(".rich-messages").fadeOut(3000);
+		}
+	</script>
+		
+	<ui:insert name="head" ></ui:insert>
+
+
+<!--[if lte IE 7]>
+<style>
+	#aploraNavigationBar {
+		padding: 10px;
+	}
+</style>
+	<![endif]-->
+	
+</head>
+
+<body style="padding: 0px; margin: 0px">
+
+	<aplos:panel ajaxRendered="true">
+		<script>setTimeout("fadeMessages()", 5000);</script>
+	</aplos:panel>
+	
+	<div id="themeChanger">
+			<h:form>
+				<aplos:themeChanger rendered="false"/>
+			</h:form>
+	</div>
+	<div class="pageFrameHeader">
+		<a href="http://www.aplossystems.co.uk" target="_blank">Aplos Systems</a><br />
+		info@aplossystems.co.uk<br />
+		0800 520 0690
+	</div>
+	<div id="backendBreadCrumbs">
+		<aplos:breadCrumbs />
+	</div>
+	
+	<h:form>
+		<div id="aploraNavigationBar">
+			<div style="float:left;">
+				<aplos:flatMenuBar hierarchyType="MAIN_TAB_PANEL" rendered="#{currentUser.loggedIn}" /><br/>
+			</div>
+			
+			<div style="float:right;">
+				<span>Logged in as #{currentUser.displayName}
+				<small><h:commandLink style="font:normal 8pt Arial;padding:0;text-decoration:underline;" action="#{loginPage.logoutAndHome}"  value="Logout" /></small>
+				</span>
+					
+				<h:panelGroup rendered="false">
+				<span style="border:none; position: relative;">
+					<div id="siteOptions" style="position:absolute;z-index:1;width:300px;left:-230px;display:none;">
+						<div style="float:right;width: 60px; background:lightyellow; height:30px;"></div>
+						<div style="background:lightyellow;clear:both;">
+							<h:panelGroup rendered="#{!site.current.live}">
+								<div style="padding: 10px;">
+									<span style="color: darkred; font-weight: bold;">Site is currently offline.</span> <h:commandLink action="#{site.setState(true)}" value="Make Live" />
+								</div>	<hr style="margin: 0px;" />
+							</h:panelGroup>
+							
+							<h:panelGroup rendered="#{site.current.live}">
+								<div style="padding: 10px;">
+									<span style="color: darkred; font-weight: bold;">Site is currently live.</span> <h:commandLink action="#{site.setState(false)}" value="Take Offline" />
+								</div>	<hr style="margin: 0px;" />
+							</h:panelGroup>
+							
+							<a href="#" onclick="$j('#siteOptions').fadeOut();">Close</a>
+						</div>
+						<br />
+					</div>
+					<a style="z-index:10;position:relative;" href="#" onclick="$j('#siteOptions').fadeIn();"> Site Options</a>
+				</span>
+				</h:panelGroup>
+				
+				<span style=" border:none;">
+					<h:outputLink value="#{request.contextPath}/">Go To Site</h:outputLink>
+				</span>
+			</div>
+				
+			<br style="clear:both;" />
+		</div>
+		
+		<div id="aploraSubNavigationBar">
+			<div style="float:left">
+				<aplos:flatMenuBar hierarchyType="SUB_TAB_PANEL" />
+			</div>
+			<br style="clear:both;" />
+		</div>	
+	</h:form>
+
+	<div>
+		<table cellpadding="0" cellspacing="0" id="content">
+			<tr>
+				<td style="padding: 20px 30px;">
+					<ui:insert name="body" />
+			
+					<ui:insert name="footer"><p:messages /></ui:insert>
+				</td>
+			</tr>
+		</table>
+	</div>
+		
+</body>
+
+</html>

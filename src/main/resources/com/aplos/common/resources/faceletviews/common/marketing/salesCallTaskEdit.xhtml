@@ -1,0 +1,145 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Task name</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:inputText label="Task name" value="#{ salesCallTask.name }" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Assigned to</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectOneMenu label="Assigned to" value="#{ salesCallTask.systemUser }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.systemUserSelectItems }" />
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Exit statuses</td>
+				<td class="aplos-required-asterisk"></td>
+				<td>
+					<h:selectManyListbox value="#{ salesCallTask.exitStatuses }" converter="potentialCompanyStatusConverter" collectionType="java.util.ArrayList" styleClass="potentialCompanyListbox">
+						<f:selectItems value="#{ potentialCompanyEditPage.statusSelectItems }" />
+					</h:selectManyListbox>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Cancelled date</td>
+				<td class="aplos-required-asterisk"></td>
+				<td>
+					<aploscc:dateTime id="cancelledDateInput"  label="Cancelled date" showCheckbox="#{true}"
+						startYearDiff="#{-15}" endYearDiff="#{15}" value="#{salesCallTask.cancelledDate}" showTime="true" >
+					</aploscc:dateTime>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Completed date</td>
+				<td class="aplos-required-asterisk"></td>
+				<td>
+					<aploscc:dateTime id="completedDateInput"  label="Completed date" showCheckbox="#{true}"
+						startYearDiff="#{-15}" endYearDiff="#{15}" value="#{salesCallTask.completedDate}" showTime="true" >
+					</aploscc:dateTime>
+				</td>
+			</tr>
+		</table>
+		<h3>Unfinished potential companies</h3>
+		<aploscc:wrappedDataTable2 multiSelect="true" dataTableState="#{ backingPage.unfinishedPotentialCompanyDts }">
+			<p:column sortBy="#{ tableBean.address.companyName }" filterBy="#{ tableBean.address.companyName }">
+				<f:facet name="header">Company Name</f:facet>
+				<aploscc:quickView text="#{tableBean.address.companyName}" bean="#{tableBean}" view="potentialcompany" />
+			</p:column>
+			<p:column sortBy="#{ tableBean.mainCategory }" filterBy="#{ tableBean.mainCategory }">
+				<f:facet name="header">Category</f:facet>
+				#{tableBean.mainCategory.name}
+			</p:column>
+			<p:column sortBy="#{ tableBean.address.postcode }" filterBy="#{ tableBean.address.postcode }">
+				<f:facet name="header">Postcode</f:facet>
+				#{tableBean.address.postcode}
+			</p:column>
+			<p:column sortBy="#{ tableBean.address.phone }" filterBy="#{ tableBean.address.phone }">
+				<f:facet name="header">Phone</f:facet>
+				#{tableBean.address.phone}
+			</p:column>
+			<p:column sortBy="#{ tableBean.address.subscriber.emailAddress }" filterBy="#{ tableBean.address.subscriber.emailAddress }">
+				<f:facet name="header">Email</f:facet>
+				#{tableBean.address.subscriber.emailAddress}
+			</p:column>
+			<p:column sortBy="#{ tableBean.potentialCompanyStatus }" filterBy="#{ tableBean.potentialCompanyStatus }">
+				<f:facet name="header">Status</f:facet>
+				#{tableBean.potentialCompanyStatus}
+			</p:column>
+			<p:column id="interactions" sortBy="#{ 'SELECT count(*) FROM PotentialCompanyInteraction pci WHERE pci.potentialCompany.id = bean.id' }" filterBy="#{ '(SELECT count(*) FROM PotentialCompanyInteraction pci WHERE pci.potentialCompany.id = bean.id)' }">
+				<f:facet name="header">Interactions</f:facet>
+				#{tableBean.numberOfInteractions}
+			</p:column>
+			<p:column sortBy="#{ tableBean.lastContactedDate }" filterBy="#{ tableBean.lastContactedDate }">
+				<f:facet name="header">Last contacted</f:facet>
+				<aplos:standardDateTableCell value="#{tableBean.lastContactedDate}" />
+			</p:column> 
+			<p:column sortBy="#{ tableBean.reminderDate }" filterBy="#{ tableBean.reminderDate }">
+				<f:facet name="header">Reminder</f:facet>
+				<aplos:standardDateTableCell value="#{tableBean.reminderDate}" />
+			</p:column> 
+			<p:column>
+				<f:facet name="header">Interactions</f:facet>
+				<h:commandButton value="View interactions" image="/images/interactionList.png" action="#{ backingPage.dataTableState.lazyDataModel.redirectToInteractions }" title="View interactions" style="width:17px;padding-right:5px"/>
+				<h:commandButton value="New copied interaction" image="/images/copyInteraction.png" action="#{ backingPage.dataTableState.lazyDataModel.newCopiedInteraction }" title="New copied interaction" style="width:17px" />
+			</p:column> 
+		</aploscc:wrappedDataTable2>
+		<h3>Finished potential companies</h3>
+		<aploscc:wrappedDataTable2 multiSelect="true" dataTableState="#{ backingPage.finishedPotentialCompanyDts }">
+			<p:column sortBy="#{ tableBean.address.companyName }" filterBy="#{ tableBean.address.companyName }">
+				<f:facet name="header">Company Name</f:facet>
+				<aploscc:quickView text="#{tableBean.address.companyName}" bean="#{tableBean}" view="potentialcompany" />
+			</p:column>
+			<p:column sortBy="#{ tableBean.mainCategory }" filterBy="#{ tableBean.mainCategory }">
+				<f:facet name="header">Category</f:facet>
+				#{tableBean.mainCategory.name}
+			</p:column>
+			<p:column sortBy="#{ tableBean.address.postcode }" filterBy="#{ tableBean.address.postcode }">
+				<f:facet name="header">Postcode</f:facet>
+				#{tableBean.address.postcode}
+			</p:column>
+			<p:column sortBy="#{ tableBean.address.phone }" filterBy="#{ tableBean.address.phone }">
+				<f:facet name="header">Phone</f:facet>
+				#{tableBean.address.phone}
+			</p:column>
+			<p:column sortBy="#{ tableBean.address.subscriber.emailAddress }" filterBy="#{ tableBean.address.subscriber.emailAddress }">
+				<f:facet name="header">Email</f:facet>
+				#{tableBean.address.subscriber.emailAddress}
+			</p:column>
+			<p:column sortBy="#{ tableBean.potentialCompanyStatus }" filterBy="#{ tableBean.potentialCompanyStatus }">
+				<f:facet name="header">Status</f:facet>
+				#{tableBean.potentialCompanyStatus}
+			</p:column>
+			<p:column id="interactions" sortBy="#{ 'SELECT count(*) FROM PotentialCompanyInteraction pci WHERE pci.potentialCompany.id = bean.id' }" filterBy="#{ '(SELECT count(*) FROM PotentialCompanyInteraction pci WHERE pci.potentialCompany.id = bean.id)' }">
+				<f:facet name="header">Interactions</f:facet>
+				#{tableBean.numberOfInteractions}
+			</p:column>
+			<p:column sortBy="#{ tableBean.lastContactedDate }" filterBy="#{ tableBean.lastContactedDate }">
+				<f:facet name="header">Last contacted</f:facet>
+				<aplos:standardDateTableCell value="#{tableBean.lastContactedDate}" />
+			</p:column> 
+			<p:column sortBy="#{ tableBean.reminderDate }" filterBy="#{ tableBean.reminderDate }">
+				<f:facet name="header">Reminder</f:facet>
+				<aplos:standardDateTableCell value="#{tableBean.reminderDate}" />
+			</p:column> 
+			<p:column>
+				<f:facet name="header">Interactions</f:facet>
+				<h:commandButton value="View interactions" image="/images/interactionList.png" action="#{ backingPage.dataTableState.lazyDataModel.redirectToInteractions }" title="View interactions" style="width:17px;padding-right:5px"/>
+				<h:commandButton value="New copied interaction" image="/images/copyInteraction.png" action="#{ backingPage.dataTableState.lazyDataModel.newCopiedInteraction }" title="New copied interaction" style="width:17px" />
+			</p:column> 
+		</aploscc:wrappedDataTable2>
+	</ui:define>
+</ui:composition>

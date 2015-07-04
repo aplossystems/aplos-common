@@ -1,0 +1,57 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+	
+	
+	<ui:define name="title">Aplos CMS - Edit #{backingPage.resolveAssociatedBean().tableName} #{(backingPage.resolveAssociatedBean().displayName != backingPage.resolveAssociatedBean().tableName) ? backingPage.resolveAssociatedBean().displayName : null }</ui:define>
+	<ui:define name="head">
+		<style>
+			textarea { width: 400px; height: 200px; font: normal 10pt Tahoma; }
+		</style>
+		<ui:insert name="editHead"></ui:insert>
+	</ui:define>
+	<ui:define name="body">
+	<table class="centreContent"><tr><td>
+	
+		<h:form id="edit" enctype="multipart/form-data" prependId="#{ backingPage.prependMainFormId }" >
+	
+	<table style="width: 100%;">
+	<tr><td>
+		<div style="margin: 15px 4px;" id="listAndEditHeading" class="aplos-listAndEditHeading">
+			<ui:insert name="heading">
+				<aplos:panel rendered="#{ backingPage.resolveAssociatedBean().isNew() }">
+					Create new #{ backingPage.resolveAssociatedBean().binding }
+				</aplos:panel>
+				<aplos:panel rendered="#{ !backingPage.resolveAssociatedBean().isNew() }">
+					Edit #{ backingPage.resolveAssociatedBean().binding } - #{ backingPage.resolveAssociatedBean() } (#{ backingPage.resolveAssociatedBean().id })
+				</aplos:panel>
+			</ui:insert>
+		</div>
+		</td>
+		</tr>
+	</table>
+		
+			<ui:insert name="editContent" />
+			<br style="clear:both;" />	
+			
+			<div style="float:right">
+				<ui:insert name="editButtons">
+					<aploscc:editButtons />
+				</ui:insert>	
+			</div>
+		</h:form>
+		
+		<p:messages infoClass="message-info" errorClass="message-error" fatalClass="message-fatal" style="padding-top:10px;margin-top:10px" />
+
+	</td></tr></table>
+	</ui:define>
+	
+	<!-- Clear the p:messages from the template footer and use our own position -->
+	<ui:define name="footer"></ui:define>
+</ui:composition>

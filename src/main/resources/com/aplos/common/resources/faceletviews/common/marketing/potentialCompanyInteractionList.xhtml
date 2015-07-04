@@ -1,0 +1,37 @@
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="listContent">
+		<aplos:panel id="wrappy">
+			<aploscc:ajaxButton value="Copy last interaction" action="#{ backingPage.dataTableState.lazyDataModel.copyLastInteraction }" rendered="#{ potentialCompanyInteraction != null }" />
+			<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }">
+				<p:column sortBy="#{ tableBean.contactDateTime }">
+					<f:facet name="header">Date / Time</f:facet>
+					#{tableBean.contactDateTimeStr}
+				</p:column>
+				<p:column sortBy="#{ tableBean.method }">
+					<f:facet name="header">Method</f:facet>
+					#{tableBean.method.label}
+				</p:column>
+				<p:column sortBy="#{ tableBean.status }">
+					<f:facet name="header">Status</f:facet>
+					#{tableBean.potentialCompanyStatus.label}
+				</p:column>
+				<p:column sortBy="#{ tableBean.notes }" filterBy="#{ tableBean.notes }">
+					<f:facet name="header">Notes / Outcome</f:facet>
+					#{tableBean.notes}
+				</p:column>
+				<p:column sortBy="#{ tableBean.nextStep }" filterBy="#{ tableBean.nextStep }">
+					<f:facet name="header">Next step</f:facet>
+					#{tableBean.nextStep}
+				</p:column>
+			</aploscc:wrappedDataTable2>
+		</aplos:panel>
+	</ui:define>
+</ui:composition>

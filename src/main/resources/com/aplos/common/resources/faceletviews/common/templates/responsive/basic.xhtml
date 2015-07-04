@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+
+<h:head>
+	<title><ui:insert name="title">Aplos Content Management</ui:insert></title>
+	<h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+	<h:outputScript library="scripts" name="aplosjqueryresolution.js" target="head" />
+	<h:outputScript library="scripts" name="cookie.js" target="head" />
+	<h:outputScript library="scripts" name="aploscommon.js" target="head" />
+	<h:outputStylesheet library="styles" name="#{ currentWebsite.packageName }.css" target="head" rendered="#{ currentWebsite.projectStylesExist }" />
+	<aplos:panel layout="none" rendered="#{ backingPage.showingMobileHeadCode }">
+    	<script src="#{request.contextPath}/js/jquery.mobilemenu.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	</aplos:panel>
+	<aplos:panel layout="none" rendered="#{ backingPage.showingNoFollow }">
+		<meta name="robots" content="noindex,nofollow" />
+	</aplos:panel>
+	<script type="text/javascript">
+		var aplosRequestContextPath = "#{ request.contextPath }";
+		var scannerHooks = #{ backingPage.scannerHooksForJavascript };
+	</script>
+	<h:outputText value="#{ backingPage.googleAnalyticsCode }" rendered="#{ backingPage.includingAnalytics }" escape="false" />
+	<aplos:scriptsAndStylesWriter />
+	<ui:insert name="head" ></ui:insert>
+	<h:outputText value="#{ contextListener.backendIeConditionalStatement }" escape="false" />
+	
+</h:head>
+	<h:body style="padding: 0px; margin: 0px">
+		<ui:insert name="body" ></ui:insert>
+	</h:body>
+</html>

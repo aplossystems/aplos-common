@@ -1,0 +1,24 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pretty="http://ocpsoft.com/prettyfaces"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+
+	<ui:define name="title">Aplos CMS - View #{plural}</ui:define>
+	<ui:define name="body">
+		<div class="centreContent">
+
+		<div style="margin: 15px 4px;" id="listAndEditHeading" class="aplos-listAndEditHeading">
+			<ui:insert name="heading">
+				View #{ backingPage.beanPluralBinding }
+			</ui:insert>
+		</div>
+
+		
+			<ui:insert name="listContent"></ui:insert>
+		</div>
+
+	</ui:define>
+</ui:composition>

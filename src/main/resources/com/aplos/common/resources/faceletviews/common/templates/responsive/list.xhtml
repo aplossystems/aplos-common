@@ -1,0 +1,34 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pretty="http://ocpsoft.com/prettyfaces"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	<ui:define name="head">
+		<ui:insert name="listHead"></ui:insert>
+	</ui:define>
+	<ui:define name="title">#{ backingPage.pageTitle }</ui:define>
+	<ui:define name="body">
+		<div class="centreContent">
+		
+		<div style="margin: 0px 4px 10px 4px;" id="listAndEditHeading" class="aplos-listAndEditHeading">
+			<ui:insert name="heading">
+				#{backingPage.pageHeading}
+			</ui:insert>
+		</div>
+
+		<h:form id="listForm" enctype="multipart/form-data" onkeypress="#{ backingPage.formOnKeyPress }">
+			<ui:insert name="listContent"></ui:insert>
+			<ui:insert name="editButtons">
+				<div class="aplos-command-button-thin">
+					<aploscc:controlPanel id="aplosControlPanel" />
+				</div>
+			</ui:insert>
+		</h:form>
+		</div>
+
+	</ui:define>
+	<ui:define name="controlPanel" />
+</ui:composition>

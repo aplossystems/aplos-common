@@ -1,0 +1,25 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	<body><!-- altrui/quickview/aplosEmail -->
+		<h3>Email</h3>
+		<div style="overflow-y:auto;">
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Subject</td>
+					<td class="aplos-field">
+						#{ quickviewBean.subject }
+					</td>
+				</tr>
+				<tr>
+					<td class="aplos-label">Content</td>
+					<td class="aplos-field">
+						#{ quickviewBean.contentSample }
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,44 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+
+
+	<ui:define name="title">#{ backingPage.pageTitle }</ui:define>
+	<ui:define name="head">
+		<ui:insert name="editHead"></ui:insert>
+	</ui:define>
+	<ui:define name="body">
+		<table class="centreContent">
+			<tr>
+				<td>
+					<h:form id="edit" prependId="#{ backingPage.prependMainFormId }" enctype="multipart/form-data" onkeypress="#{ backingPage.formOnKeyPress }">
+						<h:inputHidden id="associatedBeanId" value="#{ backingPage.associatedBeanId }" />
+						<h:inputHidden id="alternateAssociatedBeanId" value="#{ backingPage.alternateAssociatedBeanId }" />
+						<table style="width: 100%;">
+							<tr>
+								<td>
+									<div style="margin: 0px 4px 10px 4px;" id="listAndEditHeading" class="aplos-listAndEditHeading">
+										<ui:insert name="heading">#{ backingPage.pageHeading }</ui:insert>
+									</div>
+								</td>
+
+							</tr>
+						</table>
+
+						<ui:insert name="editContent" />
+
+						<ui:insert name="editButtons">
+							<aploscc:controlPanel id="aplosControlPanel" />
+						</ui:insert>
+					</h:form>
+				</td>
+			</tr>
+		</table>
+	</ui:define>
+	<ui:define name="controlPanel" />
+</ui:composition>

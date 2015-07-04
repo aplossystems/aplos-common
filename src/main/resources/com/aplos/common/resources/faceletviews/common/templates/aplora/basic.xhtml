@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	<head>
+	<title><ui:insert name="title">Aplos Content Management</ui:insert></title>
+	<script src="#{request.contextPath}/scripts/jquery/jquery-1.10.2.min.js"></script>
+	<script src="#{request.contextPath}/scripts/jquery/jquery-migrate-1.2.1.min.js"></script>
+	<script type="text/javascript" >
+		$j = jQuery.noConflict();
+		function fadeMessages() {
+			$j(".rich-messages").fadeOut(3000);
+		}
+	</script>
+	
+	<link type="text/css" media="screen" href="#{request.contextPath}/styles/aploracms.css" rel="stylesheet" />
+		
+	<ui:insert name="head" ></ui:insert>
+
+
+<!--[if lte IE 7]>
+<style>
+	#aploraNavigationBar {
+		padding: 10px;
+	}
+</style>
+	<![endif]-->
+	
+</head>
+	<body style="padding: 0px; margin: 0px">
+	</body>
+</html>

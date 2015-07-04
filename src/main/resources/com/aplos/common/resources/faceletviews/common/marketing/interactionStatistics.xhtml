@@ -1,0 +1,53 @@
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="listContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td>
+					from &#160;
+					<aploscc:dateTime id="startDateInput" showCheckbox="#{false}"
+						startYearDiff="#{-25}" endYearDiff="#{0}"
+						value="#{backingPage.startDate}" ajaxOnchange=":listForm:statisticsPanel">
+					</aploscc:dateTime>
+				</td>
+				<td>
+					to &#160;
+					<aploscc:dateTime id="finishDateInput" showCheckbox="#{false}"
+						startYearDiff="#{-25}" endYearDiff="#{0}"
+						value="#{backingPage.finishDate}" ajaxOnchange=":listForm:statisticsPanel">
+					</aploscc:dateTime>
+				</td>
+			</tr>
+		</table>
+		<aplos:panel layout="block" id="statisticsPanel">
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Interaction count</td>
+					<td class="aplos-field">
+						<h:outputText value="#{ backingPage.interactionCount }" />
+					</td>
+				</tr>
+				<tr>
+					<td class="aplos-label">Method counts</td>
+					<td class="aplos-field">
+						<table>
+							<ui:repeat value="#{ backingPage.interactionMethodKeyList }" var="mapKey">
+								<tr>
+									<td style="width:100px">#{ mapKey }</td>
+									<td>#{ backingPage.interactionMethodCounts.get( mapKey ) }</td>
+								</tr>
+							</ui:repeat>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</aplos:panel>
+	</ui:define>
+</ui:composition>

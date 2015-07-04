@@ -1,0 +1,228 @@
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="listContent">
+		<style>
+			.potentialCompanyListbox {
+				max-height:100px;
+			}
+		</style>
+	
+		<table class="aplos-form-table aplos-form-table-with-required">
+			<tr>
+				<td class="aplos-label">
+					From ID
+				</td>
+				<td class="aplos-required-asterisk"></td>
+				<td>
+					<h:inputText value="#{ backingPage.firstId }" >
+						<f:validateLongRange min="1" max="100000000" />
+						<p:ajax event="change" update="tableWrapper" />
+					</h:inputText>
+					&#160;&#160;To&#160;&#160;	
+					<h:inputText value="#{ backingPage.lastId }" >
+						<f:validateLongRange min="1" max="100000000" />
+						<p:ajax event="change" update="tableWrapper" />
+					</h:inputText>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Status</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field" style="width:700px;">
+					<h:selectManyListbox layout="lineDirection" value="#{ backingPage.dataTableState.lazyDataModel.selectedFilterStatuses }" converter="potentialCompanyStatusConverter" collectionType="java.util.ArrayList" styleClass="potentialCompanyListbox">
+						<f:selectItems value="#{ potentialCompanyEditPage.statusSelectItems }" />
+						<p:ajax event="change" update="tableWrapper" />
+					</h:selectManyListbox>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Category</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field" style="width:700px;">
+					<h:selectManyListbox layout="lineDirection" value="#{ backingPage.dataTableState.lazyDataModel.selectedFilterCategories }" converter="aplosAbstractBeanConverter" collectionType="java.util.ArrayList" styleClass="potentialCompanyListbox">
+						<f:selectItems value="#{ backingPage.categorySelectItems }" />
+						<p:ajax event="change" update="tableWrapper" />
+					</h:selectManyListbox>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Is subscribed</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field" style="width:700px;">
+					<h:selectOneRadio value="#{ backingPage.dataTableState.lazyDataModel.isSubscribed }">
+						<f:selectItems value="#{ backingPage.dataTableState.lazyDataModel.yesNoSelectItems }" />
+						<p:ajax event="change" update="tableWrapper" />
+					</h:selectOneRadio>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Has email address</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field" style="width:700px;">
+					<h:selectOneRadio value="#{ backingPage.dataTableState.lazyDataModel.isWithEmailAddress }">
+						<f:selectItems value="#{ backingPage.dataTableState.lazyDataModel.yesNoSelectItems }" />
+						<p:ajax event="change" update="tableWrapper" />
+					</h:selectOneRadio>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Has website</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field" style="width:700px;">
+					<h:selectOneRadio value="#{ backingPage.dataTableState.lazyDataModel.isWithWebsite }">
+						<f:selectItems value="#{ backingPage.dataTableState.lazyDataModel.yesNoSelectItems }" />
+						<p:ajax event="change" update="tableWrapper" />
+					</h:selectOneRadio>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Is calling allowed</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field" style="width:700px;">
+					<h:selectOneRadio value="#{ backingPage.dataTableState.lazyDataModel.isCallingAllowed }">
+						<f:selectItems value="#{ backingPage.dataTableState.lazyDataModel.yesNoSelectItems }" />
+						<p:ajax event="change" update="tableWrapper" />
+					</h:selectOneRadio>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Has viewed an email</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field" style="width:700px;">
+					<h:selectOneRadio value="#{ backingPage.dataTableState.lazyDataModel.isOnlyViewedEmail }">
+						<f:selectItems value="#{ backingPage.dataTableState.lazyDataModel.yesNoSelectItems }" />
+						<p:ajax event="change" update="tableWrapper" />
+					</h:selectOneRadio>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Has opened an email</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field" style="width:700px;">
+					<h:selectOneRadio value="#{ backingPage.dataTableState.lazyDataModel.isOnlyActionedEmail }">
+						<f:selectItems value="#{ backingPage.dataTableState.lazyDataModel.yesNoSelectItems }" />
+						<p:ajax event="change" update="tableWrapper" />
+					</h:selectOneRadio>
+				</td>
+			</tr>
+		</table>
+		
+		<aplos:panel layout="block" id="tableWrapper">
+			<aploscc:wrappedDataTable2 multiSelect="true" dataTableState="#{ backingPage.dataTableState }">
+				<aplos:column sortBy="#{ tableBean.address.companyName }" filterBy="#{ tableBean.address.companyName }" actionAllowed="false">
+					<f:facet name="header">Company Name</f:facet>
+					<aploscc:quickView text="#{tableBean.address.companyName}" bean="#{tableBean}" view="potentialcompany" />
+				</aplos:column>
+				<p:column sortBy="#{ tableBean.mainCategory }" filterBy="#{ tableBean.mainCategory }">
+					<f:facet name="header">Category</f:facet>
+					#{tableBean.mainCategory.name}
+				</p:column>
+				<p:column sortBy="#{ tableBean.address.postcode }" filterBy="#{ tableBean.address.postcode }">
+					<f:facet name="header">Postcode</f:facet>
+					#{tableBean.address.postcode}
+				</p:column>
+				<p:column sortBy="#{ tableBean.address.phone }" filterBy="#{ tableBean.address.phone }">
+					<f:facet name="header">Phone</f:facet>
+					#{tableBean.address.phone}
+				</p:column>
+				<p:column sortBy="#{ tableBean.address.subscriber.emailAddress }" filterBy="#{ tableBean.address.subscriber.emailAddress }">
+					<f:facet name="header">Email</f:facet>
+					#{tableBean.address.subscriber.emailAddress}
+				</p:column>
+				<p:column sortBy="#{ tableBean.potentialCompanyStatus }" filterBy="#{ tableBean.potentialCompanyStatus }">
+					<f:facet name="header">Status</f:facet>
+					#{tableBean.potentialCompanyStatus}
+				</p:column>
+				<p:column id="interactions" sortBy="#{ 'SELECT count(*) FROM PotentialCompanyInteraction pci WHERE pci.potentialCompany.id = bean.id' }" filterBy="#{ '(SELECT count(*) FROM PotentialCompanyInteraction pci WHERE pci.potentialCompany.id = bean.id)' }">
+					<f:facet name="header">Interactions</f:facet>
+					#{tableBean.numberOfInteractions}
+				</p:column>
+				<p:column sortBy="#{ tableBean.lastContactedDate }" filterBy="#{ tableBean.lastContactedDate }">
+					<f:facet name="header">Last contacted</f:facet>
+					<aplos:standardDateTableCell value="#{tableBean.lastContactedDate}" />
+				</p:column> 
+				<p:column sortBy="#{ tableBean.reminderDate }" filterBy="#{ tableBean.reminderDate }">
+					<f:facet name="header">Reminder</f:facet>
+					<aplos:standardDateTableCell value="#{tableBean.reminderDate}" />
+				</p:column> 
+				<aplos:column actionAllowed="false">
+					<f:facet name="header">Interactions</f:facet>
+					<h:commandButton value="View interactions" image="/images/interactionList.png" action="#{ backingPage.dataTableState.lazyDataModel.redirectToInteractions }" title="View interactions" style="width:17px;padding-right:5px"/>
+					<h:commandButton value="New copied interaction" image="/images/copyInteraction.png" action="#{ backingPage.dataTableState.lazyDataModel.newCopiedInteraction }" title="New copied interaction" style="width:17px" />
+				</aplos:column> 
+			</aploscc:wrappedDataTable2>
+		</aplos:panel>
+		<br/><br/>  
+		<table class="aplos-form-table aplos-form-table-with-required">
+			<tr>
+				<td class="aplos-label"></td>
+				<td class="aplos-field"></td>
+				<td><b>Selected</b></td>
+				<td><b>Filtered</b></td>
+			</tr>
+		<aplos:panel layout="none" rendered="#{ backingPage.showingTaskPnl }">  
+			<tr>
+				<td class="aplos-label">Task</td>
+				<td class="aplos-field">
+				</td>
+				<td><aploscc:ajaxButton value="Create task" action="#{backingPage.createTask( backingPage.selectedPotentialCompanies )}" /></td>
+				<td><aploscc:ajaxButton value="Create task" action="#{backingPage.createTask( backingPage.filteredPotentialCompanies )}" /></td>
+			</tr>
+		</aplos:panel>
+		<aplos:panel layout="none" rendered="#{ backingPage.showingStatusPnl }">
+			<tr>
+				<td class="aplos-label">Status</td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ backingPage.selectedPotentialCompanyStatus }">
+						<f:selectItems value="#{ potentialCompanyEditPage.statusSelectItems }" />
+					</h:selectOneMenu>
+				</td>
+				<td><aploscc:ajaxButton value="Change status" action="#{backingPage.changeStatus( backingPage.selectedPotentialCompanies )}" /></td>
+				<td><aploscc:ajaxButton value="Change status" action="#{backingPage.changeStatus( backingPage.filteredPotentialCompanies )}" /></td>
+			</tr>
+		</aplos:panel>
+		<aplos:panel layout="none" rendered="#{ backingPage.showingExportPnl }">
+			<tr>
+				<td class="aplos-label">Export</td>
+				<td class="aplos-field"></td>
+				<td><aploscc:ajaxButton value="Export to CSV" action="#{backingPage.exportCompaniesToCsv( backingPage.selectedPotentialCompanies ) }" /></td>
+				<td><aploscc:ajaxButton value="Export to CSV" action="#{backingPage.exportCompaniesToCsv( backingPage.filteredPotentialCompanies ) }" /></td>
+			</tr>
+		</aplos:panel>
+		<aplos:panel layout="none" rendered="#{ backingPage.showingEmailPnl }">
+			<tr>
+				<td class="aplos-label">Email</td>
+				<td class="aplos-field">
+					<aplos:panel layout="none" rendered="#{ backingPage.newsletterTemplateSelectItems.size() > 0 }">
+						<h:selectOneMenu value="#{ backingPage.selectedEmailTemplate }" converter="aplosAbstractBeanConverter" collectionType="java.util.ArrayList">
+							<f:selectItems value="#{ backingPage.newsletterTemplateSelectItems }"/>
+						</h:selectOneMenu>
+					</aplos:panel>
+				</td>
+				<td><aploscc:ajaxButton value="Send email to selected" action="#{backingPage.emailSelectedBeans}" /></td>
+				<td><aploscc:ajaxButton value="Send email all filtered" action="#{backingPage.emailFilteredBeans}" /></td>
+			</tr>
+		</aplos:panel>
+		</table>
+		<aplos:panel rendered="#{ backingPage.showingImportPnl }">
+			<br/><br/>
+			<table>
+				<tr>
+					<td class="aplos-label"></td>
+					<td class="aplos-required-asterisk"></td>
+					<td>
+						<p:fileUpload mode="simple" value="#{ backingPage.uploadedFile }"> </p:fileUpload>
+						<aploscc:ajaxButton value="Import potential companies" action="#{ backingPage.importPotentialCompanies }" />
+					</td>
+				</tr>
+			</table>
+		</aplos:panel>
+	</ui:define>
+</ui:composition>
