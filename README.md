@@ -9,11 +9,13 @@ Configuration
 -----------------------------------------
 The system requires:
 
-An installation of Java JDK 1.7 (http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
-An IDE (we use eclipse http://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/marsr) with maven installed
-Tomcat 7.0 (https://tomcat.apache.org/download-70.cgi)
-MySql (At writing we are using 5.6.25 https://dev.mysql.com/downloads/mysql/) 
-MySql Workbench (Option but advised https://dev.mysql.com/downloads/workbench/)
+<ul>
+<li>An installation of Java JDK 1.7 (http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)</li>
+<li>An IDE (we use eclipse http://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/marsr) with maven installed</li>
+<li>Tomcat 7.0 (https://tomcat.apache.org/download-70.cgi)</li>
+<li>MySql (At writing we are using 5.6.25 https://dev.mysql.com/downloads/mysql/)</li>
+<li>MySql Workbench (Option but advised https://dev.mysql.com/downloads/workbench/)</li>
+</ul>
 
 Once you have these installed and ready to go then you can download all of these aplos systems modules:
 
