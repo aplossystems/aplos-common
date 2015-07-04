@@ -1,0 +1,28 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	
+	<ui:define name="title">Aplos Systems</ui:define>
+
+	<ui:define name="body">
+	<div style="min-height: 400px; margin: auto; margin-bottom: 40px; display: table; min-width: 600px; border: 2px solid #C9D9F9; border-top: none; border-bottom: none; padding: 0px 50px;">
+	
+		<ui:insert name="heading"><h2>Restricted Feature</h2></ui:insert>
+		<p>
+			The page you are trying to access is currently restricted.  By default pages in the system are restricted for security.
+		</p>
+		<p>
+			If you believe that you should have access to this page please contact us via our usual channels and ask us to enable the feature on your system.
+		</p>
+		<p>
+			Thank you for your understanding.
+		</p>
+		<p style="padding-left:25px">
+			- Aplos Systems
+		</p>
+	</div>
+	</ui:define>
+</ui:composition>

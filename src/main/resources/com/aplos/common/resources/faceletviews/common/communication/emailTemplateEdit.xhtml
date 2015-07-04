@@ -1,0 +1,111 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+	
+	<ui:define name="editHead">
+		<h:outputScript library="jsLibraries" name="ckeditor/aplosckeditor.js" target="head" />
+		<h:outputScript library="scripts" name="ckEditorHelper.js" target="head" />
+			
+		<script type="text/javascript">
+			$j(document).ready(function() {
+				createTemplateEditor();
+			}); 
+			
+			function createTemplateEditor() {
+				var editors = ckEditorHelper.createLimitedToolbarCKEditors( '#{ request.contextPath }', { 'websiteId' : '#{currentWebsite.id}'}, 'aplos_ckeditor' );
+			}
+		
+		</script>
+	</ui:define>
+	
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label" style="width:140px">Email Template Name</td>
+				<td class="aplos-field"><h:outputText value="#{emailTemplate.name}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Email frame</td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ emailTemplate.emailFrame }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.emailFrameSelectItems }" />
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">From address</td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ emailTemplate.emailFromAddressType }">
+						<f:selectItems value="#{ backingPage.emailFromAddressTypeSelectItems }" />
+						<p:ajax event="change" update="fromAddressPnl" />
+					</h:selectOneMenu>
+				</td>
+			</tr>
+		</table>
+		<aplos:panel id="fromAddressPnl">
+			<aplos:panel rendered="#{ emailTemplate.emailFromAddressType.name() == 'OTHER' }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label" style="width:140px">Other</td>
+						<td class="aplos-field"><h:inputText value="#{emailTemplate.otherFromAddress}" /></td>
+					</tr>
+				</table>
+			</aplos:panel>
+		</aplos:panel>
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Subject</td>
+				<td class="aplos-field"><h:inputText value="#{emailTemplate.subject}" style="width:400px" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Use default content</td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox value="#{ emailTemplate.usingDefaultContent }" >
+						<p:ajax event="change" update="contentPnl" onstart="ckEditorHelper.destroyEditors();" oncomplete="createTemplateEditor()"/>
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
+		</table>
+		<aplos:panel id="contentPnl">
+			<aplos:panel rendered="#{ !emailTemplate.usingDefaultContent }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Content</td>
+						<td class="aplos-field"><h:inputTextarea id="emailContent" styleClass="aplos_ckeditor" value="#{emailTemplate.content}" /></td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Plain text</td>
+						<td class="aplos-field"><h:inputTextarea value="#{ emailTemplate.plainText }" /></td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel rendered="#{ emailTemplate.usingDefaultContent }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Content</td>
+						<td class="aplos-field"><iframe src="emailTemplateContent.jsf;jsessionid=#{session.getId()}" style="border:0px;width:700px;overflow:scroll;height:400px"></iframe></td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Plain text</td>
+						<td class="aplos-field"><h:outputText value="#{ emailTemplate.plainText }" /></td>
+					</tr>
+				</table>
+			</aplos:panel>
+		</aplos:panel>
+	</ui:define>
+	
+	<ui:define name="editButtons">
+		<aploscc:controlPanel>
+			<f:facet name="lowerRightControlPanel">
+				<div class="aplos-lower-right-control-panel">
+					<aploscc:ajaxButton value="Reload default template" action="#{ backingPage.reloadDefaultTemplate }" />
+				</div>
+			</f:facet>
+		</aploscc:controlPanel>
+	</ui:define>
+</ui:composition>

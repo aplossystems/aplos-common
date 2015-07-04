@@ -1,0 +1,68 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+
+	<ui:define name="editHead">
+		<h:outputScript library="jsLibraries" name="ckeditor/aplosckeditor.js" target="head" />
+		<h:outputScript library="scripts" name="ckEditorHelper.js" target="head" />
+		<script type="text/javascript">
+			$j(document).ready(function() {
+				ckEditorHelper.createLimitedToolbarCKEditors( '#{ request.contextPath }' );
+			}); 
+		</script>
+	</ui:define>
+	
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label" style="width:140px">Title</td>
+				<td class="aplos-field"><h:inputText value="#{customerReview.reviewTitle}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Description</td>
+				<td class="aplos-field"><h:inputTextarea id="brandDescription"
+						styleClass="aplos_ckeditor" 
+						value="#{customerReview.description}" style="width:400px;height:400px"></h:inputTextarea></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Reviewer first name</td>
+				<td class="aplos-field"><h:inputText value="#{customerReview.reviewerFirstName}"  /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Reviewer surname</td>
+				<td class="aplos-field"><h:inputText value="#{customerReview.reviewerSurname}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Location</td>
+				<td class="aplos-field"><h:inputText value="#{customerReview.location}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Position</td>
+				<td class="aplos-field"><h:inputText value="#{customerReview.reviewerPosition}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Website url</td>
+				<td class="aplos-field"><h:inputText value="#{customerReview.websiteUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Image 1</td>
+				<td class="aplos-field">
+					<aploscc:imageUploader2 resizeWidth="1000" owner="#{ customerReview }" key="IMAGE_ONE" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Image 2</td>
+				<td class="aplos-field">
+					<aploscc:imageUploader2 resizeWidth="1000" owner="#{ customerReview }" key="IMAGE_TWO" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Show on website</td>
+				<td class="aplos-field"><h:selectBooleanCheckbox value="#{customerReview.showingOnWebsite}" /></td>
+			</tr>
+		</table>
+	</ui:define>
+</ui:composition>

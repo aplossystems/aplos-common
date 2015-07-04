@@ -1,0 +1,608 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+
+	<ui:define name="editHead">
+		<h:outputScript library="jsLibraries" name="ckeditor/aplosckeditor.js" target="head" />
+		<h:outputScript library="scripts" name="ckEditorHelper.js" target="head" />
+		<script type="text/javascript"> 
+			$j(document)
+					.ready(
+					function() {
+						createEditors();	
+
+						$( "#accordion" ).accordion({
+							autoHeight: false,
+							collapsible: true,
+							active: false
+						});
+					});
+			
+			function createEditors() {
+				#{ backingPage.editorCssUrl }
+				var editors = ckEditorHelper
+						.createLimitedToolbarCKEditors('#{ request.contextPath }', { 'websiteId' : '#{currentWebsite.id}' } );
+			}
+			
+			function printContent() {
+				var getMyFrame = document.getElementById("printFrame");
+			    getMyFrame.focus();
+			    getMyFrame.contentWindow.print();
+			}
+		</script>
+		
+		<h:outputScript library="jsLibraries" name="jquery-ui-1.8/js/jquery-ui-1.8.6.custom.min.js" target="head" />
+		<h:outputStylesheet library="jsLibraries" name="jquery-ui-1.8/themes/base/jquery.ui.base.css" target="head" />
+		<h:outputStylesheet library="jsLibraries" name="jquery-ui-1.8/themes/base/jquery.ui.theme.css" target="head" />
+		<style>
+			.ui-accordion .ui-accordion-header {
+				height : 30px;
+				padding-left: 30px;
+				line-height: 30px;	
+			}
+			
+			.ui-state-default, .ui-widget-content .ui-state-default {
+				  background: none repeat scroll 0 0 #ededed;
+			}
+			
+			.ui-state-active, .ui-widget-content .ui-state-active {
+				  background: none repeat scroll 0 0 #{ commonConfiguration.highlightColour };
+				  color: #FFFFFF;
+				  box-shadow: none;
+			}
+			
+			#accordion > div {
+				padding:40px;
+			}
+		</style>
+	</ui:define>
+	
+	<ui:define name="editContent">
+		<div class="aplos-command-button-thin">
+			<aplos:panel rendered="#{ aplosEmail.emailGenerationType.name() == 'SINGLE_SOURCE' }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Email source</td>
+						<td class="aplos-field">
+							<aploscc:quickView text="#{aplosEmail.firstEmailSourceFullName}" bean="#{aplosEmail.firstEmailSource}"  rendered="#{ backingPage.isAssociatedWithEditPage(aplosEmail.firstEmailSource) }" />
+							<h:outputText label="Email source" value="#{ aplosEmail.firstEmailSourceFullName }" style="width:400px"  rendered="#{ !backingPage.isAssociatedWithEditPage(aplosEmail.firstEmailSource) }" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel rendered="#{ aplosEmail.emailGenerationType.name() == 'SINGLE_SOURCE' or aplosEmail.emailGenerationType.name() == 'NONE' }">			
+				<table class="aplos-form-table">
+				<aplos:panel rendered="#{ false and backingPage.showingRecipientType and backingPage.bulkMessageSourceGroupFilterSelectItems.size() > 0 and backingPage.emailUpdateAllowed }" layout="none">
+					<tr>
+						<td class="aplos-label">Recipient type</td>
+						<td class="aplos-field">
+							<h:selectOneMenu value="#{ backingPage.selectedEmailFinder }" converter="aplosAbstractBeanConverter">
+								<f:selectItems value="#{ backingPage.bulkMessageSourceGroupFilterSelectItems }" />
+								<f:ajax event="change" render="sendToPanel" />
+							</h:selectOneMenu>
+						</td>
+					</tr>
+				</aplos:panel>
+					<tr>
+						<td class="aplos-label">To</td>
+						<td class="aplos-field">
+							<h:inputText id="toAddresses" label="to addresses" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.toAddressesStr }" style="width:400px" />
+							<aplos:panel rendered="false">
+								<h:panelGroup id="toAddressesPanel">
+									<h:panelGroup layout="block" style="line-height:14px;">
+										<ui:repeat value="#{backingPage.selectedEmailSources}" var="recipient">
+											<span class="tag aplos-recipient"> 
+												<h:outputText value="#{recipient.sourceUniqueDisplayName}" />
+												<h:commandLink action="#{backingPage.removeRecipient}" rendered="#{ backingPage.emailUpdateAllowed }">
+													<img src="#{request.contextPath}/images/action_delete.gif" />
+													<p:ajax process="@form" event="click" listener="#{backingPage.removeRecipient}" update="toAddressesPanel" />  
+												</h:commandLink> 
+											</span>
+										</ui:repeat>
+									</h:panelGroup><br style="clear:both"/>
+									<aplos:panel  rendered="#{ backingPage.emailUpdateAllowed }">
+										<div style="width:250px;float:left;height:30px;">
+											<aplos:autoComplete id="smsRecipients"
+												value="#{backingPage.recipientSelection}"   
+							                    completeMethod="#{backingPage.suggestRecipients}" 
+							                    var="autoBean" 
+							                    itemValue="#{autoBean}" 
+							                    itemLabel="#{autoBean.sourceUniqueDisplayName}" 
+							                    converter="autoCompleteBeanConverter">
+							                    <p:ajax process="@form" event="itemSelect" listener="#{backingPage.addRecipient}" update="toAddressesPanel" />  
+							                </aplos:autoComplete>
+						                </div>
+					             		Only recipients with a valid email address will be displayed
+				             		</aplos:panel>
+					             </h:panelGroup>
+							</aplos:panel>				        
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Cc</td>
+						<td class="aplos-field">
+							<h:inputText id="ccAddresses" label="cc addresses" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.ccAddressesStr }" style="width:400px" />
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Bcc</td>
+						<td class="aplos-field">
+							<h:inputText id="bccAddresses" label="bcc addresses" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.bccAddressesStr }" style="width:400px" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel id="messageGroupsPnl" rendered="#{ aplosEmail.emailGenerationType.name() == 'MESSAGE_GROUPS' }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Send to</td>
+						<td class="aplos-field" style="width:400px">
+							<h:selectOneMenu label="Send to" value="#{ backingPage.selectedBulkMessageSourceGroup }" converter="aplosAbstractBeanConverter">
+								<f:selectItems value="#{ backingPage.bulkMessageSourceGroupSelectItems }" />
+							</h:selectOneMenu>
+							<aploscc:ajaxButton value="Add" action="#{ backingPage.addSelectedBulkMessageSourceGroup() }" />
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label"></td>
+						<td class="aplos-field">
+							<h:panelGroup id="sendToPanel">
+								<aplos:panel layout="block" id="recipientsDiv">
+									<ui:repeat value="#{aplosEmail.messageSourceList}" var="selectedSource">
+										<span class="tag aplos-recipient"> 
+											<h:outputText value="#{selectedSource.sourceUniqueDisplayName}" />
+											<h:commandButton value="Delete" image="/images/action_delete.gif" rendered="#{ backingPage.emailUpdateAllowed }" >
+									   			<p:ajax event="click" listener="#{backingPage.removeBulkMessageSource}" update="recipientsDiv filterSourcesTableWrapper"/>
+									   		</h:commandButton>
+										</span>
+									</ui:repeat>
+								</aplos:panel>
+							</h:panelGroup>
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Recipients</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="aplos-label"></td>
+						<td>
+							<aplos:panel layout="none" id="filterSourcesTableWrapper">
+								<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.filteredSourcesDataTableState }"
+									selectUpdate="contentPnl attachmentPnl" 
+							    	selectOnStart="ckEditorHelper.destroyEditors();"
+							    	selectComplete="createEditors()" >
+									<p:column headerText="First name">  
+							            <h:outputText value="#{tableBean.firstName}" />  
+							        </p:column>
+							        <p:column headerText="Surname">  
+							            #{tableBean.surname}  
+							        </p:column>
+							        <aplos:column headerText="Email" actionAllowed="false">
+										<aploscc:quickView text="#{tableBean.emailAddress}" bean="#{tableBean}"  rendered="#{ backingPage.isAssociatedWithEditPage(tableBean) }" />
+										<h:outputText value="#{tableBean.emailAddress}" rendered="#{ !backingPage.isAssociatedWithEditPage(tableBean) }" />
+							        </aplos:column>
+							        <aplos:column actionAllowed="false">
+										<h:commandButton value="Remove" image="#{ backingPage.filteredSourcesDataTableState.dataListModel.deleteBeanImage }">
+								   			<p:ajax event="click" listener="#{ backingPage.filteredSourcesDataTableState.dataListModel.deleteBeanAction }" update="messageGroupsPnl"/>
+								   		</h:commandButton>
+								   	</aplos:column>
+								</aploscc:wrappedDataTable2>
+							</aplos:panel>
+						</td>
+					</tr>
+				</table>
+				<aplos:panel id="removedSourcePnl">
+					<aplos:panel rendered="#{ aplosEmail.removedSourceSet.size() > 0 }">
+						<table class="aplos-form-table">
+							<tr>
+								<td class="aplos-label">Removed recipients</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td class="aplos-label"></td>
+								<td>
+									<aplos:panel layout="none" id="removedSourcesTableWrapper">
+										<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.removedSourcesDataTableState }" >
+											<p:column headerText="First name">  
+									            <h:outputText value="#{tableBean.firstName}" />  
+									        </p:column>
+									        <p:column headerText="Surname">  
+									            #{tableBean.surname}  
+									        </p:column>
+									        <aplos:column headerText="Email" actionAllowed="false">
+												<aploscc:quickView text="#{tableBean.emailAddress}" bean="#{tableBean}"  rendered="#{ backingPage.isAssociatedWithEditPage(tableBean) }" />
+												<h:outputText value="#{tableBean.emailAddress}" rendered="#{ !backingPage.isAssociatedWithEditPage(tableBean) }" />
+									        </aplos:column>
+							        		<p:column>  
+												<h:commandButton value="Reinstate" image="#{ backingPage.removedSourcesDataTableState.dataListModel.reinstateBeanImage }" >
+										   			<p:ajax event="click" listener="#{ backingPage.removedSourcesDataTableState.dataListModel.reinstateBeanAction }" update="messageGroupsPnl"/>
+										   		</h:commandButton>
+										   	</p:column>
+										</aploscc:wrappedDataTable2>
+									</aplos:panel>
+								</td>
+							</tr>
+						</table>
+					</aplos:panel>
+				</aplos:panel>
+			</aplos:panel>
+			<aplos:panel id="attachmentPnl" rendered="#{ backingPage.showingAttachments }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Attachments</td>
+						<td class="aplos-field" style="width:400px">
+							<table>
+								<ui:repeat value="#{ backingPage.saveableAttachments }" var="saveableAttachment">
+									<tr>
+										<td>
+											<h:commandLink value="#{ saveableAttachment.name }" action="#{aplosEmail.openSaveableAttachment(saveableAttachment)}" target="_blank" rendered="#{backingPage.isReadyToPrint(saveableAttachment) }"/>
+											<h:outputText value="#{ saveableAttachment.name }" rendered="#{!backingPage.isReadyToPrint(saveableAttachment) }"/>
+										</td>
+										<td style="padding-left:20px">
+											<aploscc:ajaxButton value="Remove" action="#{aplosEmail.removeSaveableAttachment(saveableAttachment)}" rendered="#{ backingPage.emailUpdateAllowed }"/>
+										</td>
+										<td style="padding-left:20px">
+											<aploscc:ajaxButton value="Download" action="#{aplosEmail.downloadSaveableAttachment(saveableAttachment)}" rendered="#{ !backingPage.emailUpdateAllowed }"/>
+										</td>
+									</tr>
+								</ui:repeat>
+							</table>	
+							<br/>
+							<aplos:panel rendered="#{backingPage.emailUpdateAllowed}">
+								<p:fileUpload mode="simple" id="attachmentUploader" value="#{backingPage.attachmentUploadedFile}" />
+								<aploscc:ajaxButton action="#{ backingPage.addAttachment }" value="Add" />
+							</aplos:panel>	
+							<br/>
+							<aplos:panel rendered="#{ backingPage.attachmentSelectItems.size() > 0 }">
+								<h:selectManyListbox disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.additionalAttachments }" converter="aplosAbstractBeanConverter" style="height:100px">
+									<f:selectItems value="#{ backingPage.attachmentSelectItems }" />
+								</h:selectManyListbox>
+								<aploscc:ajaxButton value="Attach" action="#{ backingPage.triggerAttach }" rendered="#{ backingPage.emailUpdateAllowed }"/>
+							</aplos:panel>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">From</td>
+					<td class="aplos-field">
+						<h:inputText disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.fromAddressStr }" />
+					</td>
+				</tr>
+			</table>
+			<aplos:panel rendered="#{ backingPage.showingEmailFrameDdl and backingPage.emailFrameSelectItems.size() > 1 and aplosEmail.emailType.name() != 'INCOMING' }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Email frame</td>
+						<td class="aplos-field">
+							<aploscc:aplosBeanMenu label="Email frame" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ aplosEmail.emailFrame }" selectItems="#{ backingPage.emailFrameSelectItems }" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel rendered="#{ backingPage.showingEmailFolders }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Folders</td>
+						<td style="width:400px">
+							<h:selectOneMenu label="folders" value="#{ backingPage.selectedEmailFolderType }">
+								<f:selectItems value="#{ backingPage.emailFolderTypeSelectItems }" />
+								<p:ajax event="change" listener="#{ backingPage.selectedEmailFolderTypeUpdated }" /> 
+							</h:selectOneMenu>
+							<aplos:autoComplete id="emailFolders"
+								label="folder"
+								value="#{backingPage.selectedEmailFolder}"   
+			                    completeMethod="#{backingPage.suggestEmailFolders}" 
+			                    var="autoBean" 
+			                    itemValue="#{autoBean}" 
+			                    itemLabel="#{autoBean.displayName}" 
+			                    converter="autoCompleteBeanConverter">
+			                    <p:ajax process="@form" event="itemSelect" listener="#{backingPage.addEmailFolder}" update="foldersDiv" />  
+			                </aplos:autoComplete>
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label"></td>
+						<td class="aplos-field">
+							<aplos:panel layout="block" id="foldersDiv">
+								<ui:repeat value="#{aplosEmail.createEmailFolderListFromSet()}" var="selectedSource">
+									<span class="tag aplos-recipient">
+										<aploscc:quickView text="#{selectedSource.displayName}" bean="#{selectedSource}"  rendered="#{ backingPage.isAssociatedWithEditPage(selectedSource) }" />
+										<h:outputText value="#{selectedSource.displayName}" rendered="#{ !backingPage.isAssociatedWithEditPage(selectedSource) }" />
+										<h:commandButton value="Delete" image="/images/action_delete.gif" > 
+								   			<p:ajax event="click" listener="#{backingPage.removeEmailFolder}" update="foldersDiv"/>
+								   		</h:commandButton>
+									</span>
+								</ui:repeat>
+							</aplos:panel>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel id="contentPnl">
+				<aplos:panel rendered="#{ backingPage.inPreviewMode }">
+					<table class="aplos-form-table">
+						<tr>
+							<td class="aplos-label"></td>
+							<td class="aplos-field">
+								<aploscc:ajaxButton value="Exit Preview" action="#{ backingPage.setInPreviewMode( false ) }" />
+							</td>
+						</tr>
+						<tr>
+							<td class="aplos-label">Subject</td>
+							<td class="aplos-field">
+								<h:outputText value="#{ backingPage.subjectPreview }"/>
+							</td>
+						</tr>
+						<tr>
+							<td class="aplos-label">Content</td>
+							<td class="aplos-field" colspan="2">
+								<iframe src="#{ backingPage.htmlPreviewUrl };jsessionid=#{session.getId()}" style="border:0px;width:750px;overflow:scroll;height:500px"></iframe>
+							</td>
+						</tr>
+					</table>
+				</aplos:panel>
+				<aplos:panel rendered="#{ !backingPage.inPreviewMode }">
+					<table class="aplos-form-table">
+						<tr>
+							<td class="aplos-label"></td>
+							<td class="aplos-field">
+								<aploscc:ajaxButton value="Preview" action="#{ backingPage.setInPreviewMode( true ) }" rendered="#{ backingPage.showingPreviewButton }" />
+							</td>
+						</tr>
+						<tr>
+							<td class="aplos-label">Subject</td>
+							<td class="aplos-field">
+								<h:inputText disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ aplosEmail.subject }" style="width:400px" />
+							</td>
+						</tr>
+						<tr>
+							<td class="aplos-label">Content</td>
+							<td class="aplos-field" colspan="2">
+								<aplos:panel layout="none" rendered="#{ backingPage.emailUpdateAllowed }">
+									<h:inputTextarea id="templateText" styleClass="aplos_ckeditor" value="#{ aplosEmail.htmlBody }" style="width:500px;height:150px" />
+								</aplos:panel>
+								<aplos:panel layout="none" rendered="#{ !backingPage.emailUpdateAllowed }">
+									<iframe src="#{ backingPage.emailContentUrl };jsessionid=#{session.getId()}" style="border:0px;width:750px;overflow:scroll;height:500px"></iframe>
+								</aplos:panel>
+							</td>
+						</tr>
+					</table>
+				</aplos:panel>
+			</aplos:panel>
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Status</td>
+					<td class="aplos-field">
+						<h:selectOneMenu value="#{ aplosEmail.emailStatus }">
+							<f:selectItems value="#{ backingPage.emailStatusSelectItems }" />
+						</h:selectOneMenu>
+					</td>
+				</tr>
+			</table>
+			<aplos:panel layout="block" rendered="#{ aplosEmail.emailType.name() != 'INCOMING' }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Ask for read receipt?</td>
+						<td class="aplos-field" style="width:500px">
+							<h:selectBooleanCheckbox id="readReceiptChk" value="#{ aplosEmail.askingForReceipt }" disabled="#{ !backingPage.emailUpdateAllowed }" />
+						</td>
+					</tr>
+				</table>
+				<aplos:panel id="sentDateContainer">
+					<aplos:panel layout="block" rendered="#{ aplosEmail.emailSentDate != null }">
+						<table class="aplos-form-table">
+							<tr>
+								<td class="aplos-label">Stats</td>
+								<td style="width:500px">
+									Read (At least this amount have read, probably more) : #{backingPage.recipientReadCount}, Actioned : #{backingPage.recipientActionedCount}
+								</td>
+							</tr>
+							<tr>
+								<td class="aplos-label">Recipients</td>
+								<td style="width:500px">
+									<aplos:panel layout="none" id="recipientTableWrapper">
+										<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.recipientDataTableState }">
+											<p:column headerText="First name">  
+									            <h:outputText value="#{tableBean.bulkEmailSource.firstName}" />  
+									        </p:column>
+									        <p:column headerText="Surname">  
+									            #{tableBean.bulkEmailSource.surname}  
+									        </p:column>
+									        <p:column headerText="Email">
+												<aploscc:quickView text="#{tableBean.firstEmailAddress}" bean="#{tableBean.bulkEmailSource}"  rendered="#{ backingPage.isAssociatedWithEditPage(tableBean.bulkEmailSource) }" />
+												<h:outputText value="#{tableBean.firstEmailAddress}" rendered="#{ !backingPage.isAssociatedWithEditPage(tableBean.bulkEmailSource) }" />  
+									        </p:column>
+									        <p:column headerText="Status">  
+									            <h:outputText value="#{tableBean.status.name()}" />  
+									        </p:column>
+									        <p:column headerText="Sent Date">  
+									            <h:outputText value="#{tableBean.emailSentDateTimeStr}" />  
+									        </p:column>
+									        <p:column headerText="Opened">  
+									            <h:outputText value="#{tableBean.openedDateTimeStr}" />  
+									        </p:column>
+									        <p:column headerText="Actioned">  
+									            <h:outputText value="#{tableBean.actionedDateTimeStr}" />  
+									        </p:column>
+										</aploscc:wrappedDataTable2>
+									</aplos:panel>
+								</td>
+							</tr>
+						</table>
+					</aplos:panel>
+				</aplos:panel>
+			</aplos:panel>
+			<aplos:panel layout="block" rendered="#{ aplosEmail.emailType.name() == 'INCOMING' }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Read date</td>
+						<td style="width:500px">
+							<aploscc:dateTime id="emailReadDate"
+								showCheckbox="#{true}" startYearDiff="#{0}" endYearDiff="#{1}"
+								value="#{aplosEmail.emailReadDate}">
+							</aploscc:dateTime>
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Received date</td>
+						<td style="width:500px">
+							#{ aplosEmail.emailSentDateStr }
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel layout="block" rendered="#{ aplosEmail.originalEmail != null }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Original email</td>
+						<td style="width:500px">
+							<h:commandLink action="#{ aplosEmail.originalEmail.redirectToEditPage }" value="#{ backingPage.getAssociatedEmailDisplayName(aplosEmail.originalEmail) }" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel layout="block" rendered="#{ aplosEmail.repliedEmail != null }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Replied</td>
+						<td style="width:500px">
+							<h:commandLink action="#{ aplosEmail.repliedEmail.redirectToEditPage }" value="#{ backingPage.getAssociatedEmailDisplayName(aplosEmail.repliedEmail) }" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel layout="block" rendered="#{ aplosEmail.forwardedEmail != null }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Forwarded</td>
+						<td style="width:500px">
+							<h:commandLink action="#{ aplosEmail.forwardedEmail.redirectToEditPage }" value="#{ backingPage.getAssociatedEmailDisplayName(aplosEmail.forwardedEmail) }" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel layout="block" rendered="#{ aplosEmail.incomingReadRetryCount == 5 }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label"></td>
+						<td style="width:500px">
+							<h:commandButton action="#{ backingPage.checkForFurtherDetails }" value="Check for further details" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel layout="block" rendered="#{ aplosEmail.emailType.name() == 'INCOMING' and aplosEmail.deletable }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Hard delete date</td>
+						<td style="width:500px">
+							<aploscc:dateTime id="hardDeleteDate"
+								showCheckbox="#{true}" startYearDiff="#{0}" endYearDiff="#{1}"
+								value="#{aplosEmail.hardDeleteDate}">
+							</aploscc:dateTime>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel layout="block" rendered="#{ backingPage.inDebugMode }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Divert emails</td>
+						<td style="width:500px">
+							<h:selectBooleanCheckbox value="#{ aplosEmail.divertingEmailsInDebug }"/>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+				
+			<aplos:panel rendered="#{ backingPage.showingAdvancedOptions }">
+				<div id="accordion">
+					<h3>Advanced options</h3>
+					<div>
+						<table class="aplos-form-table">
+							<tr>
+								<td class="aplos-label">Head content</td>
+								<td class="aplos-field">
+									<h:inputTextarea id="headContent" value="#{ aplosEmail.headContent }" disabled="#{ !backingPage.emailUpdateAllowed }" style="width:500px;height:150px" />
+								</td>
+							</tr>
+						</table>
+						<aplos:panel layout="block" rendered="#{ aplosEmail.emailType.name() != 'INCOMING' }">
+							<table class="aplos-form-table">
+								<tr>
+									<td class="aplos-label">Send plain text part</td>
+									<td class="aplos-field">
+										<h:selectBooleanCheckbox value="#{ aplosEmail.sendingPlainText }" disabled="#{ !backingPage.emailUpdateAllowed }" >
+											<p:ajax event="change" update="plainTextContainer"/>
+										</h:selectBooleanCheckbox>
+									</td>
+								</tr>
+							</table>
+						</aplos:panel>
+						<aplos:panel id="plainTextContainer">
+							<aplos:panel layout="block" rendered="#{ aplosEmail.sendingPlainText }">
+								<table class="aplos-form-table">
+									<tr>
+										<td class="aplos-label">Plain text Body</td>
+										<td class="aplos-field">
+											<h:inputTextarea id="plainTextBody" value="#{aplosEmail.plainTextBody}" disabled="#{ !backingPage.emailUpdateAllowed }"
+												style="width:500px;height:200px"></h:inputTextarea></td>
+									</tr>
+								</table>
+							</aplos:panel>
+						</aplos:panel>
+						<aplos:panel layout="none" rendered="#{ aplosEmail.emailGenerationType.name().equals( 'MESSAGE_GROUPS' ) or aplosEmail.emailGenerationType.name().equals( 'MESSAGE_FINDERS' ) }">
+							<table class="aplos-form-table">
+								<tr>
+									<td class="aplos-label">Automatic send date</td>
+									<td>
+										<aploscc:dateTime id="automaticSendDate"
+											showCheckbox="#{true}" startYearDiff="#{0}" endYearDiff="#{1}"
+											showTime="#{true}"
+											value="#{aplosEmail.automaticSendDate}" disabled="#{ !backingPage.emailUpdateAllowed }">
+										</aploscc:dateTime>
+									</td>
+								</tr>					
+								<tr>
+									<td class="aplos-label">Max send quantity</td>
+									<td class="aplos-field" style="width:500px">
+										<h:inputText label="max quantity" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ aplosEmail.maxSendQuantity }" /> (leave blank to send to all)
+									</td>
+								</tr>
+								<tr>
+									<td class="aplos-label">Start send idx</td>
+									<td class="aplos-field">
+										<h:inputText label="start send idx" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ aplosEmail.sendStartIdx }" />  (leave blank to send from first in list)
+									</td>
+								</tr>
+							</table>
+						</aplos:panel>
+					</div>
+				</div>
+			</aplos:panel>
+			<iframe id="printFrame" src="#{ backingPage.emailPrintContentUrl };jsessionid=#{session.getId()}" style="display:none">
+			</iframe>
+		</div>
+	</ui:define>
+	<ui:define name="editButtons">
+		<aploscc:controlPanel>
+			<f:facet name="lowerRightControlPanel">
+				<aploscc:ajaxButton value="Print" onclick="printContent()" />
+				<aploscc:ajaxButton value="Send email" action="#{ backingPage.sendEmail }" rendered="#{ backingPage.emailUpdateAllowed }" />
+				<aploscc:ajaxButton value="Forward" action="#{ backingPage.forwardEmail }" rendered="#{ !backingPage.emailUpdateAllowed or aplosEmail.emailType.name() == 'INCOMING' }" />
+				<aploscc:ajaxButton value="Reply" action="#{ backingPage.replyToEmail }" rendered="#{ aplosEmail.emailType.name() == 'INCOMING' }"/>
+				<aploscc:ajaxButton value="Duplicate" action="#{ backingPage.duplicateEmail }" rendered="#{ aplosEmail.emailType.name() == 'INCOMING' }"/>
+				<aploscc:quickView textOnly="true" text="Info" button="true" bean="#{backingPage.resolveAssociatedBean()}" view="audit" title="Audit Information" />
+			</f:facet>
+		</aploscc:controlPanel>
+	</ui:define>
+	
+</ui:composition>

@@ -1,0 +1,59 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+	
+	<ui:define name="editContent">
+		<aplos:panel layout="none" rendered="#{ backingPage.customTemplate }">
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Sms template name</td>
+					<td class="aplos-field"><h:inputText value="#{smsTemplate.name}" /></td>
+				</tr>
+			</table>
+		</aplos:panel>
+		
+		<aplos:panel layout="none" rendered="#{ !backingPage.customTemplate }">
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Sms template name</td>
+					<td class="aplos-field"><h:outputText value="#{smsTemplate.name}" /></td>
+				</tr>
+			</table>
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Use default content</td>
+					<td class="aplos-field">
+						<h:selectBooleanCheckbox value="#{ smsTemplate.usingDefaultContent }" >
+							<p:ajax event="change" update="contentPnl controlPanelWrapper"/>
+						</h:selectBooleanCheckbox>
+					</td>
+				</tr>
+			</table>
+		</aplos:panel>
+		<aplos:panel layout="block" id="contentPnl">
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Content</td>
+					<td class="aplos-field"><h:inputTextarea id="smsContent" value="#{smsTemplate.content}" disabled="#{smsTemplate.usingDefaultContent}" /></td>
+				</tr>
+			</table>
+		</aplos:panel>
+	</ui:define>
+	
+	<ui:define name="editButtons">
+		<aplos:panel layout="block" id="controlPanelWrapper">
+			<aploscc:controlPanel>
+				<f:facet name="lowerRightControlPanel">
+					<div class="aplos-lower-right-control-panel">
+						<aploscc:ajaxButton id="reloadDefaultTemplateBtn" value="Reload default template" action="#{ backingPage.reloadDefaultTemplate }" rendered="#{smsTemplate.usingDefaultContent}" />
+					</div>
+				</f:facet>
+			</aploscc:controlPanel>
+		</aplos:panel>
+</ui:define>
+</ui:composition>

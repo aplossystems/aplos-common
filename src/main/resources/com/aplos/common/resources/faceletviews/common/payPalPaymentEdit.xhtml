@@ -1,0 +1,119 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+
+
+
+	<ui:define name="editContent">
+		<aplos:panel rendered="#{param['paymentSuccessful'] == 0}">
+			<p style="color:red">Payment unsuccesssful</p>
+		</aplos:panel>
+		<aplos:panel rendered="#{param['paymentSuccessful'] == 1}">
+			<p style="color:red">Payment successsful.</p>
+		</aplos:panel>
+		<table class="aplos-form-table-with-required edit">
+			<tr>
+				<td class="aplos-label">Description</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field"><h:inputText label="description" value="#{ sagePayDirectPost.description }" required="true" disabled="#{ sagePayDirectPost.paid }"/></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Amount</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field"><h:inputText label="amount" value="#{ backingPage.paymentAmount }" required="true" disabled="#{ sagePayDirectPost.paid }"/></td>
+			</tr>
+		</table>
+			<aploscc:address bean="#{sagePayDirectPost.billingAddress}" state="false" phone="true" line3="false" validation="true" disabled="#{ sagePayDirectPost.paid }"  ecommerceFieldsRequired="true" />
+	
+		<table class="aplos-form-table-with-required edit">
+			<tr>
+                <td class="aplos-label formSubHeading" style="padding-top:20px">Payment details</td>
+                <td />
+            </tr>
+             <tr>
+               <td class="aplos-label">Card type</td>
+				<td></td>
+               <td class="aplos-field">
+ 				<h:selectOneListbox size="1" id="cardTypeSelector" value="#{creditCardDetails.cardType}" converter="aplosAbstractBeanConverter">
+					<f:selectItems value="#{backingPage.cardTypeSelectItems}" />
+				</h:selectOneListbox>
+               </td>
+             </tr>
+             <tr>
+               <td class="aplos-label">Name on card</td>
+				<td class="aplos-required-asterisk">*</td>
+               <td class="aplos-field">
+               		<h:inputText required="true" value="#{creditCardDetails.cardholderName}" onfocus="this.select()" type="text" name="cardname" id="cardname"  style="width:130px;" alt="name on card" class="input_rev"
+               		requiredMessage="Name on Card is required, Please fully complete this field."  validatorMessage="Enter your full name" />
+               </td>
+             </tr>
+             <tr>
+               <td class="aplos-label">Card number</td>
+				<td class="aplos-required-asterisk">*</td>
+               <td class="aplos-field">
+               	<h:inputText value="#{creditCardDetails.cardNumber}" onfocus="this.select()" name="cardno" id="cardno" label="credit card number" required="true" style="width:130px;" alt="card number" class="input_rev" 
+               		validatorMessage="Please enter your 13-16 digit card number exactly as shown on the front of your card." validator="#{ checkoutPaymentFeDmb.validateCreditCardNumber }">
+               	</h:inputText>
+               </td>
+             </tr>
+             <tr>   
+               <td class="aplos-label">Start date</td>
+				<td></td>
+               <td class="aplos-field">
+               	<h:selectOneMenu value="#{creditCardDetails.startMonth}" onfocus="this.select()" name="startM" id="startM"  style="width:50px;" class="input_rev">
+					<f:selectItems value="#{backingPage.startMonthSelectItems}" />  
+				</h:selectOneMenu> /&#160;
+               	<h:selectOneMenu value="#{creditCardDetails.startYear}" onfocus="this.select()" name="startY" id="startY"  style="width:65px;" class="input_rev">
+					<f:selectItems value="#{backingPage.startYearSelectItems}" />  
+				</h:selectOneMenu>    
+               </td>     
+             </tr>
+             <tr>
+               <td class="aplos-label">Expiry date</td>
+				<td></td>
+               <td class="aplos-field">
+               	<h:selectOneMenu value="#{creditCardDetails.expiryMonth}" onfocus="this.select()" name="expiryM" id="expiryM"  style="width:50px;" class="input_rev">
+					<f:selectItems value="#{backingPage.monthSelectItems}" />  
+				</h:selectOneMenu> /&#160; 
+               	<h:selectOneMenu value="#{creditCardDetails.expiryYear}" onfocus="this.select()" name="expiryY" id="expiryY"  style="width:65px;" class="input_rev">
+					<f:selectItems value="#{backingPage.endYearSelectItems}" />  
+				</h:selectOneMenu>
+            </td>        
+             </tr>
+ 
+             <tr>
+               <td class="aplos-label">Issue number (Maestro/Solo only)</td>
+				<td></td>
+               <td class="aplos-field">
+               	<h:selectOneMenu value="#{creditCardDetails.issueNo}" onfocus="this.select()" name="issue" id="issue"  style="width:50px;" class="input_rev">
+					<f:selectItems value="#{backingPage.issueNumberSelectItems}" />  
+				</h:selectOneMenu>                
+ 
+               </td>
+             </tr>
+             <tr>
+               <td class="aplos-label">Security number</td>
+				<td class="aplos-required-asterisk">*</td>
+               <td class="aplos-field">
+               		<h:inputText value="#{creditCardDetails.cvv}" onfocus="this.select()" name="securityno" id="securityno" label="security number" style="width:50px;" alt="securityno" class="input_rev"
+               		validatorMessage="Enter the last 3 digits shown on the back of your card as the security number." required="true" validator="#{ checkoutPaymentFeDmb.validateCvv }">
+               	</h:inputText></td>
+             </tr>
+    	</table>
+	</ui:define>
+	
+	<ui:define name="editButtons">
+	<aploscc:controlPanel>
+		<f:facet name="upperRightControlPanel">
+			<aploscc:ajaxButton rendered="#{ !sagePayDirectPost.paid }" value="Make Payment" action="#{ backingPage.makePayment }" />
+			<aploscc:ajaxButton rendered="#{ !sagePayDirectPost.paid }" value="Cancel" immediate="#{true}" action="#{ backingPage.cancelBtnAction }" />
+			<aploscc:ajaxButton rendered="#{ sagePayDirectPost.paid }" value="Back" immediate="#{true}" action="#{ backingPage.cancelBtnAction }" />
+		</f:facet>
+	</aploscc:controlPanel>
+</ui:define>
+
+</ui:composition>

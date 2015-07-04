@@ -1,0 +1,43 @@
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="listContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Processing</td>
+				<td class="aplos-field">
+					#{backingPage.processingDuration}
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Database create</td>
+				<td class="aplos-field">
+					#{backingPage.databaseCreateDuration}
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Database insert</td>
+				<td class="aplos-field">
+					#{backingPage.databaseInsertDuration}
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Database select</td>
+				<td class="aplos-field">
+					#{backingPage.databaseSelectDuration}
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Database delete</td>
+				<td class="aplos-field">
+					#{backingPage.databaseDeleteDuration}
+				</td>
+			</tr>
+		</table>
+	</ui:define>
+</ui:composition>

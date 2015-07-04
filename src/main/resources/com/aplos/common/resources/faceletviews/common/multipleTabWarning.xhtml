@@ -1,0 +1,55 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	
+	<ui:define name="title">Aplos CMS - Issue Reported</ui:define>
+	<ui:define name="head">
+		<style>
+			textarea { width: 400px; height: 200px; font: normal 10pt Tahoma; }
+		</style>
+	</ui:define>
+	<ui:define name="body">
+	<table class="centreContent"><tr><td>
+	
+		<h:form id="edit" enctype="multipart/form-data" prependId="#{ backingPage.prependMainFormId }" >
+			<h1 class="aplos-listAndEditHeading" >Multiple Tab Warning/Back-Forward Button Warning</h1>
+			<table style="padding-top:20px">
+				<tr>
+					<td style='padding-left: 40px;'>
+						<b>Multiple Tabs</b>
+					</td>
+				</tr>
+				<tr>
+					<td style='padding-left: 40px;'>
+						#{ commonConfiguration.moduleConfiguration.multipleTabWarning }
+					</td>
+				</tr>
+				<tr>
+					<td style='padding-left: 40px;padding-top:20px'>
+						<b>Back and forward buttons</b>
+					</td>
+				</tr>
+				<tr>
+					<td style='padding-left: 40px;'>
+						It is dangerous to use this application with the back and forward buttons in your browser.  Instead you can use the history drop down
+						which is normally situation near the top right of your screen.
+					</td>
+				</tr>
+				<tr>
+					<td style='padding: 40px;'>
+						<b>PLEASE NOTE: If you feel that you have received this warning and it is not applicable please contact the system administrator.</b>
+					</td>
+				</tr>
+			</table>
+			<br style="clear:both;" />	
+			
+		</h:form>
+
+	</td></tr></table>
+	</ui:define>
+</ui:composition>

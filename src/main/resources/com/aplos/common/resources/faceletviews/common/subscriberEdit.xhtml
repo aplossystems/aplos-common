@@ -1,0 +1,27 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+		   		
+			<tr>
+				<td class="aplos-label">First name</td>
+				<td class="aplos-field"><h:inputText value="#{subscriber.firstName}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Surname</td>
+				<td class="aplos-field"><h:inputText value="#{subscriber.surname}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Email</td>
+				<td class="aplos-field"><h:inputText value="#{subscriber.emailAddress}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Active Subscription</td>
+				<td class="aplos-field"><h:selectBooleanCheckbox value="#{subscriber.subscribed}" /></td>
+			</tr>
+		</table>
+	</ui:define>
+</ui:composition>

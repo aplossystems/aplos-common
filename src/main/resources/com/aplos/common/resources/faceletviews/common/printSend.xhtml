@@ -1,0 +1,83 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+	
+	<ui:define name="editContent">
+		<h:outputScript library="jsLibraries" name="ckeditor/aplosckeditor.js" target="head" />
+		<h:outputScript library="scripts" name="ckEditorHelper.js" target="head" />
+		<script type="text/javascript">
+			$j(document).ready(function() {
+				ckEditorHelper.createLimitedToolbarCKEditors( '#{ request.contextPath }' );
+			}); 
+		</script>
+		<div style="float:right; text-align:center; position:relative;">
+			<aploscc:ajaxButton value="&#60; Back to #{ backingPage.returnPageName }" action="#{ backingPage.redirectToMainPage }" />
+		</div>
+		<br style="clear:both" />
+		
+		<div style="float:right;text-align:right">
+			<aplos:panel rendered="#{ backingPage.showingPdf }">
+				<span style="position:relative;bottom:10px">View pdf</span>
+				<h:commandLink action="#{backingPage.redirectToPdfUrl}" target="_blank">
+					<img src="#{request.contextPath}/images/download32.32.png" border="0"/>
+				</h:commandLink>
+			</aplos:panel>
+			<br/>
+			<aplos:panel rendered="#{ backingPage.showingEmail }">
+				<span style="position:relative;bottom:10px">Send email</span>
+				<h:commandLink action="#{backingPage.generatePDFAndSendEmail}">
+					<img src="#{request.contextPath}/images/mail32.32.png" border="0"/>
+				</h:commandLink>
+			</aplos:panel>
+		</div>
+		<aplos:panel rendered="#{ backingPage.showingEmail }">
+			<table>
+				<tr>
+					<td class="aplos-label">Send email to</td>
+					<td class="aplos-field">
+						<h:inputText value="#{ backingPage.toEmailAddresses }" style="width:400px" />
+					</td>
+				</tr>
+				<tr>
+					<td class="aplos-label">CC</td>
+					<td class="aplos-field">
+						<h:inputText value="#{ backingPage.ccEmailAddresses }" style="width:400px" />
+					</td>
+				</tr>
+				<tr>
+					<td class="aplos-label">Subject</td>
+					<td class="aplos-field">
+						<h:inputText value="#{ backingPage.emailSubject }" style="width:400px" />
+					</td>
+				</tr>
+			</table>
+		</aplos:panel>
+		<div style="clear:both" />
+		<aplos:panel rendered="#{ backingPage.showingCkEditor }">
+			<table>
+				<tr>
+					<td class="aplos-label">Template text</td>
+					<td class="aplos-field">
+						<h:inputTextarea id="templateText" styleClass="aplos_ckeditor" value="#{ backingPage.emailBody }" style="width:400px;height:200px" />
+					</td>
+				</tr>
+			</table>
+		</aplos:panel>
+		
+	</ui:define>
+	
+
+	<ui:define name="editButtons">
+		<aploscc:controlPanel>
+			<f:facet name="upperRightControlPanel">
+	
+	
+			</f:facet>
+		</aploscc:controlPanel>
+	</ui:define>
+	
+</ui:composition>

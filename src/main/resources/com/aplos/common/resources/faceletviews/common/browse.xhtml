@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+<title>Browse Media</title>
+<style>
+.rich-table-cell { height: 60px; width: 200px; text-align: center; vertical-align: center; }
+.dir { width: 200px; width:140px; vertical-align:top; display:block; text-transform:capitalize; font-size:16px; padding:3px; background:#ffffff; border:0px solid #ffffff; color:#637393; text-decoration:none;}
+.dir:hover { background:#EDEDED; border-color:#C9D9F9; color:darkslategray; }
+.dir span { margin:5px auto; }
+.dir img { margin:0 5px 3px 0; border:0; }
+</style>
+
+</h:head>
+	<h:body style="padding: 0px; margin: 0px">
+
+<div style="background-color: #C9D9F9; text-align: right; font: bold 24pt Garamond; padding: 10px 50px; color: darkslategray;">Aplos CMS</div>
+<h:form>
+<aplos:panel autoUpdate="true" style="display:table;margin: 40px auto;">
+
+	<h:commandLink action="#{backingPage.openParent}" styleClass="dir" rendered="#{ !backingPage.root }" >
+		<img src="#{request.contextPath}/images/arrow_top.png" alt="" style="vertical-align:top" />
+		Back
+	</h:commandLink>
+	<p:dataGrid columns="4" value="#{backingPage.files}" var="file" >
+		<h:commandLink rendered="#{file.directory}" action="#{backingPage.open(file)}" styleClass="dir">
+				<span><img src="#{request.contextPath}/images/folder.png" alt="" style="vertical-align:top" />
+				<h:outputText value="#{file.name}" /></span>
+		</h:commandLink>
+		<aplos:panel layout="none" rendered="#{file.file}">
+			<div class="dir" ondblclick="window.opener.CKEDITOR.tools.callFunction( #{CKEditorFuncNum}, '#{request.contextPath}/media/#{backingPage.getMediaId(file)}' ); window.close(); self.close(); ">
+				<span><img src="#{request.contextPath}/images/file.png" alt="" style="vertical-align:top" />
+				#{file.name}</span>
+			</div>
+		</aplos:panel>
+	</p:dataGrid>
+	<br/><br/><br/>
+	<em style="color:dimgray;">Double click to select a file ...</em>
+</aplos:panel>
+</h:form>
+</h:body>
+</html>

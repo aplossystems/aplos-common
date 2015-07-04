@@ -1,0 +1,35 @@
+
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="listContent">
+		<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }">
+			<p:column sortBy="#{ tableBean.itemCode }" filterBy="#{ tableBean.itemCode }">
+				<f:facet name="header">Code</f:facet>
+				#{tableBean.itemCode}
+			</p:column>
+			<p:column sortBy="#{ tableBean.itemName }" filterBy="#{ tableBean.itemName }">
+				<f:facet name="header">Name</f:facet>
+				#{tableBean.itemName}
+			</p:column>
+			<p:column sortBy="#{ tableBean.quantity }" filterBy="#{ tableBean.quantity }">
+				<f:facet name="header">Quantity</f:facet>
+				#{tableBean.quantity}
+			</p:column>
+			<p:column sortBy="#{ tableBean.quantity }" filterBy="#{ tableBean.quantity }">
+				<f:facet name="header">Single Price</f:facet>
+				#{tableBean.singleItemNetPrice}
+			</p:column>
+			<p:column sortBy="#{ tableBean.quantity }" filterBy="#{ tableBean.quantity }">
+				<f:facet name="header">Line Price</f:facet>
+				#{tableBean.cachedNetLinePrice}
+			</p:column>
+		</aploscc:wrappedDataTable2>
+	</ui:define>
+</ui:composition>

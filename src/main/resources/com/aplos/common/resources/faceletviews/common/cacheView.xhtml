@@ -1,0 +1,119 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<ui:define name="heading">
+		Edit Available Backing Pages
+	</ui:define>
+	
+	<ui:define name="body">
+		<h:form id="edit" enctype="multipart/form-data">
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Class</td>
+					<td class="aplos-field">
+						<aplos:autoComplete id="beanClassAc"
+							value="#{backingPage.beanClassName}"   
+		                    completeMethod="#{backingPage.suggestBeanClassNames}" 
+		                    var="autoBean" 
+		                    itemValue="#{autoBean}" 
+		                    itemLabel="#{autoBean}">
+		                    <p:ajax process="@form" event="itemSelect" listener="#{backingPage.beanClassNameUpdated}" update="idPnl" />  
+		                </aplos:autoComplete>
+					</td>
+				</tr>
+			</table>
+			<aplos:panel id="idPnl">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">ID</td>
+						<td class="aplos-field">
+							<aplos:autoComplete id="beanIdAc"
+								value="#{backingPage.beanIdStr}"   
+			                    completeMethod="#{backingPage.suggestBeanIds}" 
+			                    var="autoBean" 
+			                    itemValue="#{autoBean}" 
+			                    itemLabel="#{autoBean}" >
+			                    <p:ajax process="@form" event="itemSelect" listener="#{backingPage.beanIdUpdated}" update="fieldValuePnl"/>  
+			                </aplos:autoComplete>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel id="fieldValuePnl">
+				<table class="aplos-form-table">
+					<ui:repeat value="#{ backingPage.currentBeanKeyValueList }" var="keyValue">
+						<tr>
+							<td style="bold">#{ keyValue.key }</td>
+							<td>
+								<h:outputText value="#{ keyValue.value }" rendered="#{ !keyValue.persistentClass and !keyValue.collection }" />
+								<p:commandLink value="Show class" action="#{ backingPage.showPersistentClass( keyValue.fieldInfo ) }" rendered="#{ keyValue.persistentClass }" update=":edit:persistentPnl" />
+								<p:commandLink value="Show collection  #{backingPage.getCollectionInfo(keyValue.value) }" action="#{ backingPage.showCollectionFromFieldInfo( keyValue.fieldInfo ) }" rendered="#{ keyValue.collection }" update=":edit:collectionPnl" />
+							</td>
+						</tr>
+					</ui:repeat>
+				</table>
+			</aplos:panel>
+			<aplos:panel id="collectionPnl">
+				<aplos:panel rendered="#{ backingPage.currentChildCollectionIsMap }">
+					<h3>Map values</h3>
+					<table class="aplos-form-table">
+						<ui:repeat value="#{ backingPage.currentChildCollectionKeySet }" var="key">
+							<tr>
+								<td style="bold">#{ key }</td>
+								<td>
+									<h:outputText value="#{ backingPage.currentChildCollection.get( key ) }" rendered="#{ !backingPage.isAplosAbstractBean( backingPage.currentChildCollection.get( key ) ) and !backingPage.isCollection( backingPage.currentChildCollection.get( key ) ) }" />
+									<p:commandLink value="Show class" action="#{ backingPage.showAplosAbstractBean( backingPage.currentChildCollection.get( key ) ) }" rendered="#{ backingPage.isAplosAbstractBean( backingPage.currentChildCollection.get( key ) ) }" update=":edit:persistentPnl" />
+									<p:commandLink value="Show collection #{backingPage.getCollectionInfo(backingPage.currentChildCollection.get( key ))}" action="#{ backingPage.showCollection( backingPage.currentChildCollection.get( key ) ) }" rendered="#{ backingPage.isCollection( backingPage.currentChildCollection.get( key ) ) }" update=":edit:collectionPnl" />
+								</td>
+							</tr>
+						</ui:repeat>
+					</table>
+				</aplos:panel>
+				<aplos:panel rendered="#{ !backingPage.currentChildCollectionIsMap and backingPage.currentChildCollection != null }">
+					<h3>Collection values</h3>
+					<table class="aplos-form-table">
+						<ui:repeat value="#{ backingPage.currentChildCollectionValues }" var="value">
+							<tr>
+								<td>
+									<h:outputText value="#{ value }" rendered="#{ !backingPage.isAplosAbstractBean( value ) and !backingPage.isCollection( value ) }" />
+									<p:commandLink value="Show class" action="#{ backingPage.showAplosAbstractBean( value ) }" rendered="#{ backingPage.isAplosAbstractBean( value ) }" update=":edit:persistentPnl" />
+									<p:commandLink value="Show collection #{backingPage.getCollectionInfo(value)}" action="#{ backingPage.showCollection( value ) }" rendered="#{ backingPage.isCollection( value ) }" update=":edit:collectionPnl" />
+								</td>
+							</tr>
+						</ui:repeat>
+					</table>
+				</aplos:panel>
+			</aplos:panel>
+			<aplos:panel id="persistentPnl">
+				<aplos:panel rendered="#{ backingPage.currentChildBean != null }">
+					<h3>Persistent Class</h3>
+					<table class="aplos-form-table">
+						<ui:repeat value="#{ backingPage.childBeanKeyValueList }" var="keyValue">
+							<tr>
+								<td style="bold">#{ keyValue.key }</td>
+								<td>
+									<h:outputText value="#{ keyValue.value }" rendered="#{ !keyValue.persistentClass and !keyValue.collection }" />
+									<p:commandLink value="Show class" action="#{ backingPage.showPersistentClass( keyValue.fieldInfo ) }" rendered="#{ keyValue.persistentClass }" update=":edit:collectionPnl" />
+									<p:commandLink value="Show collection" action="#{ backingPage.showCollectionFromFieldInfo( keyValue.fieldInfo ) }" rendered="#{ keyValue.collection }" update=":edit:collectionPnl" />
+								</td>
+							</tr>
+						</ui:repeat>
+					</table>
+				</aplos:panel>
+			</aplos:panel>
+		</h:form>	
+	</ui:define>
+	<ui:define name="editButtons">
+	<aploscc:controlPanel>
+		<f:facet name="upperRightControlPanel">
+
+
+		</f:facet>
+	</aploscc:controlPanel>
+</ui:define>
+</ui:composition>

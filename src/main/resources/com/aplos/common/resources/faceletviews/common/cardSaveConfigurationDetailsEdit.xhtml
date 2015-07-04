@@ -1,0 +1,122 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+    xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Name</td>
+				<td class="aplos-field"><h:inputText value="#{cardSaveConfigurationDetails.name}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Integration type</td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ cardSaveConfigurationDetails.integrationType }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.integrationTypeSelectItems }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Connect to type</td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ cardSaveConfigurationDetails.connectToType }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.connectToTypeSelectItems }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Merchant Id for this Connect-to type</td>
+				<td class="aplos-field">
+					<h:inputText value="#{cardSaveConfigurationDetails.merchantId}" />
+				</td>
+			</tr>	
+			<tr>
+				<td class="aplos-label">Gateway password</td>
+				<td class="aplos-field">
+					<h:inputSecret value="#{backingPage.gatewayPassword}" />
+				</td>
+			</tr>	
+			<tr>
+				<td class="aplos-label"></td>
+				<td class="aplos-description">Leave blank to keep unchanged</td>
+			</tr>		
+			<tr>
+				<td class="aplos-label">Site secure base Url (Your site FQDN)</td>
+				<td class="aplos-field"><h:inputText value="#{cardSaveConfigurationDetails.secureSiteBaseUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label"></td>
+				<td class="aplos-description">e.g. https://www.yoursitename.com/ (MUST include the trailing "/")</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Front end successful redirection Url</td>
+				<td class="aplos-field"><h:inputText value="#{cardSaveConfigurationDetails.frontEndSuccessfulRedirectionUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Front end failed redirection Url</td>
+				<td class="aplos-field"><h:inputText value="#{cardSaveConfigurationDetails.frontEndFailedRedirectionUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Back end successful redirection Url</td>
+				<td class="aplos-field"><h:inputText value="#{cardSaveConfigurationDetails.backEndSuccessfulRedirectionUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Back end failed redirection Url</td>
+				<td class="aplos-field"><h:inputText value="#{cardSaveConfigurationDetails.backEndFailedRedirectionUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Payment processor (Full domain and port)</td>
+				<td class="aplos-field"><h:inputText value="#{cardSaveConfigurationDetails.paymentProcessorFullDomain}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Notes</td>
+				<td class="aplos-field"><h:inputTextarea value="#{cardSaveConfigurationDetails.notes}" style="width:400px ; height:100px ;" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label"></td>
+				<td class="aplos-description"> e.g. for gateway "https://gwX.cardsaveonlinepayments.com:4430/", this should just be "cardsaveonlinepayments.com:4430"</td>
+			</tr>
+		</table>
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Gateways</td>
+				<td class="aplos-field">
+					<h:dataTable value="#{cardSaveConfigurationDetails.gateways}" var="gateway">
+						<h:column>
+							<f:facet name="header">
+								Subdomain
+							</f:facet>
+							#{gateway.subdomain}
+							<f:facet name="footer">
+								<h:inputText value="#{ backingPage.newGateway.subdomain }" />
+							</f:facet>
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								Priority
+							</f:facet>
+							#{gateway.priority}
+							<f:facet name="footer">
+								<h:inputText value="#{ backingPage.newGateway.priority }" />
+							</f:facet>
+						</h:column>
+						<h:column>
+							<aploscc:ajaxButton value="Remove" action="#{ backingPage.removeGateway }" />
+							<f:facet name="footer">
+								<aploscc:ajaxButton value="Add" action="#{ backingPage.addGateway }" />
+							</f:facet>
+						</h:column>
+					</h:dataTable>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label"></td>
+				<td class="aplos-description"> e.g. for gateway "https://gw1.cardsaveonlinepayments.com:4430/", this should just be "gw1"</td>
+			</tr>
+		</table>
+	</ui:define>
+</ui:composition>

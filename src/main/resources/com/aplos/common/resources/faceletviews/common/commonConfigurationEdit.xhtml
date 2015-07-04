@@ -1,0 +1,301 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="head">
+		<h:outputScript library="jsLibraries" name="ckeditor/aplosckeditor.js" target="head" />
+		<h:outputScript library="scripts" name="ckEditorHelper.js" target="head" />
+		<script type="text/javascript">
+			$j(document).ready(function() {
+				ckEditorHelper.createLimitedToolbarCKEditors( '#{ request.contextPath }' );
+			}); 
+		</script>
+	</ui:define>
+	
+	<ui:define name="editContent">
+		<style>
+			.editLabelColumn {
+				width : 140px;
+			}
+		</style>
+		<table class="aplos-form-table aplos-form-table-with-required" style="width:100%">
+			<tr>
+				<td class="aplos-label">Default administrator</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field">
+					<h:selectOneMenu required="true" requiredMessage="A Default Administrator is Required" value="#{ commonConfiguration.defaultAdminUser }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.adminSystemUserSelectItemBeans }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<h:panelGroup rendered="#{currentUser.superuser}">
+				<tr>
+					<td class="aplos-label">Default super user</td>
+					<td class="aplos-required-asterisk">*</td>
+					<td class="aplos-field">
+						<h:selectOneMenu required="true" requiredMessage="A Default Super User is Required" value="#{ commonConfiguration.defaultSuperUser }" converter="aplosAbstractBeanConverter">
+							<f:selectItems value="#{ backingPage.superuserSystemUserSelectItemBeans }" />				
+						</h:selectOneMenu>
+					</td>
+				</tr>
+				<tr>
+					<td class="aplos-label">Is internationalisation enabled for this application?</td>
+					<td class="aplos-required-asterisk"></td>
+					<td class="aplos-field"><h:selectBooleanCheckbox disabled="#{!backingPage.isInternationalisationAvailable}" value="#{ backingPage.isInternationalizedApplication }" /></td>
+				</tr>
+				<h:panelGroup rendered="#{!backingPage.isInternationalisationAvailable}">
+					<tr>
+						<td colspan="2"></td><td class="aplos-description" style="text-align:left!important;">Internationalisation is not available because&#160;<h:outputText value="#{backingPage.internationalisationError}" />.<br/>If enabled this could cause redirect loops and render the system unusable.</td>
+					</tr>
+				</h:panelGroup>
+				<h:panelGroup rendered="#{!commonConfiguration.isInternationalizedApplication}">
+					<tr>
+						<td colspan="2"></td><td class="aplos-description" style="text-align:left!important;">Please be aware - enabling internationalisation will require you to restart your server</td>
+					</tr>
+				</h:panelGroup>
+				<tr>
+					<td class="aplos-label">Default payment gateway</td>
+					<td class="aplos-required-asterisk"></td>
+					<td class="aplos-field">
+						<h:selectOneMenu value="#{ commonConfiguration.defaultPaymentGateway }" converter="aplosAbstractBeanConverter">
+							<f:selectItems value="#{ backingPage.paymentGatewaySelectItem }" />				
+						</h:selectOneMenu>
+					</td>
+				</tr>
+			</h:panelGroup>
+			<tr>
+				<td class="aplos-label">Default Credit Card Type</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ commonConfiguration.defaultCreditCardType }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.creditCardTypeSelectItemBeans }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Paypal email</td>
+				<td></td>
+				<td class="aplos-field"><h:inputText value="#{ commonConfiguration.payPalEmail }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Is VAT inclusive?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:selectBooleanCheckbox value="#{ commonConfiguration.vatInclusive }" /></td>
+			</tr> 
+			<tr>
+				<td class="aplos-label">Is delivery VAT inclusive?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:selectBooleanCheckbox value="#{ commonConfiguration.deliveryVatInclusive }" /></td>
+			</tr> 
+			<tr>
+				<td class="aplos-label">Default Currency</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field">
+					<h:selectOneMenu required="true" requiredMessage="Default currency is required" value="#{ commonConfiguration.defaultCurrency }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.currencySelectItemBeans }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>  
+			<tr>
+				<td class="aplos-label">Is testing CardSave?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:selectBooleanCheckbox value="#{ commonConfiguration.testingCardSave }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Is testing SagePay?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:selectBooleanCheckbox value="#{ commonConfiguration.testingSagePay }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Is testing PayPal?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:selectBooleanCheckbox value="#{ commonConfiguration.testingPayPal }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Is using PayPal Express?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:selectBooleanCheckbox value="#{ commonConfiguration.usingPayPalExpress }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Default VAT Type</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ commonConfiguration.defaultVatType }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.vatTypeSelectItems }"  />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">UK VAT Type</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ commonConfiguration.ukVatType }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.vatTypeSelectItems }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<h:panelGroup rendered="#{backingPage.isInternationalizedApplication}">
+				<tr>
+					<td class="aplos-label">Default Language</td>
+					<td class="aplos-required-asterisk">*</td>
+					<td class="aplos-field">
+						<h:inputText 
+							required="true"
+							requiredMessage="Default Language is required"
+							validationMessage="Default Language is required, it should be a 2-character lowercase string"
+							value="#{ backingPage.defaultLanguageStr }">
+							<f:validateLength minimum="2" maximum="2" />
+						</h:inputText>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"></td>
+					<td class="aplos-description" style="text-align:left!important;">This should be an iso-compatible language identifier such as 'en' or 'ar'.</td>
+				</tr>
+			</h:panelGroup>
+			<tr>
+				<td class="aplos-label">Encrypt passwords</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox id="passwordEncryptedChk" value="#{ commonConfiguration.passwordEncrypted }" disabled="#{ commonConfiguration.passwordEncrypted }">
+						<f:ajax event="change" render="passwordEncryptedChk" listener="#{ backingPage.passwordEncryptionUpdated }" /> 
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
+				<tr>
+					<td colspan="2"></td>
+					<td class="aplos-description" style="text-align:left!important;">Once selected and saved this cannot be undone.</td>
+				</tr>
+			<tr>
+				<td class="aplos-label">Maximum Failed Login Attempts</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{ commonConfiguration.maxFailedLoginAttempts }" /></td>
+			</tr>
+			<tr>
+				<td colspan="2"></td><td class="aplos-description" style="text-align:left!important;">If you enter a value here, users will be deactivated and unable to login if they enter <br/>their password incorrectly this many times. <br/>If no value is entered users can continue to attempt to login indefinitely.</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Default Company Details</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field">
+					<h:selectOneMenu required="true" requiredMessage="Default company details are required" value="#{ commonConfiguration.defaultCompanyDetails }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.companyDetailsSelectItemBeans }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Is using Nexemo?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:selectBooleanCheckbox value="#{ commonConfiguration.usingNexemo }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Sms source number?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{ commonConfiguration.smsAccount.smsSourceNumber }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Default email frame</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ commonConfiguration.outerEmailFrame }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.emailFrameSelectItems }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Ask for read receipts?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox id="readReceiptChk" value="#{ commonConfiguration.readReceiptsRequired }" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Default not select text</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{ commonConfiguration.defaultNotSelectedText }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label formSubHeading">Mail settings</td>
+				<td></td>
+				<td class="aplos-field"></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Email address</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{ commonConfiguration.mailServerSettings.emailAddress }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Outgoing host</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{ commonConfiguration.mailServerSettings.outgoingHost }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Outgoing username</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{ commonConfiguration.mailServerSettings.outgoingUsername }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Outgoing password</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputSecret value="#{ commonConfiguration.mailServerSettings.outgoingPassword }" redisplay="true" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Using incoming mail</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox value="#{ commonConfiguration.mailServerSettings.usingIncomingEmail }" >
+						<p:ajax event="change" update="incomingMailSettings" />
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
+		</table>
+		<aplos:panel id="incomingMailSettings">
+			<aplos:panel rendered="#{ commonConfiguration.mailServerSettings.usingIncomingEmail }">
+				<table class="aplos-form-table aplos-form-table-with-required" style="width:100%">
+					<tr>
+						<td class="aplos-label">Incoming host</td>
+						<td class="aplos-required-asterisk"></td>
+						<td class="aplos-field"><h:inputText value="#{ commonConfiguration.mailServerSettings.incomingHost }" /></td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Incoming username</td>
+						<td class="aplos-required-asterisk"></td>
+						<td class="aplos-field"><h:inputText value="#{ commonConfiguration.mailServerSettings.incomingUsername }" /></td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Incoming password</td>
+						<td class="aplos-required-asterisk"></td>
+						<td class="aplos-field"><h:inputSecret value="#{ commonConfiguration.mailServerSettings.incomingPassword }" redisplay="true" /></td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Delete emails from server</td>
+						<td class="aplos-required-asterisk"></td>
+						<td class="aplos-field">
+							<h:selectBooleanCheckbox value="#{ commonConfiguration.mailServerSettings.deletingEmailsFromServer }" >
+							</h:selectBooleanCheckbox>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+		</aplos:panel>
+	</ui:define>
+	
+	
+<ui:define name="editButtons">
+	<aploscc:controlPanel>
+		<f:facet name="upperRightControlPanel">
+		<aploscc:ajaxButton value="Apply" action="#{ backingPage.applyBtnAction }" />
+	</f:facet>
+	</aploscc:controlPanel>
+</ui:define>
+
+</ui:composition>
+
+
+	
+	
+	

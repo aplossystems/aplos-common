@@ -1,0 +1,23 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	
+	<ui:define name="editContent">
+		<p:dataTable id="listTable" value="#{ backingPage.dataTransferReport }"  var="tableBean" styleClass="listDatatable" style="margin-top:-12px;width:100%">
+			<p:column>
+				<f:facet name="header">Class</f:facet>
+				#{tableBean[ 0 ]}
+			</p:column>
+			<p:column>
+				<f:facet name="header">Transfered By</f:facet>
+				#{tableBean[ 1 ]}
+			</p:column>
+		</p:dataTable>
+		<h:commandButton action="#{ backingPage.transferData }" value="Transfer" reRender="listTable" />
+		<h:commandButton action="#{ backingPage.transferEntireDatabase }" value="Transfer All" reRender="listTable" />
+	</ui:define>
+</ui:composition>

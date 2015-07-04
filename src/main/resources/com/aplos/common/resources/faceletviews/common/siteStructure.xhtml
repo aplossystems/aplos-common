@@ -1,0 +1,159 @@
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+
+	<ui:define name="head">
+		<h:outputScript library="jsLibraries" name="jsTree/aplosjquery.tree.js" target="head" />
+		<h:outputScript library="jsLibraries" name="jsTree/plugins/jquery.tree.contextmenu.js" target="head" />	
+	</ui:define>
+	
+	<ui:define name="heading">Manage Menu Structure</ui:define>
+	<ui:define name="return"></ui:define>
+	
+	<ui:define name="listContent">
+		
+		<style>
+			/* Elements we can only view */
+			#treeView li[rel='view'] a { font-style: italic; }
+			#treeView li a { cursor: pointer; }
+			#menuKey { list-style: none; }
+			#menuKey li { font-size:11px; float:left; margin:3px; background-color:#eaeaea; padding:2px; }
+			#menuKey li img { height:16px; width:16px; vertical-align:middle; }
+		</style>
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Menu Structure</td>
+				<td>
+					<h:panelGroup layout="block" id="treeView">
+						<div id="basic_json_1"></div>
+						<aplos:ajaxJsFunction name="moveNode" action="#{backingPage.updateTree}" >
+							<aplos:param name="node" assignTo="#{backingPage.dragNode}" />
+							<aplos:param name="node_type" assignTo="#{backingPage.dragNodeType}" />
+							<aplos:param name="ref_node" assignTo="#{backingPage.dropNode}" />
+							<aplos:param name="ref_node_type" assignTo="#{backingPage.dropNodeType}" />
+							<aplos:param name="type" assignTo="#{backingPage.dropType}" />
+							<aplos:param name="state" assignTo="#{backingPage.currentState}" />
+						</aplos:ajaxJsFunction>
+						
+						<aplos:jsFunction name="selectNode" action="#{backingPage.selectNode}">
+							<aplos:param name="ref_node" assignTo="#{backingPage.dropNode}" />
+							<aplos:param name="ref_node_type" assignTo="#{backingPage.dropNodeType}" />
+						</aplos:jsFunction>
+			
+						<aplos:ajaxJsFunction name="openNode" action="#{backingPage.openNode}">
+							<aplos:param name="ref_node" assignTo="#{backingPage.dropNode}" />
+						</aplos:ajaxJsFunction>
+						
+						<aplos:ajaxJsFunction name="closeNode" action="#{backingPage.closeNode}">
+							<aplos:param name="ref_node" assignTo="#{backingPage.dropNode}" />
+						</aplos:ajaxJsFunction>
+						
+						<script type="text/javascript" class="source">
+						
+							$j(function() {
+								$j("#basic_json_1").tree( {
+									types : {
+										"default" : 	{ max_depth : 12, valid_children : null, clickable : false },
+										"top"  : 		{ draggable : false, valid_children : [ "root","simple_root","inactive_root","orphan-panels","orphan-tabs" ] },
+										"root" : 		{ draggable : false, clickable : true, max_children: 1, valid_children : [ "tabpanel","newbean_tabpanel" ], icon : { image : "#{request.contextPath}/images/site_icon.gif" } },
+										"simple_root" : 		{ draggable : false, clickable : true, max_children: 1, valid_children : [ "tabpanel","newbean_tabpanel" ], icon : { image : "#{request.contextPath}/images/simple_site_icon.gif" } },
+										"inactive_root" : 		{ draggable : false, clickable : true, max_children: 1, valid_children : [ "tabpanel","newbean_tabpanel" ], icon : { image : "#{request.contextPath}/images/inactive_site_icon.gif" } },
+										"destroy-node" : 	{ draggable : false, clickable : false, valid_children : [ "tabpanel","newbean_tabpanel","menutab","menutab_hidden", "output" ], icon : { image : "#{request.contextPath}/images/destroy_node_icon.gif" } },
+										"orphan-panels" : 	{ draggable : false, clickable : false, valid_children : [ "tabpanel","newbean_tabpanel" ], icon : { image : "#{request.contextPath}/images/orphan_icon.gif" } },
+										"orphan-tabs" : 	{ draggable : false, clickable : false, valid_children : [ "menutab","menutab_hidden", "output" ], icon : { image : "#{request.contextPath}/images/orphan_icon.gif" } },
+										"tabpanel" : 	{ clickable : true, valid_children : [ "menutab","menutab_hidden", "output" ], icon : { image : "#{request.contextPath}/images/panel_icon.gif" } },
+										"newbean_tabpanel" : 	{ clickable : true, valid_children : [ "menutab","menutab_hidden", "output" ], icon : { image : "#{request.contextPath}/images/nbtp_icon.gif" } },
+										"output" : 		{ clickable : true, max_children: 0, valid_children : "", icon : { image : "#{request.contextPath}/images/tab_icon_unclickable.gif" } },
+										"menutab" : 	{ clickable : true, max_children: 1, valid_children : [ "tabpanel","newbean_tabpanel" ], icon : { image : "#{request.contextPath}/images/tab_icon.gif" } },
+										"menutab_hidden" : 	{ clickable : true, max_children: 1, valid_children : [ "tabpanel","newbean_tabpanel" ], icon : { image : "#{request.contextPath}/images/tab_icon_hidden.gif" } },
+									},
+						
+									callback : {
+										
+										beforemove : function(NODE, REF_NODE, TYPE, TREE_OBJ) { 
+											if ($j(REF_NODE).attr("rel") == "destroy-node") { //drop node
+												return confirm("Do you really wish to destroy this node?");
+											} else {
+												return true 
+											}
+										},
+										
+										onchange : function (NODE) {
+											selectNode($j(NODE).attr("id"), $j(NODE).attr("rel"));
+										},
+						
+										onmove : function(node, ref_node, type, TREE_OBJ, RB) {
+											moveNode(	$j(node).attr("id"), 
+														$j(node).attr("rel"), 
+														$j(ref_node).attr("id"), 
+														$j(ref_node).attr("rel"), 
+														type, 
+														RB);
+										},
+										
+										onopen : function(NODE) {
+											openNode($j(NODE).attr("id"));
+										},
+										
+										onclose : function(NODE) {
+											closeNode($j(NODE).attr("id"));
+										}
+									},
+						
+									plugins : {
+										//contextmenu : { items : { remove : false } }
+									},
+									
+									data : {
+										type : "json",
+										opts : {
+											static : [ { 
+												"data" : { title : " ", icon : false }, 
+												"attributes" : { "rel" : "top" }, //this makes it so we cant put things 'inside' the top level / yellow folder
+												state : "open", "children" : [ <h:outputText value="#{backingPage.menuJson}" /> ]
+											} ]
+										}
+									}
+								});
+							});
+						</script>
+			
+					</h:panelGroup> 
+
+					<br style="clear:both;" /><br/>
+					<aploscc:ajaxButton action="#{backingPage.startWebsiteCreationWizard}" value="New Website" />
+					<aploscc:ajaxButton action="#{backingPage.goToNewPanel}" value="New Panel" />
+					<aploscc:ajaxButton action="#{backingPage.goToNewTab}" value="New Tab" />
+
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Menu Key</td>
+				<td>
+					<table id="menuKey">
+						<tr>
+							<td><img src="#{request.contextPath}/images/simple_site_icon.gif" /> Simple Website</td>
+							<td><img src="#{request.contextPath}/images/tab_icon.gif" /> Menu Tab</td>
+							<td><img src="#{request.contextPath}/images/panel_icon.gif" /> Tab Panel</td>
+						</tr>
+						<tr>
+							<td><img src="#{request.contextPath}/images/site_icon.gif" /> CMS Website</td>
+							<td><img src="#{request.contextPath}/images/tab_icon_unclickable.gif" /> Menu Tab, External link</td>
+							<td><img src="#{request.contextPath}/images/nbtp_icon.gif" /> Tab Panel, Linked to Bean</td>
+						</tr>
+						<tr>
+							<td><img src="#{request.contextPath}/images/inactive_site_icon.gif" /> Inactive CMS Website</td>
+							<td><img src="#{request.contextPath}/images/tab_icon_hidden.gif" /> Menu Tab, Hidden when new</td>
+							<td></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</ui:define>
+
+</ui:composition>

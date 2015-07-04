@@ -1,0 +1,86 @@
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="listContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Page visbility</td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ backingPage.dataTableState.lazyDataModel.selectedPageVisibility }" >
+						<f:selectItems value="#{ backingPage.dataTableState.lazyDataModel.pageVisibilitySelectItems }"></f:selectItems>
+						<p:ajax event="change" update=":listForm:tableWrapper" />
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Only Status 404</td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox value="#{ backingPage.dataTableState.lazyDataModel.showingOnlyStatus404 }" >
+						<p:ajax event="change" update=":listForm:tableWrapper" />
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
+		</table>
+		<aplos:panel id="tableWrapper">
+			<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }">
+				<p:column sortBy="#{ tableBean.pageUrl }" filterBy="#{ tableBean.pageUrl }">
+					<f:facet name="header">Url</f:facet>
+					<h:outputText value="#{tableBean.pageUrlEnding}" title="#{ tableBean.pageUrl }" />
+				</p:column>
+				<p:column sortBy="#{ tableBean.refererUrl }" filterBy="#{ tableBean.refererUrl }">
+					<f:facet name="header">Url</f:facet>
+					<h:outputText value="#{tableBean.refererUrlEnding}" title="#{ tableBean.refererUrl }" />
+				</p:column>
+				<p:column sortBy="#{ tableBean.pageRequestedTime }" filterBy="#{ tableBean.pageRequestedTime }">
+					<f:facet name="header">Requested</f:facet>
+					<aplos:standardDateTableCell value="#{tableBean.pageRequestedDateTime}" />
+				</p:column>
+				<p:column sortBy="#{ tableBean.restoreViewBeforeBindTime }" filterBy="#{ tableBean.restoreViewBeforeBindTime }" width="40px" style="width:40px">
+					<f:facet name="header">RV1</f:facet>
+					#{tableBean.restoreViewBeforeBindTimeInMillis}
+				</p:column>
+				<p:column sortBy="#{ tableBean.restoreViewAfterBindTime }" filterBy="#{ tableBean.restoreViewAfterBindTime }">
+					<f:facet name="header">RV2</f:facet>
+					#{tableBean.restoreViewAfterBindTimeInMillis}
+				</p:column>
+				<p:column sortBy="#{ tableBean.applyRequestValuesTime }" filterBy="#{ tableBean.applyRequestValuesTime }">
+					<f:facet name="header">ARV</f:facet>
+					#{tableBean.applyRequestValuesTimeInMillis}
+				</p:column>
+				<p:column sortBy="#{ tableBean.processValidationsTime }" filterBy="#{ tableBean.processValidationsTime }">
+					<f:facet name="header">PV</f:facet>
+					#{tableBean.processValidationsTimeInMillis}
+				</p:column>
+				<p:column sortBy="#{ tableBean.updateModelValuesTime }" filterBy="#{ tableBean.updateModelValuesTime }">
+					<f:facet name="header">UMV</f:facet>
+					#{tableBean.updateModelValuesTimeInMillis}
+				</p:column>
+				<p:column sortBy="#{ tableBean.invokeApplicationTime }" filterBy="#{ tableBean.invokeApplicationTime }">
+					<f:facet name="header">IA</f:facet>
+					#{tableBean.invokeApplicationTimeInMillis}
+				</p:column>
+				<p:column sortBy="#{ tableBean.renderResponseBeforeBindTime }" filterBy="#{ tableBean.renderResponseBeforeBindTime }">
+					<f:facet name="header">RR1</f:facet>
+					#{tableBean.renderResponseBeforeBindTimeInMillis}
+				</p:column>
+				<p:column sortBy="#{ tableBean.renderResponseAfterBindTime }" filterBy="#{ tableBean.renderResponseAfterBindTime }">
+					<f:facet name="header">RR2</f:facet>
+					#{tableBean.renderResponseAfterBindTimeInMillis}
+				</p:column>
+				<p:column sortBy="#{ tableBean.renderResponseCompleteTime }" filterBy="#{ tableBean.renderResponseCompleteTime }">
+					<f:facet name="header">RR3</f:facet>
+					#{tableBean.renderResponseCompleteTimeInMillis}
+				</p:column>
+				<p:column sortBy="#{ tableBean.duration }" filterBy="#{ tableBean.duration }">
+					<f:facet name="header">Duration</f:facet>
+					<h:outputText value="#{tableBean.durationInMillis}" title="RV1 - #{tableBean.restoreViewBeforeBindTimeInMillis}, RV2 - #{tableBean.restoreViewAfterBindTimeInMillis}, ARV - #{tableBean.applyRequestValuesTimeInMillis}, PV - #{tableBean.processValidationsTimeInMillis}, UMV - #{tableBean.updateModelValuesTimeInMillis}, IA - #{tableBean.invokeApplicationTimeInMillis}, RR1 - #{tableBean.renderResponseBeforeBindTimeInMillis}, RR2 - #{tableBean.renderResponseAfterBindTimeInMillis}, RR3 - #{tableBean.renderResponseCompleteTimeInMillis}" />
+				</p:column>
+			</aploscc:wrappedDataTable2>
+		</aplos:panel>
+	</ui:define>
+</ui:composition>

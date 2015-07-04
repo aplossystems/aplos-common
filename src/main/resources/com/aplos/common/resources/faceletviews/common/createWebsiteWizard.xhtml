@@ -1,0 +1,117 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	<ui:define name="heading">Create Website Wizard</ui:define>
+	<ui:define name="editContent">
+		<h3>Basic Details</h3>
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label" style="width:300px">Website Name *</td>
+				<td class="aplos-field">
+					<h:inputText required="#{ backingPage.validationRequired }" id="Name" value="#{backingPage.name}">
+						<f:ajax event="change" render="extensionPanel" /> 
+					</h:inputText>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Host Name (if known)</td>
+				<td class="aplos-field"><h:inputText value="#{backingPage.hostName}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Package Root *</td>
+				<td class="aplos-field">
+					<h:selectOneMenu id="ImplementationModule" required="#{ backingPage.validationRequired }" value="#{backingPage.packageRoot}">
+						<f:selectItems value="#{backingPage.packageRootSelectItems}" /> 
+						<f:ajax event="change" render="extensionPanel" /> 
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Should Countries Be Configurable?</td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox value="#{backingPage.configurableCountries}" id="using_countries" />
+				</td>
+			</tr>
+		</table>
+		<aplos:panel id="extensionPanel">
+			<h:panelGroup rendered="#{backingPage.name != null and backingPage.name != '' and backingPage.packageRoot != null}">
+				<h3>Networking Ease Details</h3>
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label" style="width:300px">Are we linking with Networking Ease?</td>
+						<td class="aplos-field">
+							<h:selectBooleanCheckbox immediate="true" value="#{backingPage.isNeaseProject}" id="using_nease">
+								<f:ajax event="change" render="neasePanel" /> 
+							</h:selectBooleanCheckbox>
+						</td>
+					</tr>
+				</table>
+				<aplos:panel id="neasePanel">
+					<h:panelGroup rendered="#{backingPage.isNeaseProject}">
+						<table class="aplos-form-table">
+							<tr>
+								<td class="aplos-label" style="width:300px">Admin user's Nease Username *</td>
+								<td class="aplos-field">
+									<h:inputText required="#{backingPage.isNeaseProjectRequired}" id="NeaseUsername" value="#{backingPage.neaseUsername}" />
+								</td>
+							</tr>
+							<tr>
+								<td class="aplos-label" style="width:300px">Admin user's Nease Password *</td>
+								<td class="aplos-field">
+									<h:inputSecret required="#{backingPage.isNeaseProjectRequired}" id="NeasePassword" value="#{backingPage.neasePassword}" />
+								</td>
+							</tr>
+							<tr>
+								<td class="aplos-label" style="width:300px">Admin user's Linked Project *</td>
+								<td class="aplos-field">
+									<h:selectOneMenu id="NeaseProject" required="#{backingPage.isNeaseProjectRequired}" value="#{backingPage.neaseProjectId}" converter="aplosAbstractBeanConverter">
+										<f:selectItems value="#{backingPage.neaseProjectSelectItems}" />
+										<f:ajax event="change" render="newNeasePanel" /> 
+									</h:selectOneMenu>
+								</td>
+							</tr>
+						</table>
+					</h:panelGroup>
+				</aplos:panel>
+				<aplos:panel id="newNeasePanel">
+					<h:panelGroup rendered="#{backingPage.isNewNeaseProject}">
+						<h3>New Networking Ease Project Details</h3>
+						<table class="aplos-form-table">
+							<tr>
+								<td class="aplos-label" style="width:300px">Project Title *</td>
+								<td class="aplos-field">
+									<h:inputText required="true" id="NeaseProjectTitle" value="#{backingPage.neaseProjectTitle}" />
+								</td>
+							</tr>					
+						</table>
+					</h:panelGroup>
+				</aplos:panel>
+				<aplos:panel id="moduleConfigurationPnl">
+					<c:forEach var="module" items="#{cForEachHack.modules}">
+						<div>
+							<aplos:namingContainer>
+								<ui:include src="#{module.websiteWizardSettingsViewPath}" />
+							</aplos:namingContainer>
+						</div>
+					</c:forEach>
+				</aplos:panel>
+			</h:panelGroup>
+		</aplos:panel>
+	</ui:define>
+	<ui:define name="editButtons">
+		<aploscc:controlPanel>
+			<f:facet name="upperRightControlPanel">
+				<aploscc:ajaxButton id="aplosEditOkBtn" action="#{backingPage.okBtnAction}" value="Ok" />
+				<aploscc:ajaxButton id="aplosEditCancelBtn" action="#{backingPage.cancelBtnAction}" value="Cancel" />
+			</f:facet>
+			<f:facet name="lowerRightControlPanel">
+				&#160;
+			</f:facet>
+		</aploscc:controlPanel>
+	</ui:define>
+</ui:composition>

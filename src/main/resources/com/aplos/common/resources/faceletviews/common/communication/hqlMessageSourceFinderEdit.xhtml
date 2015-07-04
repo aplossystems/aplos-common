@@ -1,0 +1,69 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+
+	<ui:define name="editContent">
+		<table class="aplos-form-table-with-required">
+			<tr>
+				<td class="formText">Name</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="formField"><h:inputText label="name" value="#{hqlMessageSourceFinder.name}" required="#{ backingPage.validationRequired }"/></td>
+			</tr>
+			<tr>
+				<td class="formText">Group is for SMS</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="formField">
+					<h:selectBooleanCheckbox value="#{hqlMessageSourceFinder.smsRequired}">
+						<p:ajax process="@form" event="change" update="sourceType" listener="#{ backingPage.updateList }" /> 
+					</h:selectBooleanCheckbox>
+				</td>  
+			</tr>
+			<tr>
+				<td class="formText">Group is for Email</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="formField">
+					<h:selectBooleanCheckbox value="#{hqlMessageSourceFinder.emailRequired}">
+						<p:ajax process="@form" event="change" update="sourceType" listener="#{ backingPage.updateList }" /> 
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
+			<tr>
+				<td class="formText">Source Type</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="formField">
+					<h:selectOneMenu id="sourceType" value="#{ backingPage.selectedSourceType }">
+						<f:selectItems value="#{ backingPage.sourceTypeSelectItems }" /> 
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="formText">HQL</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="formField"><h:inputTextarea label="hql" value="#{hqlMessageSourceFinder.hql}" style="width:600px;height:150px" required="#{ backingPage.validationRequired }"></h:inputTextarea></td>
+			</tr>
+		</table>
+		<aploscc:ajaxButton value="Test HQL" action="#{ backingPage.testHql }" />
+		
+		<aplos:panel rendered="#{ backingPage.bulkMessageSources != null }" >
+			<p:dataTable value="#{ backingPage.bulkMessageSources }" var="tableBean">
+				<p:column sortBy="#{ tableBean.firstName }" filterBy="#{ tableBean.firstName }">
+					<f:facet name="header">First name</f:facet>
+					#{tableBean.firstName}
+				</p:column>
+				<p:column sortBy="#{ tableBean.surname }" filterBy="#{ tableBean.surname }">
+					<f:facet name="header">Surname</f:facet>
+					#{tableBean.surname}
+				</p:column>
+				<p:column sortBy="#{ tableBean.address.subscriber.emailAddress }" filterBy="#{ tableBean.address.subscriber.emailAddress }">
+					<f:facet name="header">Email Address</f:facet>
+					<h:commandLink value="#{tableBean.address.subscriber.emailAddress}" action="#{ backingPage.dataTableState.lazyDataModel.emailBasicContact }" />
+				</p:column>
+			</p:dataTable>
+		</aplos:panel>
+	</ui:define>
+</ui:composition>

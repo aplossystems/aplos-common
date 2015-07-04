@@ -1,0 +1,42 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	
+	<ui:define name="editContent">
+		<aploscc:address bean="#{ basicContact.address }" validation="#{ backingPage.validationRequired }" contactTitle="true" companyName="true" phone="true" phone2="true" mobile="true" email="true" updateSubscriber="true"/>
+		<ui:insert name="belowForm"/>
+		
+		<table class="aplos-form-table-with-required">
+			<tr>
+				<td class="aplos-label">Tags</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field" style="padding:20px 0px 0px 0px;width:600px">
+				<aplos:panel id="basicContactTabPnl">
+					<p:dataTable id="basicContactTagTabel" value="#{ basicContact.basicContactTagList }" var="tableBean" styleClass="listDatatable" style="margin-top:-12px;width:100%">
+						<p:column sortBy="#{ tableBean.tagName }">
+							<f:facet name="header">Name</f:facet>
+							#{tableBean.tagName}
+						</p:column>
+						<p:column width="24px">
+							<h:commandButton action="#{ backingPage.removeBasicContactTag }" image="/images/action_delete.gif" reRender="basicContactTabPnl" />
+						</p:column>
+					</p:dataTable>
+				</aplos:panel>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label"></td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<aploscc:beanMenu label="Basic contact tag" value="#{ backingPage.selectedBasicContactTag }" beanMenuHelper="#{ backingPage.basicContactTagBmh }" />
+					<aploscc:ajaxButton action="#{ backingPage.addBasicContactTag }" value="Add" reRender="basicContactTabPnl" />
+				</td>
+			</tr>
+		</table>
+	</ui:define>
+</ui:composition>

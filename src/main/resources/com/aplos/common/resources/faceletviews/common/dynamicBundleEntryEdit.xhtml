@@ -1,0 +1,91 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="head">
+		<h:outputScript library="jsLibraries" name="jquery-ui-1.8/js/jquery-ui-1.8.6.custom.min.js" target="head" />
+		<h:outputScript library="jsLibraries" name="ckeditor/aplosckeditor.js" target="head" />
+		<h:outputScript library="scripts" name="ckEditorHelper.js" target="head" />
+		<script type="text/javascript">
+			//  For the ckeditor dialogs
+			var aploraFilebrowserBrowseUrl = "#{request.contextPath}/common/browse.jsf";
+			var aploraFilebrowserUploadUrl = "#{request.contextPath}/editorUpload/upload.jsf";
+			var aploraFormsDialog = "#{request.contextPath}/scripts/ckeditor/aplora/dialog.js";
+			var aploraPagesDialog = "#{request.contextPath}/scripts/ckeditor/aplora/dialog.js";
+			function initPage() {
+				ckEditorHelper.destroyEditors();
+				ckEditorHelper.createLimitedToolbarCKEditors( '#{ request.contextPath }', null, "valueTextarea" ); 
+			}
+		</script>
+		<aplos:panel id="ckEditorScriptPanel" layout="none" rendered="#{dynamicBundleEntry.html}">
+			<script type="text/javascript">
+				$j(document).ready(function() {
+					initPage();
+				}); 
+			</script>
+		</aplos:panel>
+	</ui:define>	
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Key</td>
+				<td class="aplos-field"><h:inputText value="#{dynamicBundleEntry.entryKey}" style="width:400px"/></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Switch Language</td>
+				<td class="aplos-field">
+					<ui:repeat value="#{backingPage.languages}" var="lang">
+						<h:commandButton styleClass="aplos-language-icon" image="#{lang.fullIconUrl}" value="#{lang.name}" action="#{backingPage.switchLanguage(lang.languageKey)}" />
+					</ui:repeat>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Value Type</td>
+				<td class="aplos-field">
+					<h:selectOneMenu id="valueTypeSelector" value="#{backingPage.valueType}">
+						<f:selectItems value="#{backingPage.valueTypeSelectItems}" />
+						<p:ajax event="change" listener="#{backingPage.propagateValueTypeToBean}" update="valueTypePanel,valueTypeSelector" oncomplete="var sel = document.getElementById('valueTypeSelector'); if(sel.options[sel.selectedIndex].value==800002) { initPage() }" />
+					</h:selectOneMenu>				
+				</td>
+			</tr>
+		</table>	
+		
+		<aplos:panel id="valueTypePanel">
+			<table class="aplos-form-table">	
+				<tr>
+					<td class="aplos-label">Value</td>
+					<td class="aplos-field">
+						<!-- BASIC, HTML -->
+						<h:inputTextarea id="valueTextarea" styleClass="valueTextarea" rendered="#{!dynamicBundleEntry.redirectKey}" value="#{dynamicBundleEntry.entryValue}" />
+
+						<!-- KEY REDIRECT -->	
+						<h:panelGroup rendered="#{dynamicBundleEntry.redirectKey}" layout="none">
+							<aplos:autoComplete id="bundleAc" value="#{backingPage.selectedDynamicBundleEntry}"   
+			                    completeMethod="#{backingPage.suggestKeys}" var="autoBean" itemValue="#{autoBean}" itemLabel="#{ autoBean.valueChainDisplayName }" converter="autoCompleteBeanConverter">
+			                   <p:ajax process="@form" event="itemSelect" listener="#{backingPage.addKeyToRedirectTo}" update="valueTypePanel"/>  
+			                </aplos:autoComplete>
+						</h:panelGroup>
+					</td>
+				</tr>
+				<aplos:panel rendered="#{dynamicBundleEntry.redirectKey}" layout="none">
+					<tr>
+						<td class="aplos-label">Redirect Key</td>
+						<td class="aplos-field">
+							<h:outputText value="#{dynamicBundleEntry.keyToRedirectTo.entryKey}" id="key_selected" />
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Determined Value</td>
+						<td class="aplos-field">
+							<h:outputText value="#{dynamicBundleEntry.determineValue()}" />
+						</td>
+					</tr>
+				</aplos:panel>
+			</table>
+		</aplos:panel>	
+		
+	</ui:define>
+</ui:composition>

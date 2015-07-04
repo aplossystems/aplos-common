@@ -1,0 +1,210 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:define name="editContent">
+		
+		<h3>Basic Details</h3>
+		<table class="aplos-form-table">
+			<tr>
+				<td>
+					Display Name
+				</td>
+				<td>
+					<h:inputText required="true" name="Display Name" value="#{backingPage.beanDisplayName}" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Tab Width
+				</td>
+				<td>
+					<h:selectOneMenu value="#{backingPage.tabWidth}">
+						<f:selectItems value="#{backingPage.tabWidthSelectItems}" /> 
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<h:outputText rendered="#{backingPage.linkedToBean}" value="Does the tab show when the bean is new and unsaved?" />
+				</td>
+				<td>
+					<h:selectBooleanCheckbox rendered="#{backingPage.linkedToBean}" value="#{backingPage.showWhenNew}" />
+				</td>
+			</tr>
+		</table>
+		
+		<h3>Who can access this tab</h3>
+		<table class="aplos-form-table">
+			<tr>
+				<td>Renders when there is no user</td>
+				<td colspan="2"><h:selectBooleanCheckbox value="#{backingPage.rendersWhenNoUser}" /></td>
+			</tr>
+			<tr>
+				<td>Is hidden from superuser</td>
+				<td colspan="2"><h:selectBooleanCheckbox value="#{backingPage.hiddenFromSuperuser}" /></td>
+			</tr>
+			<tr>
+				<td>Restricted</td>
+				<td></td>
+				<td>Allowed</td>
+			</tr>
+			<tr>
+				<td>
+					<h:selectManyListbox style="width:150px !important" size="8" collectionType="java.util.ArrayList" value="#{backingPage.selectedRestrictedUserTypes}" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{backingPage.restrictedUserTypeSelectItems}" /> 
+					</h:selectManyListbox>
+				</td>
+				<td>
+					<h:commandButton value="Allow &gt;&gt;" action="#{backingPage.addUserAccess}" />
+					<br/><br/>
+					<h:commandButton value="&lt;&lt; Restrict" action="#{backingPage.removeUserAccess}" />
+				</td>
+				<td>
+					<span style="font-size:11px;width:146px;display:block;padding-left:2px;background:#EEEEEE;border:1px solid #BBBBBB;overflow-y:scroll;color:#252525">SuperUser</span>
+					<h:selectManyListbox style="width:150px !important" size="7" collectionType="java.util.ArrayList" value="#{backingPage.selectedAllowedUserTypes}" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{backingPage.allowedUserTypeSelectItems}" /> 
+					</h:selectManyListbox>
+				</td>
+			</tr>
+		</table>
+		
+		<h3>Assign an action to this tab</h3>
+		<aplos:panel id="actionpanels">
+			<h:panelGroup rendered="#{!backingPage.hasHome}">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-description">You must select a home for this tab before assigning an action to it</td>
+					</tr>
+				</table>
+			</h:panelGroup>
+			<h:panelGroup rendered="#{backingPage.hasHome}">
+				<!--# {!backingPage.hasSubTabPanel}">-->
+					<table class="aplos-form-table">
+						<tr>
+							<td>
+								<h:selectOneRadio disabled="#{backingPage.currentDefaultTabForBackingPage}" rendered="#{!backingPage.hasSubmenu}" value="#{backingPage.tabActionType}"
+									id="subtabpanel_or_dynamictabclass" layout="pageDirection"
+									required="true">
+									<f:selectItems value="#{backingPage.tabActionTypeSelectItems}" />
+									<f:ajax event="change" render="availableActions" /> 
+								</h:selectOneRadio>
+							</td>
+						</tr>
+						<tr>
+							<td class="aplos-description">
+							<h:outputText value="You cannot change this tabs action type while it is the default option for its backing page" rendered="#{backingPage.currentDefaultTabForBackingPage}" />
+							<h:outputText value="This tab is assigned a submenu, clicking the tab will cause the default page for the submenu to be shown" rendered="#{backingPage.hasSubmenu}" /></td>
+						</tr>
+					</table>
+					<aplos:panel id="availableActions">
+						<h:panelGroup rendered="#{backingPage.isBackingPageAction}">
+							<table class="aplos-form-table">
+								<tr>
+									<td>
+										Action
+									</td>
+									<td>
+										<h:selectOneMenu disabled="#{backingPage.currentDefaultTabForBackingPage}" collectionType="java.util.ArrayList" value="#{backingPage.actionBinding}" converter="aplosAbstractBeanConverter">
+											<f:selectItems value="#{backingPage.availableActionBindingSelectItemBeans}" /> 
+											<p:ajax event="change" listener="#{backingPage.defaultTabActionChanged}" update="additionalBindings defaultMtPanel" />
+										</h:selectOneMenu>
+									</td>
+								</tr>
+							</table>
+							<aplos:panel id="defaultMtPanel">
+								<h:panelGroup rendered="#{backingPage.multiUseBackingPageClass}">
+									<table class="aplos-form-table">
+										<tr>
+											<td>
+												Is this the default menu tab for this backing page class?
+											</td>
+											<td>
+												<h:selectBooleanCheckbox
+													value="#{backingPage.defaultTabForBackingPage}"
+													disabled="#{backingPage.currentDefaultTabForBackingPage}" />
+											</td>
+										</tr>
+									</table>
+								</h:panelGroup>
+							</aplos:panel>
+						</h:panelGroup>
+						<h:panelGroup rendered="#{backingPage.isOutputLink}">
+							<table class="aplos-form-table">
+								<tr>
+									<td>
+										URL
+									</td>
+									<td>
+										<h:inputText style="width:750px" value="#{backingPage.linkValue}">
+											<f:ajax event="change" render="additionalBindings" />
+										</h:inputText>
+										<br/>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Target
+									</td>
+									<td>
+										<h:inputText value="#{backingPage.target}" />
+									</td>
+								</tr>
+							</table>
+						</h:panelGroup>
+						<h:panelGroup rendered="#{backingPage.isCommandLink}">
+							<table class="aplos-form-table">
+								<tr>
+									<td>
+										Action
+									</td>
+									<td>
+										<h:inputText style="width:750px" value="#{backingPage.linkAction}">
+											<f:ajax event="change" render="additionalBindings" />
+										</h:inputText>
+										<br/>
+									</td>
+								</tr>
+							</table>
+						</h:panelGroup>
+					</aplos:panel>
+				<!-- </aplos:panel> -->
+				<aplos:panel id="additionalBindings">
+					<h:panelGroup rendered="#{backingPage.tabActionType != null}">
+						<h3>Assign further backing pages to this tab</h3>
+						<table class="aplos-form-table">
+							<tr>
+								<td>Available</td>
+								<td></td>
+								<td>Assigned</td>
+							</tr>
+							<tr>
+								<td>
+									<h:selectManyListbox style="width:350px !important" size="15" collectionType="java.util.ArrayList" value="#{backingPage.selectedAvailableClasses}" converter="aplosAbstractBeanConverter">
+										<f:selectItems value="#{backingPage.availableClassSelectItems}" /> 
+									</h:selectManyListbox>
+								</td>
+								<td>
+									<h:commandButton value="Assign &gt;&gt;" action="#{backingPage.addAssignments}" />
+									<br/><br/>
+									<h:commandButton value="&lt;&lt; Remove" action="#{backingPage.removeAssignments}" />
+								</td>
+								<td>
+									<h:selectManyListbox style="width:350px !important" size="15" collectionType="java.util.ArrayList" value="#{backingPage.selectedAssignedClasses}" converter="aplosAbstractBeanConverter">
+										<f:selectItems value="#{backingPage.assignedClassSelectItems}" /> 
+									</h:selectManyListbox>
+								</td>
+							</tr>
+						</table>
+					</h:panelGroup>
+				</aplos:panel>
+			</h:panelGroup>
+		</aplos:panel>
+	
+	</ui:define>
+
+</ui:composition>

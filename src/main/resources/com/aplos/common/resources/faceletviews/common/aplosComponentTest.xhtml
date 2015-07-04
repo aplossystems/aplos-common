@@ -1,0 +1,30 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Date Component</td>
+				<td>
+					<aploscc:dateTime id="testDateInput"
+						showCheckbox="#{false}" startYearDiff="#{0}" endYearDiff="#{4}"
+						value="#{backingPage.testDate}">
+					</aploscc:dateTime>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label"></td>
+				<td class="aplos-description" style="text-align:left">
+					Year dropdown should have this year +4, value is -10, so year drowpodn should also contain
+					just the year 10 years ago, to make a total of 6 options
+				</td>
+			</tr>
+		</table>
+	</ui:define>
+	
+</ui:composition>

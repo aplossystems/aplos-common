@@ -1,0 +1,91 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+	
+	<ui:define name="title">NetEase Gateway - #{currentUser.displayName}</ui:define>
+
+	<ui:define name="body"><h:form>
+		<ui:insert name="heading">
+			
+				<h2 style="margin:0 auto;">NetEase Gateway - #{currentUser.displayName}</h2>
+				<h:panelGroup rendered="#{!backingPage.incompleteNeaseDetails and backingPage.responseError == null and backingPage.responseUrl == null}">
+					<h3>Please wait while we connect your #{ loginPage.applicationName } account to Networking Ease</h3>
+				</h:panelGroup>
+			
+		</ui:insert>
+		<h:panelGroup rendered="#{backingPage.incompleteNeaseDetails}">
+		
+			
+				<table class="aplos-form-table">
+					<tr>
+						<td colspan="2">Your NetEase details seem to be incomplete. Please enter the required information to continue. These details will be saved for future transactions.<br/><br/></td>
+					</tr>
+					<tr>
+						<td class="aplos-label" style="width:120px">NetEase Username</td>
+						<td class="aplos-field">
+							<h:inputText value="#{currentUser.neaseUsername}" required="true" requiredMessage="Your Networking Ease Username is required to connect." />
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label">NetEase Password</td>
+						<td class="aplos-field">
+							<h:inputSecret value="#{currentUser.neasePassword}" required="true" requiredMessage="Your Networking Ease Password is required to connect." />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<br/><br/>
+							<aploscc:ajaxButton action="#{backingPage.saveNeaseDetails}" value="Update" />
+						</td>
+					</tr>
+				</table>
+			
+
+		</h:panelGroup>
+		<br/>
+		<h:panelGroup rendered="#{!backingPage.incompleteNeaseDetails}">
+			
+			<h:outputText value="Your Networking Ease session will be opened in a new window... You are being redirected now..." />
+			<!-- The link below should not be expected to log us in if the window auto-opened once already as the key is only good once -->
+			<br/><small><em style="color:silver">If the window has not opened please check your browser has not blocked the window - this is often shown in the address bar. You can manually open the window using the link below.</em></small>
+			<br/><br/><a class="stdLink" style="text-decoration:none" href="#" onclick="window.open('#{backingPage.responseUrl}','Nease-Gateway-Link');">» Open Nease Window</a>
+			
+			
+			<!--# {backingPage.responseUrl}" style="width: 100%;height: 100%;border: 0;background: transparent;overflow-x: hidden;position: relative;top: -40px;left: -20px;" />-->
+		</h:panelGroup>
+		
+		<aplos:panel autoUpdate="true">
+			<div style="min-height: 400px; margin: auto; margin-bottom: 40px; display: table; padding: 0px 50px;">
+				<h:panelGroup rendered="#{!backingPage.incompleteNeaseDetails and backingPage.responseError != null}">
+					<h3>Error</h3>
+					<h:outputText value="#{backingPage.responseError}" />
+					<br/><br/><br/>
+					<aploscc:ajaxButton action="#{backingPage.cancelAndChangeDetails}" value="Change Details" />
+				</h:panelGroup>
+				<h:panelGroup rendered="#{!backingPage.incompleteNeaseDetails and backingPage.responseError == null and backingPage.responseUrl == null}">
+					<div style="width:100%;text-align:center;padding-top:20px;"><img src="#{request.contextPath}/images/loading.gif" style="margin:0 auto;" />
+					<br/><br/>
+					<aploscc:ajaxButton action="#{backingPage.cancelAndChangeDetails}" value="Cancel and Change Details" />
+					</div>
+				</h:panelGroup>
+			</div>
+		</aplos:panel>
+		
+	</h:form>
+		<form name="neaseform" method="POST" action="#{backingPage.responseUrl}" target="_blank">
+			<input type="hidden" name="token" value="#{backingPage.token}" />
+			<input type="hidden" name="callType" value="#{backingPage.callType}" />
+			<input type="hidden" name="neaseUsername" value="#{backingPage.neaseUsername}" />
+			<input type="hidden" name="neasePassword" value="#{backingPage.neasePassword}" />
+		</form>
+		<script type="text/javascript">
+			$j(document).ready( function() {
+				document.neaseform.submit();
+			});
+		</script>
+	</ui:define>
+</ui:composition>

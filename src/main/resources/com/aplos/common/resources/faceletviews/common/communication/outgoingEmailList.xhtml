@@ -1,0 +1,110 @@
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:insert name="heading">View outgoing emails</ui:insert>
+	<ui:define name="listContent">
+		<div>
+			<aplos:panel layout="none" rendered="#{ backingPage.showingMailServerSettingsFilter }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Account</td>
+						<td class="aplos-field">
+							<aploscc:aplosBeanMenu label="Email account" value="#{ backingPage.dataTableState.lazyDataModel.mailServerSettings }" selectItems="#{ backingPage.mailServerSettingsSelectItems }" update=":listForm:tableWrapper" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel layout="none" rendered="#{ backingPage.showingEmailTemplateFilter }">
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Email template</td>
+					<td class="aplos-field">
+						<aploscc:aplosBeanMenu label="Email template" value="#{ backingPage.dataTableState.lazyDataModel.emailTemplate }" selectItems="#{ backingPage.emailTemplateSelectItems }" update=":listForm:tableWrapper" />
+					</td>
+				</tr>
+			</table>
+			</aplos:panel>
+			<aplos:panel rendered="#{ commonConfiguration.moduleConfiguration.showingEmailFolders and backingPage.showingEmailFolderFilter }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Folders</td>
+						<td style="width:400px">
+							<h:selectOneMenu label="folders" value="#{ backingPage.selectedEmailFolderType }" >
+								<f:selectItems value="#{ backingPage.emailFolderTypeSelectItems }" />
+								<p:ajax event="change" listener="#{ backingPage.selectedEmailFolderTypeUpdated }" /> 
+							</h:selectOneMenu>
+							<aplos:autoComplete id="emailFolders"
+								label="folder"
+								value="#{backingPage.selectedEmailFolder}"   
+			                    completeMethod="#{backingPage.suggestEmailFolders}" 
+			                    var="autoBean" 
+			                    itemValue="#{autoBean}" 
+			                    itemLabel="#{autoBean.displayName}" 
+			                    converter="autoCompleteBeanConverter">
+			                    <p:ajax process="@form" event="itemSelect" listener="#{backingPage.dataTableState.lazyDataModel.addEmailFolder}" update="foldersDiv tableWrapper" />  
+			                </aplos:autoComplete>
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label"></td>
+						<td class="aplos-field">
+							<aplos:panel layout="block" id="foldersDiv">
+								<ui:repeat value="#{backingPage.dataTableState.lazyDataModel.emailFolderList}" var="selectedSource">
+									<span class="tag aplos-recipient"> 
+										<h:outputText value="#{selectedSource.displayName}" />
+										<h:commandButton value="Delete" image="/images/action_delete.gif" >
+								   			<p:ajax event="action" process="@form" listener="#{backingPage.dataTableState.lazyDataModel.removeEmailFolder}" update=":listForm:foldersDiv :listForm:tableWrapper"/>
+								   		</h:commandButton>
+									</span>
+								</ui:repeat>
+							</aplos:panel>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+		</div>
+		<aplos:panel layout="block" id="tableWrapper"> 
+			<aploscc:ajaxButton value="New newsletter" action="#{backingPage.goToNewNewsletter()}" rendered="#{ backingPage.showingNewNewsletterBtn }"/>
+			<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }" multiSelect="true"  >
+				<aplos:column sortBy="#{ tableBean.subject }" filterBy="#{ tableBean.subject }" style="#{ tableBean.rowStyle }" actionAllowed="false">
+					<f:facet name="header">Subject</f:facet>
+					<aploscc:quickView bean="#{tableBean}" text="#{tableBean.subject}" view="aplosemail" />
+				</aplos:column>
+				<p:column sortBy="#{ tableBean.fromAddress }" filterBy="#{ tableBean.fromAddress }">
+					<f:facet name="header">From</f:facet>
+					<h:outputText value="#{tableBean.fromAddress}" />
+				</p:column>
+				<p:column sortBy="#{ 'toAddress:toAddress' }" filterBy="#{ 'toAddress:toAddress' }">
+					<f:facet name="header">To</f:facet>
+					<h:outputText value="#{tableBean.firstToAddress}" />
+				</p:column>
+				<p:column sortBy="#{ tableBean.dateCreated }" filterBy="#{ tableBean.dateCreated }">
+					<f:facet name="header">Created</f:facet>
+					<aplos:standardDateTableCell value="#{tableBean.dateCreated}" />
+				</p:column>
+				<p:column sortBy="#{ tableBean.emailSentDate }" filterBy="#{ tableBean.emailSentDate }">
+					<f:facet name="header">Sent</f:facet>
+					<aplos:standardDateTableCell value="#{tableBean.emailSentDate}" />
+				</p:column>
+				<aplos:column style="width:36px" actionAllowed="false">
+					<h:graphicImage url="/images/page_text_32.png" style="width:18px" title="#{tableBean.saveableAttachments.size()} attachments" rendered="#{ tableBean.saveableAttachments.size() > 0 }" />
+					<h:commandLink action="#{ tableBean.forwardedEmail.redirectToEditPage }" rendered="#{ tableBean.forwardedEmail != null and tableBean.forwardedEmail.emailSentDate != null }">
+						<h:graphicImage url="/images/email_forward_32.png" style="width:18px" title="Forwarded #{ tableBean.forwardedEmail.emailSentDateTimeStr }"/>
+					</h:commandLink>
+				</aplos:column>
+			</aploscc:wrappedDataTable2>
+		</aplos:panel>
+		<aploscc:ajaxButton value="Refresh List" action="#{ backingPage.refreshEmailList }" />
+		<aploscc:ajaxButton value="Delete selected" onclick="deleteEmailsConfirmation.show()" ajaxButtons="true"/>
+		<p:confirmDialog message="Are you sure you want to delete these #{ backingPage.dataTableState.lazyDataModel.beanDao.entityName }" header="Confirm deletion" severity="alert" widgetVar="deleteEmailsConfirmation">
+    		<p:commandButton value="Ok" update="tableWrapper" oncomplete="deleteEmailsConfirmation.hide()"  
+                    actionListener="#{ backingPage.dataTableState.lazyDataModel.deleteSelectedEmails }" />  
+	        <p:commandButton value="Cancel" onclick="deleteEmailsConfirmation.hide()" type="button" />
+	    </p:confirmDialog>
+	</ui:define>
+</ui:composition>

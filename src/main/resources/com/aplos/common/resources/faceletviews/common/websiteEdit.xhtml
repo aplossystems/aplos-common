@@ -1,0 +1,146 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+    xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+	
+	<ui:define name="editContent">
+		<table class="aplos-form-table-with-required">
+			<tr>
+				<td class="aplos-label">Name</td>
+				<td></td>
+				<td class="aplos-field"><h:inputText value="#{website.name}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label" >Default menu url</td>
+				<td></td>
+				<td class="aplos-field"><h:inputText value="#{website.defaultMenuUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Package name</td>
+				<td></td>
+				<td class="aplos-field"><h:inputText value="#{website.packageName}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Primary host name</td>
+				<td></td>
+				<td class="aplos-field"><h:inputText value="#{website.primaryHostName}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Alternative host name</td>
+				<td></td>
+				<td class="aplos-field"><h:inputText value="#{website.alternativeHostName}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Default VAT type</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field">
+					<h:selectOneMenu label="default vat type" value="#{website.defaultVatType}" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.vatTypeSelectItems }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Combined resource status</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field">
+					<h:selectOneMenu label="combined resource status" value="#{website.combinedResourceStatus}" converter="selectItemsConverter">
+						<f:selectItems value="#{ backingPage.combinedResourceStatusSelectItems }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Is SSL enabled?</td>
+				<td></td>
+				<td class="aplos-field"><h:selectBooleanCheckbox value="#{ website.sslEnabled }" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">SSL Protocol</td>
+				<td></td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{website.defaultSslProtocolEnum}" >
+						<f:selectItems value="#{backingPage.sslProtocolSelectItems}" />
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Using default mail settings?</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox value="#{ website.usingDefaultMailServerSettings }"> 
+						<f:ajax event="click" update="mailSettingsPanel" />
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
+		</table>
+		<aplos:panel id="mailSettingsPanel" autoUpdate="true">
+			<aplos:panel rendered="#{ !website.usingDefaultMailServerSettings }" >
+				<table class="aplos-form-table-with-required">
+					<tr>
+						<td class="aplos-label formSubHeading">Mail settings</td>
+						<td></td>
+						<td class="aplos-field"></td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Outgoing host</td>
+						<td class="aplos-required-asterisk"></td>
+						<td class="aplos-field"><h:inputText value="#{ website.mailServerSettings.outgoingHost }" /></td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Username</td>
+						<td class="aplos-required-asterisk"></td>
+						<td class="aplos-field"><h:inputText value="#{ website.mailServerSettings.username }" /></td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Password</td>
+						<td class="aplos-required-asterisk"></td>
+						<td class="aplos-field"><h:inputSecret value="#{ website.mailServerSettings.password }" redisplay="true" /></td>
+					</tr>
+				</table>
+			</aplos:panel>
+		</aplos:panel>
+		<table class="aplos-form-table-with-required">
+			<tr>
+				<th colspan="1" class="aplos-label formSubHeading">Scheduled jobs</th>
+				<th colspan="3"> - Last Run #{ backingPage.jobScheduler.lastRunStdStr } <aploscc:ajaxButton action="#{ backingPage.jobScheduler.interrupt() }" value="Interrupt" rendered="#{ backingPage.jobScheduler.running }" /></th>
+			</tr>
+			<tr>
+				<td></td>
+				<td>Running</td>
+				<td>Last executed</td>
+				<td>Next execution</td>
+			</tr>
+			<ui:repeat value="#{ backingPage.scheduledJobs }" var="scheduledJob">
+				<tr>
+					<td class="aplos-label">#{ scheduledJob.getClass().getSimpleName() }</td>
+					<td>#{ scheduledJob.running }</td>
+					<td>#{ scheduledJob.lastScheduledDateStdStr }</td>
+					<td>#{ scheduledJob.scheduledDateStdStr }</td>
+					<td>
+						<aploscc:ajaxButton action="#{ backingPage.executeScheduledJob }" value="Execute" />
+						<aploscc:ajaxButton action="#{ backingPage.toggleThreadRun }" value="#{ backingPage.pauseResumeBtnText }" />
+						
+					</td>
+				</tr>
+			</ui:repeat>
+		</table>
+		<table class="aplos-form-table-with-required">
+			<tr>
+				<td class="aplos-label formSubHeading">Application threads</td>
+				<td>Running</td>
+				<td>Queue size</td>
+			</tr>
+			<ui:repeat value="#{ backingPage.aplosThreadList }" var="aplosThread">
+				<tr>
+					<td class="aplos-label">#{ aplosThread.getClass().getSimpleName() }</td>
+					<td>#{ aplosThread.running }</td>
+					<td>#{ aplosThread.queueSize }</td>
+				</tr>
+			</ui:repeat>
+		</table>
+		<ui:insert name="belowWebsiteForm" />
+	</ui:define>
+	
+</ui:composition>

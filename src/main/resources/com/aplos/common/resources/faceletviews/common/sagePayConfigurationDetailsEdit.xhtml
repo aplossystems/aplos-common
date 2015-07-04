@@ -1,0 +1,71 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Name</td>
+				<td class="aplos-field"><h:outputText value="#{sagePayConfigurationDetails.name}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Connect to type</td>
+				<td class="aplos-field">
+					<h:selectOneMenu value="#{ sagePayConfigurationDetails.connectToType }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.connectToTypeSelectItems }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Virtual directory</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.virtualDir}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Your site FQDN</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.yourSiteFQDN}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Your site internal FQDN</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.yourSiteInternalFQDN}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Notification page name</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.notificationPageName}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Front end successful redirection Url</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.frontEndSuccessfulRedirectionUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Front end failed redirection Url</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.frontEndFailedRedirectionUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Back end successful redirection Url</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.backEndSuccessfulRedirectionUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Back end failed redirection Url</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.backEndFailedRedirectionUrl}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Default order description</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.defaultOrderDescription}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Vendor name</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.vendorName}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Partner Id</td>
+				<td class="aplos-field"><h:inputText value="#{sagePayConfigurationDetails.partnerID}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Notes</td>
+				<td class="aplos-field"><h:inputTextarea value="#{sagePayConfigurationDetails.notes}" style="width:400px ; height:100px ;" /></td>
+			</tr>
+		</table>
+	</ui:define>
+</ui:composition>

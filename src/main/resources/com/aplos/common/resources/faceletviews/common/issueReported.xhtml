@@ -1,0 +1,46 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	
+	<ui:define name="title">Aplos CMS - Issue Reported</ui:define>
+	<ui:define name="head">
+		<style>
+			textarea { width: 400px; height: 200px; font: normal 10pt Tahoma; }
+		</style>
+		<script language="javascript">
+    			function showTechnicalDetails() {
+    				var technicalDetailsCell = document.getElementById( "technicalDetailsCell" );
+    				technicalDetailsCell.style.display = "inline";
+    			}
+    	</script>
+	</ui:define>
+	<ui:define name="body">
+	<table class="centreContent"><tr><td>
+	
+		<h:form id="edit" enctype="multipart/form-data" prependId="#{ backingPage.prependMainFormId }" >
+			<table>
+				<tr>
+					<td style='padding: 40px;'>An error has occured and an email has been sent to the
+					technical staff. If this problem persists please first close your
+					browser and try again, if the problem still persists please
+					contact a member of the technical staff.<a
+						href="#" onclick="showTechnicalDetails();return false;"
+						class="stdLink">(Show Technical Details)</a></td>
+				</tr>
+				<tr>
+					<td id="technicalDetailsCell" style="display: none; color: black">
+					<h:outputText value="#{ technicalDetails }" escape="false"/></td>
+				</tr>
+			</table>
+			<br style="clear:both;" />	
+			
+		</h:form>
+
+	</td></tr></table>
+	</ui:define>
+</ui:composition>

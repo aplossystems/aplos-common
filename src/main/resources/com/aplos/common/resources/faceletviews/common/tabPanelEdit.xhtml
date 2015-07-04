@@ -1,0 +1,88 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<ui:define name="editContent">
+
+		<h3>Basic Details</h3>
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">
+					Display Name
+				</td>
+				<td class="aplos-field">
+					<h:inputText required="true" name="Display Name" id="Name" value="#{backingPage.beanDisplayName}" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">
+					Is this panel linked to the backing page's associated bean?
+				</td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox value="#{backingPage.linkedToBean}">
+						<f:ajax event="change" render="linkpanel" />
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
+		</table>	
+		<aplos:panel id="linkpanel">
+			<h:panelGroup rendered="#{!backingPage.linkedToBean}">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">
+							Default Tab
+						</td>
+						<td class="aplos-field">
+							<h:selectOneMenu style="width: 250px;" collectionType="java.util.ArrayList" value="#{backingPage.defaultTab}" converter="aplosAbstractBeanConverter">
+								<f:selectItems value="#{backingPage.fullTabListSelectItemBeans}" /> 
+							</h:selectOneMenu>
+						</td>
+					</tr>
+				</table>
+			</h:panelGroup>
+		</aplos:panel>
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">
+					Is this panel displayed vertically?
+				</td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox value="#{backingPage.isVertical}">
+						<f:ajax event="change" render="verticalpanel" />
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
+		</table>
+		<aplos:panel id="verticalpanel">
+			<h:panelGroup rendered="#{backingPage.isVertical}">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">
+							Vertical Panel Width
+						</td>
+						<td class="aplos-field">
+							<h:selectOneMenu value="#{backingPage.verticalWidth}">
+								<f:selectItems value="#{backingPage.verticalWidthSelectItems}" /> 
+							</h:selectOneMenu>
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label">
+							Vertical Panel Height
+						</td>
+						<td class="aplos-field">
+							<h:selectOneMenu value="#{backingPage.verticalTabHeight}">
+								<f:selectItems value="#{backingPage.verticalHeightSelectItems}" /> 
+							</h:selectOneMenu>
+						</td>
+					</tr>
+				</table>
+			</h:panelGroup>
+		</aplos:panel>
+		
+	</ui:define>
+
+</ui:composition>

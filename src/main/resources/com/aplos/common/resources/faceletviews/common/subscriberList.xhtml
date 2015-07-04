@@ -1,0 +1,60 @@
+
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="listContent">
+		<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }">
+			<p:column sortBy="#{ tableBean.firstName }" filterBy="#{ tableBean.firstName }">
+				<f:facet name="header">First Name</f:facet>
+				#{tableBean.firstName}
+			</p:column>
+			<p:column sortBy="#{ tableBean.surname }" filterBy="#{ tableBean.surname }">
+				<f:facet name="header">Surname</f:facet>
+				#{tableBean.surname}
+			</p:column>
+			<p:column sortBy="#{ tableBean.emailAddress }" filterBy="#{ tableBean.emailAddress }">
+				<f:facet name="header">Email</f:facet>
+				#{tableBean.emailAddress}
+			</p:column>
+			<p:column sortBy="#{ tableBean.isSubscribed }" filterBy="#{ tableBean.isSubscribed }" style="width:75px">
+				<f:facet name="header">Subscribed</f:facet>
+				#{tableBean.subscribed}
+			</p:column>
+		</aploscc:wrappedDataTable2>
+		<aplos:panel autoUpdate="true" id="totalsPanel">
+			<table style="float:right ; text-align:right; width:300px ; font-familt:Verdana ; font-weight:bold">
+				<tr>
+					<td>
+						Subscribed
+					</td>
+					<td>
+						<h:outputText value="#{ backingPage.dataTableState.lazyDataModel.subscribedTotalStr } / #{ backingPage.dataTableState.lazyDataModel.subscriberTotalStr }" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Unsubscribed
+					</td>
+					<td>
+						<h:outputText value="#{ backingPage.dataTableState.lazyDataModel.unsubscribedTotalStr } / #{ backingPage.dataTableState.lazyDataModel.subscriberTotalStr }" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Margin
+					</td>
+					<td>
+						<h:outputText value="#{ formatUtil.formatTwoDigit( backingPage.dataTableState.lazyDataModel.subscribedTotal / (backingPage.dataTableState.lazyDataModel.subscriberTotal / 100.0) ) } % Subscribed" />
+					</td>
+				</tr>
+			</table>
+		</aplos:panel>
+		<div style="clear:both" />
+		<aplos:commandButton value="Export all subscribers to CSV" action="#{ backingPage.exportToCsv }" />
+	</ui:define>
+</ui:composition>

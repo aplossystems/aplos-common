@@ -1,0 +1,84 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+
+	<ui:define name="editHead">
+		<h:outputScript library="jsLibraries" name="ckeditor/aplosckeditor.js" target="head" />
+		<h:outputScript library="scripts" name="ckEditorHelper.js" target="head" />
+		<script type="text/javascript"> 
+			$j(document).ready(
+			function() {
+				editors = ckEditorHelper.createLimitedToolbarCKEditors('#{ request.contextPath }', #{ backingPage.getEditorOptions( emailFrame.headerUsingSource ) }, 'header_editor' );
+				editors[ 0 ].on( 'afterCommandExec', function( event ) { 
+					if( event.data.name == "source" ) {
+						headerUsingSourceUpdated( event.data.command.previousState );
+					}
+				});
+				editors = ckEditorHelper.createLimitedToolbarCKEditors('#{ request.contextPath }', #{ backingPage.getEditorOptions( emailFrame.footerUsingSource ) }, 'footer_editor' );
+				editors[ 0 ].on( 'afterCommandExec', function( event ) { 
+					if( event.data.name == "source" ) { 
+						footerUsingSourceUpdated( event.data.command.previousState );
+					}
+				});
+			});
+		</script>
+	</ui:define>
+	
+	<ui:define name="editContent">
+		<aplos:ajaxJsFunction name="headerUsingSourceUpdated" action="#{ backingPage.headerUsingSourceUpdated }" > 
+			<aplos:param name="headerUsingSourceVariable" assignTo="#{backingPage.headerUsingSourceVariable}" />
+		</aplos:ajaxJsFunction>
+		<aplos:ajaxJsFunction name="footerUsingSourceUpdated" action="#{ backingPage.footerUsingSourceUpdated }" > 
+			<aplos:param name="footerUsingSourceVariable" assignTo="#{backingPage.footerUsingSourceVariable}" />
+		</aplos:ajaxJsFunction>
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Name</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field">
+					<h:inputText required="#{ backingPage.validationRequired }" value="#{ emailFrame.name }" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Header</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:inputTextarea id="header" styleClass="header_editor aplos_ckeditor" value="#{ emailFrame.header }" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Footer</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:inputTextarea id="footer" styleClass="footer_editor aplos_ckeditor" value="#{ emailFrame.footer }" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Html head</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<h:inputTextarea label="Html head" value="#{ emailFrame.htmlHead }" style="width:500px;height:150px" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Header Image</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+			       <aploscc:imageUploader2 owner="#{emailFrame}" key="HEADER" />
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Footer Image</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+			       <aploscc:imageUploader2 owner="#{emailFrame}" key="FOOTER" />
+				</td>
+			</tr>
+		</table>
+	</ui:define>
+	
+</ui:composition>

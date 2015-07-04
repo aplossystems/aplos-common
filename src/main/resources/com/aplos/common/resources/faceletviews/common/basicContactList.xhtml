@@ -1,0 +1,91 @@
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="listContent">
+		
+		<table class="aplos-form-table-with-required">
+			<tr>
+				<td class="aplos-label">Tag</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+					<aploscc:beanMenu label="Basic contact tag" value="#{ backingPage.selectedBasicContactTagFilter }" beanMenuHelper="#{ backingPage.basicContactTagFilterBmh }" update=":listForm:tableWrapper" />
+				</td>
+			</tr>
+		</table>
+		<br/>
+		<aplos:panel id="tableWrapper">
+			<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }">
+				<p:column sortBy="#{ tableBean.address.contactFirstName }" filterBy="#{ tableBean.address.contactFirstName }">
+					<f:facet name="header">First name</f:facet>
+					#{tableBean.address.contactFirstName}
+				</p:column>
+				<p:column sortBy="#{ tableBean.address.contactSurname }" filterBy="#{ tableBean.address.contactSurname }">
+					<f:facet name="header">Surname</f:facet>
+					#{tableBean.address.contactSurname}
+				</p:column>
+				<p:column sortBy="#{ tableBean.address.companyName }" filterBy="#{ tableBean.address.companyName }">
+					<f:facet name="header">Company</f:facet>
+					#{tableBean.address.companyName}
+				</p:column>
+				<aplos:column sortBy="#{ tableBean.address.subscriber.emailAddress }" filterBy="#{ tableBean.address.subscriber.emailAddress }" actionAllowed="false">
+					<f:facet name="header">Email Address</f:facet>
+					<h:commandLink value="#{tableBean.address.subscriber.emailAddress}" action="#{ backingPage.dataTableState.lazyDataModel.emailBasicContact }" />
+				</aplos:column>
+				<aplos:column sortBy="#{ tableBean.address.mobile }" filterBy="#{ tableBean.address.mobile }" actionAllowed="false">
+					<f:facet name="header">Mobile</f:facet>
+					<h:commandLink value="#{tableBean.address.mobile}" action="#{ backingPage.dataTableState.lazyDataModel.smsBasicContact }" />
+				</aplos:column>
+				<p:column sortBy="#{ tableBean.address.phone }" filterBy="#{ tableBean.address.phone }">
+					<f:facet name="header">Phone</f:facet>
+					#{tableBean.address.phone}
+				</p:column>
+			</aploscc:wrappedDataTable2>
+		</aplos:panel>
+		<br/><br/>    
+		<aploscc:ajaxButton value="Export all basic contacts CSV" action="#{backingPage.exportBasicContactsToCsv}" rendered="#{ backingPage.adminUser }"/>
+		<br/><br/>
+		<aplos:panel rendered="#{ backingPage.adminUser }">
+			<table>
+				<tr>
+					<td class="aplos-label">Tags</td>
+					<td class="aplos-required-asterisk"></td>
+					<td class="aplos-field" style="padding:20px 0px 0px 0px;width:600px">
+					<aplos:panel id="basicContactTabPnl">
+						<p:dataTable id="basicContactTagTabel" value="#{ backingPage.importBasicContactTags }" var="tableBean" styleClass="listDatatable" style="margin-top:-12px;width:100%">
+							<p:column sortBy="#{ tableBean.tagName }">
+								<f:facet name="header">Name</f:facet>
+								#{tableBean.tagName}
+							</p:column>
+							<p:column width="24px">
+								<h:commandButton action="#{ backingPage.removeImportBasicContactTag }" image="/images/action_delete.gif" reRender="basicContactTabPnl" />
+							</p:column>
+						</p:dataTable>
+					</aplos:panel>
+					</td>
+				</tr>
+				<tr>
+					<td class="aplos-label"></td>
+					<td class="aplos-required-asterisk"></td>
+					<td class="aplos-field">
+						<aploscc:beanMenu label="Basic contact tag" value="#{ backingPage.selectedImportBasicContactTag }" beanMenuHelper="#{ backingPage.importBasicContactTagBmh }" />
+						<aploscc:ajaxButton action="#{ backingPage.addImportBasicContactTag }" value="Add" reRender=":listForm:basicContactTabPnl" />
+					</td>
+				</tr>
+				<tr>
+					<td class="aplos-label"></td>
+					<td class="aplos-required-asterisk"></td>
+					<td>
+						<p:fileUpload mode="simple" value="#{ backingPage.uploadedFile }"> </p:fileUpload>
+						<aplos:commandButton value="Import basic contacts" action="#{ backingPage.importBasicContacts }" />
+					</td>
+				</tr>
+			</table>
+		</aplos:panel>
+	</ui:define>
+</ui:composition>

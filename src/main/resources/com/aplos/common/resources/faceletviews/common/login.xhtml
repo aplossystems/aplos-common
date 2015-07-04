@@ -1,0 +1,69 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+    xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+	
+	<ui:define name="title">Aplos Systems - Login page</ui:define>
+
+	<ui:define name="body">
+		<div style="min-height: 400px; margin: auto; margin-bottom: 40px; display: table; min-width: 600px; border: 2px solid #C9D9F9; border-top: none; border-bottom: none; padding: 0px 50px;">
+		
+			<ui:insert name="heading"><h2>Login to #{ loginPage.applicationName }</h2></ui:insert>
+			
+			<h:form id="login" prependId="false" >
+				<h:panelGroup rendered="#{backingPage.userDisabledByAttempts}">
+					<div class="disabledNotification">
+						Login attempts exceeded. Your account has been disabled, you will need to contact an administrator to re-enable your account.
+					</div>
+				</h:panelGroup>
+				<h:panelGroup rendered="#{!backingPage.userDisabledByAttempts and backingPage.failedAttempts > 0}">
+					<div class="failedAttemptNotification">
+						Login Failed. Attempt #{backingPage.failedAttempts} / #{commonConfiguration.maxFailedLoginAttempts}
+					</div>
+				</h:panelGroup>
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Username</td>
+						<td class="aplos-field"><h:inputText value="#{backingPage.username}" /></td>
+					</tr>
+					<tr>
+						<td class="aplos-label">Password</td>
+						<td class="aplos-field">
+							<h:inputSecret value="#{backingPage.password}" onkeydown="quickLogin(event)"/>
+						</td>
+					</tr>
+				</table>
+				<aplos:panel rendered="#{ commonConfiguration.moduleConfiguration.showingLoginRememberMe }">
+					<table class="aplos-form-table">
+						<tr>
+							<td class="aplos-label"></td>
+							<td style="width:150px;text-align:left"><h:selectBooleanCheckbox id="aplosRememberMeChk" value="#{ backingPage.rememberMe }" />&#160;Remember me?</td>
+						</tr>
+					</table>
+				</aplos:panel>
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label"></td>
+						<td class="aplos-field"><h:commandLink value="Forgotten your password?" action="#{backingPage.goToForgottenPassword}" /></td>
+					</tr>
+					<tr>
+						<td class="aplos-label"></td>
+						<td class="aplos-field" style="text-align:right"><aploscc:ajaxButton id="aplosLoginBtn" action="#{backingPage.login}" value="login" /></td>
+					</tr>
+				</table>
+				<aplos:jsFunction name="login" action="#{backingPage.login}"  />
+	
+			</h:form>
+			<script type="text/javascript">
+				function quickLogin( event ) {
+					if( event.keyCode == 13 ) {
+						login();
+					}
+				}
+			</script>
+		</div>
+	</ui:define>
+</ui:composition>

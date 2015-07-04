@@ -1,0 +1,49 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+	
+	<ui:define name="editContent">
+		<aplos:panel rendered="#{param['paymentSuccessful'] == 0}">
+			<p style="color:red">Payment unsuccesssful</p>
+		</aplos:panel>
+		<aplos:panel rendered="#{param['paymentSuccessful'] == 1}">
+			<p style="color:red">Payment successsful.</p>
+		</aplos:panel>
+		<table class="aplos-form-table-with-required edit">
+			<tr>
+				<td class="aplos-label">Description</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field"><h:inputText label="description" value="#{ paymentGatewayPost.description }" required="true" disabled="#{ paymentGatewayPost.processed }"/></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Amount</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field"><h:inputText label="amount" value="#{ paymentGatewayPost.decTotal }" required="true" disabled="#{ paymentGatewayPost.processed }"/></td>
+				<td> (Vat inclusive)</td>
+			</tr>
+		</table>
+		<aploscc:address bean="#{paymentGatewayPost.billingAddress}" phone="true" validation="#{ backingPage.validationRequired }" disabled="#{ paymentGatewayPost.processed }" ecommerceFieldsRequired="true" />
+		<table class="aplos-form-table-with-required edit">
+			<tr>
+                <td class="aplos-label formSubHeading" style="padding-top:20px">Payment details</td>
+                <td />
+            </tr>
+    	</table>
+		<aploscc:creditCardEntry creditCardDetails="#{backingPage.creditCardDetails}"  
+                      			 validationRequired="#{ backingPage.validationRequired }" />
+	</ui:define>
+	
+	<ui:define name="editButtons">
+	<aploscc:controlPanel>
+		<f:facet name="upperRightControlPanel">
+			<aploscc:ajaxButton id="makePaymentBtn" rendered="#{ !paymentGatewayPost.processed }" value="Make Payment" action="#{ backingPage.makePayment }" />
+			<aploscc:ajaxButton id="aplosEditCancelBtn" rendered="#{ !paymentGatewayPost.processed }" value="Cancel" immediate="#{true}" action="#{ backingPage.cancelBtnAction }" />
+		</f:facet>
+	</aploscc:controlPanel>
+</ui:define>
+
+</ui:composition>

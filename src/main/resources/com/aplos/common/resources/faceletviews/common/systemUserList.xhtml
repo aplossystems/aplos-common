@@ -1,0 +1,46 @@
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="listContent">
+		<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }">
+			<aplos:column sortBy="#{ tableBean.username }" filterBy="#{ tableBean.username }" actionAllowed="false">
+				<f:facet name="header">Username</f:facet>
+				<h:outputText value="#{tableBean.username}" rendered="#{!tableBean.lockedOutByAttempts}" />
+				<h:panelGroup styleClass="lockedOut" rendered="#{tableBean.lockedOutByAttempts}">
+					<span class="lockedOutText">
+						(user is locked out for too many failed login attempts -&#160;<h:commandLink action="#{backingPage.resetAccount}" value="Click to Reset Account" />)
+					</span>
+				</h:panelGroup>
+			</aplos:column>
+			<p:column sortBy="#{ tableBean.userLevel }" filterBy="#{ tableBean.userLevel }"
+				headerText="User level" 
+                filterOptions="#{backingPage.userLevelSelectItems}">
+                #{ tableBean.userLevel.name }
+			</p:column>
+			<aplos:column sortBy="#{ tableBean.email }" filterBy="#{ tableBean.email }" actionAllowed="false">
+				<f:facet name="header">Email</f:facet>
+				<h:commandLink value="#{tableBean.email}" action="#{ backingPage.emailSystemUser( tableBean ) }" rendered="#{ backingPage.sendEmailAllowed }" />
+				<h:outputText value="#{tableBean.email}" rendered="#{ !backingPage.sendEmailAllowed }" />
+			</aplos:column>
+			<p:column sortBy="#{ tableBean.lastLoggedInDate }" filterBy="#{ tableBean.lastLoggedInDate }"
+				headerText="Last login" >
+                <aplos:standardDateTableCell value="#{ tableBean.lastLoggedInDate }" />
+			</p:column>
+			<p:column sortBy="#{ tableBean.lastPageAccessDate }" filterBy="#{ tableBean.lastPageAccessDate }"
+				headerText="Last page date" >
+                <aplos:standardDateTableCell value="#{ tableBean.lastPageAccessDate }" />
+			</p:column>
+			<p:column sortBy="#{ tableBean.lastPageAccessed }" filterBy="#{ tableBean.lastPageAccessed }"
+				headerText="Last page URL" >
+                #{ tableBean.lastPageAccessed }
+			</p:column>
+		</aploscc:wrappedDataTable2>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,103 @@
+<ui:composition template="#{ themeManager.editTemplatePath }"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	
+	
+	<ui:define name="editContent">
+
+			
+		<aploscc:address style="float:left;" bean="#{companyDetails.address}" companyName="true" phone="true" fax="true" email="true" ecommerceFieldsRequired="true"/>
+			
+			
+		<table class="aplos-form-table-with-required">
+			<tr>
+				<td class="aplos-label">Web</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.web}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">VAT #</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.vatNo}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Director</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.director}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Reg #</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.regNo}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Logo</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field">
+	    
+			       <aploscc:imageUploader2 owner="#{companyDetails}" key="LOGO" />
+					
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label formSubHeading">Bank details</td>
+				<td></td>
+				<td class="aplos-field"></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Bank name</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.bankName}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">IBAN number</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.ibanNumber}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Account name</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.accountName}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Sort code</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.sortCode}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Account number</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.accountNumber}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Swiftcode</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.swiftCode}" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Salutation</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputText value="#{companyDetails.salutation}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Opening Hours</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputTextarea value="#{companyDetails.openingHours}" style="width:650px;height:200px"/></td>    
+			</tr>
+			<tr>
+				<td class="aplos-label">Email Signature</td>
+				<td class="aplos-required-asterisk"></td>
+				<td class="aplos-field"><h:inputTextarea value="#{companyDetails.emailSignature}" style="width:650px;height:200px"/></td>
+			</tr>
+		</table>
+	</ui:define>
+	
+</ui:composition>

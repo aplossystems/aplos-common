@@ -1,0 +1,117 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+
+	<ui:define name="editContent">
+		<table>
+			<tr>
+				<td class="formText">Group Name</td>
+				<td class="formField"><h:inputText value="#{bulkMessageSourceGroup.name}"/></td>
+			</tr>
+			<tr>
+				<td class="formText">Group is for SMS</td>
+				<td class="formField">
+					<h:selectBooleanCheckbox value="#{bulkMessageSourceGroup.smsRequired}">
+						<p:ajax process="@form" event="change" update="sourceType,listPanel" listener="#{ backingPage.updateLists }"  /> 
+					</h:selectBooleanCheckbox>
+				</td>  
+			</tr>
+			<tr>
+				<td class="formText">Group is for Email</td>
+				<td class="formField">
+					<h:selectBooleanCheckbox value="#{bulkMessageSourceGroup.emailRequired}">
+						<p:ajax process="@form" event="change" update="sourceType,listPanel" listener="#{ backingPage.updateLists }"  /> 
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
+			<tr>
+				<td class="formText">Source Type</td>
+				<td class="formField">
+				<h:panelGroup id="sourceType">
+					<h:selectOneMenu value="#{ backingPage.selectedBulkMessageFinder }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{ backingPage.bulkMessageFinderSelectItems }" />
+						<p:ajax process="@form" event="change" update="listPanel" listener="#{ backingPage.updateLists }"  /> 
+					</h:selectOneMenu>
+				</h:panelGroup>
+				</td>
+			</tr>
+			<tr>
+				<td class="formText">Available Subscribers</td>
+				<td class="formField">
+					<aplos:panel id="listPanel">
+						<aploscc:wrappedDataTable2 style="width:100%" showToggleDeleted="false" multiSelect="true" dataTableState="#{ backingPage.dataTableState }">
+							<p:column>
+								<f:facet name="header">First Name</f:facet>
+								#{tableBean.firstName}
+							</p:column>
+							<p:column>
+								<f:facet name="header">Surname</f:facet>
+								#{tableBean.surname}
+							</p:column>
+							<p:column>
+								<f:facet name="header">Email</f:facet>
+								#{tableBean.emailAddress}
+							</p:column>
+						</aploscc:wrappedDataTable2>
+					</aplos:panel>
+				</td>
+			</tr>
+			<tr>
+				<td class="formText"></td>
+				<td class="formField">
+					<aploscc:ajaxButton value="Add&#160;&#160;&#160;&#8595;" escape="false" action="#{ backingPage.addToBulkMessageSourceGroup }" />
+				</td>
+			</tr>
+			<tr>
+				<td class="formText"></td>
+				<td class="formField">
+					<!-- cant use a datatable for this second one because the object might not even be saved (and all our queries would be against the objects children rows using sql)  -->
+					<aplos:panel autoUpdate="true">
+						<p:dataTable var="selectedRow" value="#{bulkMessageSourceGroup.bulkMessageSources}">
+							<p:column>
+								<f:facet name="header">id</f:facet>
+								#{selectedRow.id}
+							</p:column>
+							<p:column>
+								<f:facet name="header">First Name</f:facet>
+								#{selectedRow.firstName}
+							</p:column>
+							<p:column>
+								<f:facet name="header">Surname</f:facet>
+								#{selectedRow.surname}
+							</p:column>
+							<p:column>
+								<f:facet name="header">Email</f:facet>
+								#{selectedRow.emailAddress}
+							</p:column>
+							<p:column>
+								<aploscc:ajaxButton value="Remove&#160;&#160;&#160;&#8593;" escape="false" action="#{backingPage.removeFromBulkMessageSourceGroup}" />
+							</p:column>
+						</p:dataTable>
+					</aplos:panel>
+				</td>
+			</tr>
+		</table>
+		
+		<!-- <aplos:panel autoUpdate="true">
+			<style type="text/css">
+				.ui-picklist .ui-picklist-list { width:400px; }
+			</style>
+			<p:pickList 
+				value="# {backingPage.pickListModel}"  
+                var="sourceGroup"  
+                itemLabel="# {sourceGroup.sourceUniqueDisplayName}"  
+                itemValue="# {sourceGroup}" 
+                converter="aplosBeanConverter"
+            />  
+		</aplos:panel> -->
+		
+		
+		<br style="clear:both;" />
+	</ui:define>
+</ui:composition>

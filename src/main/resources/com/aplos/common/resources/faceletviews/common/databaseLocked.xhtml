@@ -1,0 +1,140 @@
+<ui:composition template="#{ themeManager.basicTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components">
+	
+	<ui:define name="title">Aplos Systems</ui:define>
+
+	<ui:define name="body">
+		<div class="bodyWrapper">
+			<div id="aploraNavigationBar">
+				<div>
+				<table style="position:absolute">
+					<tr>
+						<td>
+
+						</td>
+						<td>
+
+						</td>
+					</tr>
+					<tr>
+
+					</tr>
+					</table>
+					<div id="topBarImgTopRightDiv">
+					
+						<div id="topBarImgTopLeftDiv">
+							 
+							<div id="topBarBgTopDiv">
+								
+								<aplos:panel rendered="#{ currentUser != null }">
+									<div id="topLoginBarRightDiv">
+										<div id="topLoginBarLeftDiv">
+											
+											<div id="topLoginBarMiddleDiv">
+											
+											<h:form id="editForm" enctype="multipart/form-data">
+												<div style="position:relative;top:-1px">
+													<span id="topLoginBarUserName">
+														#{currentUser.displayName}&#160;
+													</span>
+													<span>
+														<aploscc:ajaxButton action="#{loginPage.logoutAndHome}" value="Logout" />
+														<aploscc:ajaxButton action="/" value="Go To Site" />
+													</span>
+												</div>
+												</h:form>
+												
+											</div>
+										</div>
+									</div>
+								</aplos:panel>
+	
+							</div>
+						</div>
+					</div>
+				</div>
+
+<div id="mainMenuBarImgTopRightDiv">
+					<div id="mainMenuBarImgTopLeftDiv">
+						<div id="mainMenuBarBgTopDiv">
+							<div id="mainMenuBarContainer" style="margin-left:-47px; width:1000px">
+								</div>
+						</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="aploraSubNavigationBar">
+			<div>
+				<div id="subMenuBarImgTopRightDiv"> 
+					
+					<div id="subMenuBarImgTopLeftDiv">
+						<div id="subMenuBarBgTopDiv">
+							<div id="subMenuBarContainer" style="margin-left:-2px">
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		
+		<div id="frame">		
+			<div id="frameImgTopRight" style="width:100%">
+				<div id="frameBgTop" style="padding-left:3px; padding-right:3px; ">
+					<div id="frameBgLeft">
+						<div id="frameBgRight" style="width:100%">
+							<table cellpadding="0" cellspacing="0" id="content" style="width:100% ; margin:auto auto">
+								<tr>
+									<td style="padding: 20px 30px">
+										<div style="min-height: 400px; margin: auto; margin-bottom: 40px; display: table; min-width: 600px; border: 2px solid #C9D9F9; border-top: none; border-bottom: none; padding: 0px 50px;">
+											<ui:insert name="heading"><h2>Routine Maintenance</h2></ui:insert>
+											<p>
+												We currently have the database locked so we can undertake some routine database maintenance to keep things working efficiently.
+											</p>
+											<p>
+												We hope to have things up and running again very soon so please check back later.
+											</p>
+											<p>
+												Thank you for your understanding.
+											</p>
+											<p style="padding-left:25px">
+												- Aplos Systems
+											</p>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<div id="frameImgBottomRight" style="margin-right:3px">
+				<div id="frameImgBottomLeft">
+					<div id="frameBgBottom" />					
+				</div>
+			</div>
+		</div>
+		
+		<div id="push" />
+	</div>
+	<div id="aplosFooter">
+		<a href="http://www.aplossystems.co.uk" target="_blank">Aplos Systems</a><br />
+		info@aplossystems.co.uk<br />
+		0800 520 0690
+	</div>
+
+
+
+
+
+	
+	</ui:define>
+</ui:composition>

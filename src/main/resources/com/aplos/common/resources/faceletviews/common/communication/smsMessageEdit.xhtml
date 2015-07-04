@@ -1,0 +1,258 @@
+<ui:composition template="#{ themeManager.editTemplatePath }"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	<ui:define name="head">
+		<script type="text/javascript">
+			var charsPerMessage = #{ backingPage.charsPerMessage };
+			var recipientCount =  #{ smsMessage.determineRecipientCount() };
+			
+			function updateCounts() {
+				var displayedMessageCount = document.getElementById("msgCount").innerHTML;
+				var message = document.getElementById("messageBox").value;
+				var numberOfMessages = parseInt((message.length / charsPerMessage) + 1);
+				document.getElementById("charCount").innerHTML = message.length;
+				document.getElementById("msgCount").innerHTML = numberOfMessages;
+				var totalRequired = numberOfMessages * recipientCount;
+				document.getElementById("totalRequired").innerHTML = totalRequired;
+				if (#{backingPage.smsQuota} &lt; totalRequired) {
+					//document.getElementById("sendMessageButton").disabled = "disabled";
+					$j('#reqWarnSpan').css("color","darkred");
+				} else {
+					//document.getElementById("sendMessageButton").disabled = "";
+					//highlight when close to limit
+					if ( recipientCount >= (#{backingPage.smsQuota} - (totalRequired - 1) )) {
+						$j('#reqWarnSpan').css("color","#EDB500");
+					} else {
+						$j('#reqWarnSpan').css("color","inherit");
+					}
+				}
+				//if (numberOfMessages == "0") { 
+				//	document.getElementById("sendMessageButton").disabled = "disabled";
+				//}
+				if (displayedMessageCount &lt; numberOfMessages) {
+					$j("#msgCountContainer").css("color","#FFFFFF");
+					$j("#msgCountContainer").animate({ color: '#EDB500'}, 1000, function() {});
+					$j("#msgCountContainer").animate({ color: '#A9A9A9'}, 2000, function() {});
+				}
+			}
+			
+		</script>
+	</ui:define>
+	
+	<ui:define name="editContent">
+		<aplos:panel rendered="#{ !backingPage.templateSelected }">
+			Please select a template:
+			
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Template</td>
+					<td class="aplos-field">
+						<h:selectOneMenu value="#{ smsMessage.smsTemplate }" converter="aplosAbstractBeanConverter">
+							<f:selectItems value="#{ backingPage.smsTemplateSelectItems }" />  
+							<p:ajax process="@form" event="change" update="smsTemplateContentPnl" />
+						</h:selectOneMenu>
+					</td>
+					<td style="vertical-align:bottom;"></td>
+				</tr>
+			</table>
+			<aplos:panel id="smsTemplateContentPnl">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Content</td>
+						<td class="aplos-field">
+							<h:inputTextarea id="smsTemplateBox" value="#{smsMessage.smsTemplate.content}" style="width:480px;height:100px;" disabled="true"/>
+						</td>
+						<td style="vertical-align:bottom;"></td>
+					</tr>
+				</table>
+			</aplos:panel>
+		</aplos:panel>
+		<aplos:panel rendered="#{ backingPage.templateSelected }">
+		
+			<script type="text/javascript">
+				$j(document).ready(function() {
+					updateCounts();
+				});
+				
+			</script>
+			<aplos:panel rendered="#{ smsMessage.smsGenerationType.name() == 'SINGLE_SOURCE' }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Sms source</td>
+						<td class="aplos-field">
+							<h:outputText label="Sms source" value="#{ smsMessage.firstSmsSourceFullName }" style="width:400px" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel rendered="#{ smsMessage.smsGenerationType.name() == 'NONE' }">
+				<table class="aplos-form-table">
+					<aplos:panel rendered="#{ backingPage.showingLimitRecipientSearch and backingPage.bulkMessageSourceGroupFilterSelectItems.size() > 0 }" layout="none">
+						<tr>
+							<td class="aplos-label">Recipient type</td>
+							<td class="aplos-field">
+								<h:selectOneMenu value="#{ backingPage.selectedSmsFinder }" converter="aplosAbstractBeanConverter" rendered="#{ !backingPage.messageSent }">
+									<f:selectItems value="#{ backingPage.bulkMessageSourceGroupFilterSelectItems }" />
+									<f:ajax event="change" render="sendToPanel" />
+								</h:selectOneMenu>
+							</td>
+						</tr>
+					</aplos:panel>
+					<tr>
+						<td class="aplos-label">Recipients</td>
+						<td class="aplos-field" style="width:500px">
+							<h:panelGroup id="sendToPanel">
+								<h:panelGroup layout="block" style="line-height:14px;">
+									<ui:repeat value="#{smsMessage.messageSourceList}" var="recipient">
+										<span class="tag aplos-recipient"> 
+											<h:outputText value="#{recipient.sourceUniqueDisplayName}" />
+											<h:commandLink action="#{backingPage.removeSmsRecipient}" rendered="#{ !backingPage.messageSent }">
+												<img src="#{request.contextPath}/images/action_delete.gif" />
+												<p:ajax process="@form" event="click" listener="#{backingPage.removeSmsRecipient}" oncomplete="updateCounts()" update="sendToPanel" />  
+											</h:commandLink> 
+										</span>
+									</ui:repeat>
+								</h:panelGroup><br style="clear:both"/>
+								<aplos:panel  rendered="#{ !backingPage.messageSent }">
+									<div style="width:250px;float:left;height:30px;">
+										<aplos:autoComplete id="smsRecipients"
+											value="#{backingPage.recipientSelection}"   
+						                    completeMethod="#{backingPage.suggestRecipients}" 
+						                    var="autoBean" 
+						                    itemValue="#{autoBean}" 
+						                    itemLabel="#{autoBean.sourceUniqueDisplayName}" 
+						                    converter="autoCompleteBeanConverter">
+						                    <p:ajax process="@form" event="itemSelect" listener="#{backingPage.addRecipient}" oncomplete="updateCounts()" update="sendToPanel" />  
+						                </aplos:autoComplete>
+					                </div>
+				             		Only recipients with a valid contact number will be displayed
+			             		</aplos:panel>
+				             </h:panelGroup>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel rendered="#{ smsMessage.smsGenerationType.name() == 'MESSAGE_GROUPS' }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Send from</td>
+						<td class="aplos-field" style="width:400px">
+							<h:selectOneMenu label="Send from" value="#{ backingPage.selectedBulkMessageSourceGroup }" converter="aplosAbstractBeanConverter">
+								<f:selectItems value="#{ backingPage.bulkMessageSourceGroupSelectItems }" />
+							</h:selectOneMenu>
+							<aploscc:ajaxButton value="Add" action="#{ backingPage.addSelectedBulkMessageSourceGroup() }" rendered="#{ !backingPage.messageSent }" />
+						</td>
+					</tr>
+					<tr>
+						<td class="aplos-label"></td>
+						<td class="aplos-field">
+							<aplos:panel layout="block" id="recipientsDiv">
+								<ui:repeat value="#{smsMessage.messageSourceList}" var="selectedSource">
+									<span class="tag aplos-recipient"> 
+										<h:outputText value="#{selectedSource.sourceUniqueDisplayName}" />
+										<h:commandButton value="Delete" image="/images/action_delete.gif" rendered="#{ !backingPage.messageSent }" >
+								   			<p:ajax event="click" listener="#{backingPage.removeBulkMessageSourceGroup}" update="recipientsDiv"/>
+								   		</h:commandButton>
+									</span>
+								</ui:repeat>
+							</aplos:panel>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel id="smsTemplatePnl" rendered="#{ smsMessage.smsTemplate != null }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Template</td>
+						<td class="aplos-field">
+							<h:outputText value="#{ smsMessage.smsTemplate.name }" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<table class="aplos-form-table">
+				<tr>
+					<td class="aplos-label">Send from</td>
+					<td class="aplos-field">
+						<h:inputText value="#{ smsMessage.sourceNumber }" disabled="#{ backingPage.messageSent }" />
+					</td>
+				</tr>
+			</table>
+			<aplos:panel id="prefixPnl">
+				<aplos:panel rendered="#{ backingPage.prefix != null }">
+					<table class="aplos-form-table">
+						<tr>
+							<td class="aplos-label">Prefix</td>
+							<td class="aplos-field">
+								<h:outputText value="#{ backingPage.prefix }" />
+							</td>
+							<td style="vertical-align:bottom;"></td>
+						</tr>
+					</table>
+				</aplos:panel>
+			</aplos:panel>
+			<aplos:panel id="messagePnl">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Message</td>
+						<td class="aplos-field">
+							<h:inputTextarea id="messageBox" value="#{backingPage.smsMessage.content}" style="width:480px;height:100px;" onkeyup="checkEncoding(charsPerMessage);" disabled="#{ backingPage.messageSent }"/>
+							<aplos:ajaxJsFunction name="checkEncoding" action="#{backingPage.checkEncoding}" process="@form" oncomplete="updateCounts()" delay="400">
+								<aplos:param name="charsPerMessage" assignTo="#{backingPage.charsPerMessage}" readAndWrite="true" />
+							</aplos:ajaxJsFunction>
+						</td>
+						<td style="vertical-align:bottom;"></td>
+					</tr>
+					<tr>
+						<td class="aplos-description" colspan="2" style="text-align:right;">
+							<h:panelGroup id="requirementCount" style="margin: 5px 10px;font-size:8pt;"> 
+								<span id="charCount">0</span> characters,
+								<span id="msgCountContainer"><span id="msgCount">1</span> messages</span>.
+							</h:panelGroup>
+							<span id="reqWarnSpan">You will require <span id="totalRequired">0</span> sms credits. You have&#160;<h:outputText value="#{ (backingPage.smsQuota != null) ? backingPage.smsQuota : 0 }"/> available.</span>
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<aplos:panel id="suffixPnl">
+				<aplos:panel rendered="#{ backingPage.suffix != null }">
+					<table class="aplos-form-table">
+						<tr>
+							<td class="aplos-label">Suffix</td>
+							<td class="aplos-field">
+								<h:outputText value="#{ backingPage.suffix }" />
+							</td>
+							<td style="vertical-align:bottom;"></td>
+						</tr>
+					</table>
+				</aplos:panel>
+			</aplos:panel>
+			<aplos:panel id="sentDatePnl" rendered="#{ smsMessage.smsSentDate != null }">
+				<table class="aplos-form-table">
+					<tr>
+						<td class="aplos-label">Sent date</td>
+						<td class="aplos-field">
+							<h:outputText value="#{ smsMessage.sentDateStdStr }" />
+						</td>
+					</tr>
+				</table>
+			</aplos:panel>
+			<br style="clear:both;" />
+		</aplos:panel>
+	</ui:define>
+	<ui:define name="editButtons">
+		<aploscc:controlPanel>
+			<f:facet name="lowerRightControlPanel">
+				<aploscc:ajaxButton id="sendMessageButton" action="#{backingPage.sendSMS}" value="Send" rendered="#{ backingPage.templateSelected and !backingPage.messageSent }" />
+				<aploscc:ajaxButton id="nextScreenButton" action="#{backingPage.smsTemplateSelected}" value="Next" rendered="#{ !backingPage.templateSelected }"/>
+				
+				<aploscc:quickView textOnly="true" text="Info" button="true" bean="#{backingPage.resolveAssociatedBean()}" view="audit" title="Audit Information" />
+			</f:facet>
+		</aploscc:controlPanel>
+	</ui:define>
+</ui:composition>

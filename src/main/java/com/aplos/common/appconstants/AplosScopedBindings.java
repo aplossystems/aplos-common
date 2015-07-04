@@ -1,0 +1,50 @@
+package com.aplos.common.appconstants;
+
+public class AplosScopedBindings {
+	private AplosScopedBindings() {} // Private constructor stops the class being initialised;
+
+	public static final String ACTIVE_USERS = "activeUsers";
+	public static final String ADD_WEBSITE_FOR_ACCESS = "addWebsiteForAccess";
+	public static final String ALLOW_AUTO_LOGIN = "allowCookieLogin";
+	public static final String APLOS_REQUEST_CONTEXT = "aplosRequestContext";
+	public static final String AUTO_UNSUBSCRIBE = "autoUnsubscribe";
+	public static final String BACKING_PAGE = "backingPage";
+	public static final String CACHED_MAIN_TABPANEL = "cachedMainTabPanel";
+	public static final String CLASSIC = "classic";
+	public static final String CONTEXT_LISTENER = "contextListener";
+	public static final String CURRENT_LOCALE = "currentLocale";
+	public static final String CURRENT_WEBSITE = "currentWebsite";
+	public static final String DATE_TIME_PAGE_CREATED = "aplosDateTimePageCreated";
+	public static final String EDIT_PAGE = "editPage";
+	public static final String EXTERNAL_LOGIN_REDIRECTION_URL = "externalLoginRedirectionUrl";
+	public static final String ID = "id";
+	public static final String CURRENT_USER = "currentUser";
+	public static final String FLASH_VIEW_MAP = "flashViewMap";
+	public static final String HISTORY_QUEUE = "historyQueue";
+	public static final String LAST_SESSION_ID = "aplosLastSessionId";
+	public static final String LIGHT_BOX_IMAGE_UPLOADER = "lightBoxImageUploader";
+	public static final String MESSAGE_BOX = "messageBox";
+	public static final String MENU_TAB_ID = "menuTabId";
+	public static final String PAGE_NOT_FOUND = "pageNotFound";
+	public static final String PASSWORD_EXPIRY_CODE = "passwordExpiryCode";
+	public static final String REMEMBER_REDIRECT = "rememberRedirect";
+	public static final String REDIRECTED_FROM_MEMORY = "rfm";
+	public static final String REQUEST_COMMAND_LIST = "requestCommandList";
+	public static final String REQUIRED_STATE_REDIRECT = "rsr";
+	public static final String SERVER_URL = "serverUrl";
+	public static final String SESSION_CREATED = "sessionCreated";
+	public static final String SESSION_CREATED_HEADERS = "sessionCreatedHeaders";
+	public static final String SESSION_LAST_ACCESSED = "aplosSessionLastAccessed";
+	public static final String SESSION_MAX_INTERVAL = "aplosSessionMaxInterval";
+	public static final String SUBSCRIBER = "subscriber";
+	public static final String SUBSCRIBER_CLASS = "subscriberClass";
+	public static final String SYSTEM_USER = "systemUser";
+	public static final String SYSTEM_USER_ID = "systemUserId";
+	public static final String TABLE_BEAN = "tableBean";
+	public static final String TAB_SESSION = "tabSession";
+	public static final String TECHNICAL_DETAILS = "technicalDetails";
+	public static final String THEME = "theme";
+	public static final String USERNAME = "username";
+	public static final String WINDOW_ID_REDIRECTION_URL = "windowIdRedirectionUrl";
+	public static final String ERROR_EMAIL_ACTIVATED = "errorEmailActivated";
+}

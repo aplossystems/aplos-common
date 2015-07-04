@@ -1,0 +1,22 @@
+<ui:composition template="#{ themeManager.listTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+	<ui:define name="listContent">
+		<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }">
+			<p:column sortBy="#{ tableBean.entryKey }" filterBy="#{ tableBean.entryKey }">
+				<f:facet name="header">Key</f:facet>
+				#{tableBean.entryKey}
+			</p:column>
+			<p:column sortBy="#{ tableBean.entryValue }" filterBy="#{ tableBean.entryValue }">
+				<f:facet name="header">Value (determined)</f:facet>
+				#{tableBean.valueChain}
+			</p:column>
+		</aploscc:wrappedDataTable2>
+	</ui:define>
+</ui:composition>

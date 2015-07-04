@@ -1,0 +1,56 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Name</td>
+				<td class="aplos-field"><h:inputText value="#{country.name}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Iso 2</td>
+				<td class="aplos-field"><h:outputText value="#{country.iso2}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Iso 3</td>
+				<td class="aplos-field"><h:outputText value="#{country.iso3}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Idd code</td>
+				<td class="aplos-field"><h:inputText value="#{country.iddCode}" /></td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Gmt difference</td>
+				<td class="aplos-field"><h:inputText value="#{country.gmtDifference}" /></td>
+			</tr>
+			<!-- Replaced by PostalZone
+			<tr>
+				<td class="aplos-label">Royal mail zone</td>
+				<td class="aplos-field">
+					<h:selectOneListbox size="1" value="# { country.royalMailZone }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="# {royalMailZone.selectItemBeansWithNotSelected }" />
+					</h:selectOneListbox>
+				</td>
+			</tr>-->
+			<tr>
+				<td class="aplos-label">Vat exemption</td>
+				<td class="aplos-field">
+					<h:selectOneListbox size="1" value="#{ country.vatExemption }" converter="aplosAbstractBeanConverter">
+						<f:selectItems value="#{backingPage.vatExemptionSelectItems}" />
+					</h:selectOneListbox>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Vat comment</td>
+				<td class="aplos-field">
+					<h:inputTextarea value="#{country.vatComment}" style="width:400px ; height:100px ;" />
+				</td>
+			</tr>
+		</table>
+	</ui:define>
+	
+</ui:composition>

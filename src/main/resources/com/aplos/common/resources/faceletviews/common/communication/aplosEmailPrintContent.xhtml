@@ -1,0 +1,31 @@
+<ui:composition xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	<div>
+		<table>
+			<tr>
+				<td style="width:150px;font-weight:bold">From:</td>
+				<td>#{ aplosEmail.fromAddress }</td>
+			</tr>
+			<tr>
+				<td style="width:150px;font-weight:bold">Sent:</td>
+				<td>#{ aplosEmail.emailSentDateStr }</td>
+			</tr>
+			<tr>
+				<td style="width:150px;font-weight:bold">To:</td>
+				<td>#{ aplosEmail.joinedToAddresses }</td>
+			</tr>
+			<tr>
+				<td style="width:150px;font-weight:bold">Subject:</td>
+				<td>#{ aplosEmail.subject }</td>
+			</tr>
+		</table>
+	</div>
+	<hr style="font-weight:bold"/>
+	<aplos:panel layout="none" rendered="#{ aplosEmail.htmlBody != null and aplosEmail.htmlBody != '' }">
+		<h:outputText value="#{ aplosEmail.htmlBody }" escape="false" />
+	</aplos:panel>
+	<aplos:panel layout="none" rendered="#{ aplosEmail.htmlBody == null or aplosEmail.htmlBody == '' }">
+		<h:outputText value="#{ aplosEmail.plainTextBody }" escape="false" />
+	</aplos:panel>
+</ui:composition>

@@ -1,0 +1,58 @@
+<ui:composition template="#{ themeManager.backendTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	
+	<ui:define name="title">Session timeout</ui:define>
+	<ui:define name="body">
+	<table class="centreContent"><tr><td>
+	
+		<h:form rendered="#{backingPage.includeForm}" id="timeout" enctype="multipart/form-data">
+			<table>
+				<tr>
+					<td style="padding:40px;">
+						Your session timed out due to inactivity.  Any information that you entered onto the last page you were on before this message
+						may have been lost.  
+						<br/><br/>
+						The current session is set to timeout after #{ sessionTimeoutPage.maxSessionInterval } minutes, keeping this low 
+						improves security and server performance.  If you feel that your session ended before this time or would like to raise this 
+						limit please contact support.	
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align:right;padding-right:60px;">
+						<aploscc:ajaxButton id="aplosLoginBtn" action="#{backingPage.login}" value="login" rendered="#{ currentUser == null }"/>
+						<aploscc:ajaxButton id="navigatedBackBtn" action="#{backingPage.navigateBack}" value="back" rendered="#{ currentUser != null }"/>
+					</td>
+				</tr>
+			</table>
+			<br style="clear:both;" />	
+			
+		</h:form>
+		
+		<h:panelGroup rendered="#{!backingPage.includeForm}">
+		
+			<table>
+				<tr>
+					<td style="padding:40px;">
+						Your session timed out due to inactivity.  Any information that you entered onto the last page you were on before this message
+						may have been lost.  
+						<br/><br/>
+						The current session is set to timeout after #{ sessionTimeoutPage.maxSessionInterval } minutes, keeping this low 
+						improves security and server performance.  If you feel that your session ended before this time or would like to raise this 
+						limit please contact support.	
+					</td>
+				</tr>
+			</table>
+			<br style="clear:both;" />	
+			
+		</h:panelGroup>
+
+	</td></tr></table>
+	</ui:define>
+</ui:composition>

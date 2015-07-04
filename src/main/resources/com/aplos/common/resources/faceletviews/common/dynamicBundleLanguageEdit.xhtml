@@ -1,0 +1,36 @@
+<ui:composition template="#{ themeManager.editTemplatePath }" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
+	<ui:define name="editContent">
+		<table class="aplos-form-table">
+			<tr>
+				<td class="aplos-label">Language Name</td>
+				<td class="aplos-field">
+					<h:inputText value="#{dynamicBundleLanguage.name}" style="width:400px"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Language Key</td>
+				<td class="aplos-field">
+					<h:inputText value="#{dynamicBundleLanguage.languageKey}" style="width:400px"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label"></td>
+				<td class="aplos-description">
+					(E.g. en, de or ar)
+				</td>
+			</tr>
+			<tr>
+				<td class="aplos-label">Icon</td>
+				<td class="aplos-field">
+					<aploscc:imageUploader2 key="ICON" resizeHeight="17" resizeWidth="33" owner="#{ dynamicBundleLanguage }" />
+				</td>
+			</tr>
+		</table>
+	</ui:define>
+</ui:composition>
