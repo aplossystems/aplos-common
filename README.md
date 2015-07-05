@@ -11,8 +11,9 @@ The system requires:
 
 <ul>
 <li>An installation of Java JDK 1.7 (http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)</li>
-<li>An IDE (we use eclipse http://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/marsr) with maven installed</li>
-<li>If you have installed eclipse then install subsclipse into it with the update URL (http://subclipse.tigris.org/update_1.10.x)</li>
+<li>Eclipse http://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/marsr with maven installed</li>
+<li>Install subsclipse into Eclipse with the update URL (http://subclipse.tigris.org/update_1.10.x)</li>
+<li>Install AspectJ tools into Ecipse with the update URL (http://download.eclipse.org/tools/ajdt/44/dev/update)
 <li>Tomcat 7.0 (https://tomcat.apache.org/download-70.cgi)</li>
 <li>MySql (At writing we are using 5.6.25 https://dev.mysql.com/downloads/mysql/)</li>
 <li>MySql Workbench (Option but advised https://dev.mysql.com/downloads/workbench/)</li>
