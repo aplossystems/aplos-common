@@ -16,7 +16,6 @@ The system requires:
 <li>Install AspectJ tools into Ecipse with the update URL (http://download.eclipse.org/tools/ajdt/44/dev/update)
 <li>Tomcat 7.0 (https://tomcat.apache.org/download-70.cgi)</li>
 <li>MySql (At writing we are using 5.6.25 https://dev.mysql.com/downloads/mysql/)</li>
-<li>MySql Workbench (Option but advised https://dev.mysql.com/downloads/workbench/)</li>
 </ul>
 
 Once you have these installed and ready to go then you can download all of these aplos systems modules:
