@@ -107,6 +107,10 @@ public abstract class EmailTemplate<EMAIL_SOURCE extends BulkEmailSource, CONTEN
 			}
 		} else if( EmailFromAddressType.OTHER.equals( getEmailFromAddressType() ) && !CommonUtil.isNullOrEmpty( getOtherFromAddress() ) ) {
 			return getOtherFromAddress();
+		} else if( EmailFromAddressType.COMPANY_DETAILS.equals( getEmailFromAddressType() ) ) {
+			if( CommonConfiguration.getCommonConfiguration().getDefaultCompanyDetails() != null &&
+					!CommonUtil.isNullOrEmpty( CommonConfiguration.getCommonConfiguration().getDefaultCompanyDetails().getEmailAddress() ) )
+			return CommonConfiguration.getCommonConfiguration().getDefaultCompanyDetails().getEmailAddress();
 		} 
 
 		// EmailFromAddressType.SYSTEM_DEFAULT 
