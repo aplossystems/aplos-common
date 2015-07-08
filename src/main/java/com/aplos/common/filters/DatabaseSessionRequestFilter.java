@@ -43,7 +43,7 @@ public class DatabaseSessionRequestFilter implements javax.servlet.Filter {
 			if( requestUri.startsWith( JSFUtil.getContextPath() ) ) {
 				requestUri = requestUri.substring( JSFUtil.getContextPath().length() );
 			}
-			boolean isResourceRequest = requestUri.contains( "/javax.faces.resource" ) || requestUri.startsWith( "/resources" ) || requestUri.startsWith( "/media" );
+			boolean isResourceRequest = CommonUtil.isResourceRequest( requestUri );
 			AplosRequestContext aplosRequestContext = null;
 
 			if( !isResourceRequest ) {

@@ -453,7 +453,7 @@ public class CommonUtil {
 	}
 	
 	public static boolean isResourceRequest( String requestUrl ) {
-		return requestUrl.contains( "/javax.faces.resource" ) || requestUrl.contains( "/media/" );
+		return requestUrl.contains( "/javax.faces.resource" ) || requestUrl.contains( "/media/" ) || requestUrl.startsWith( "/resources" );
 	}
 
 	public static boolean isFileUploaded( UploadedFile uploadedFile ) {
