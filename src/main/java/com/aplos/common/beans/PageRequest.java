@@ -3,9 +3,11 @@ package com.aplos.common.beans;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import com.aplos.common.annotations.persistence.Column;
 import com.aplos.common.annotations.persistence.Entity;
+import com.aplos.common.annotations.persistence.ManyToOne;
 import com.aplos.common.annotations.persistence.Transient;
 import com.aplos.common.utils.CommonUtil;
 import com.aplos.common.utils.JSFUtil;
@@ -28,6 +30,10 @@ public class PageRequest extends AplosBean {
 	private long renderResponseAfterBindTime;
 	private long renderResponseCompleteTime;
 	private long duration;
+	private String sessionId;
+	private boolean sessionCreated = false;
+	@ManyToOne
+	private SystemUser loggedInUser;
 	@Transient
 	private long timeMarker;
 	private boolean isStatus404 = false;
@@ -44,6 +50,11 @@ public class PageRequest extends AplosBean {
 			}
 		}
 		setRefererUrl( refererUrl );
+		setLoggedInUser( JSFUtil.getLoggedInUser() );
+		HttpSession httpSession = JSFUtil.getSessionTemp();
+		if( httpSession != null ) {
+			setSessionId( httpSession.getId() );
+		}
 	}
 	
 	public String getPageUrlEnding() {
@@ -233,6 +244,30 @@ public class PageRequest extends AplosBean {
 
 	public void setRefererUrl(String refererUrl) {
 		this.refererUrl = refererUrl;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	public boolean isSessionCreated() {
+		return sessionCreated;
+	}
+
+	public void setSessionCreated(boolean sessionCreated) {
+		this.sessionCreated = sessionCreated;
+	}
+
+	public SystemUser getLoggedInUser() {
+		return loggedInUser;
+	}
+
+	public void setLoggedInUser(SystemUser loggedInUser) {
+		this.loggedInUser = loggedInUser;
 	}
 	
 }

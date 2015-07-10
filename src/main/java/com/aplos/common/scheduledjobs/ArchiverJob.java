@@ -64,16 +64,29 @@ public class ArchiverJob extends ScheduledJob<Boolean> {
 					for( Object[] idArray : idArrayList ) {
 						tempId = (Long) idArray[ 0 ];
 						if( archivableTable.verifyBeforeArchiving( tempId ) ) {
-							sqlStrBuf = new StringBuffer( "INSERT INTO " );
-							sqlStrBuf.append( archiveDbName ).append( "." );
-							sqlStrBuf.append( archivableTable.getTableName() ).append( " (" );
-							sqlStrBuf.append( StringUtils.join( beanSelectCriteria, "," ) );
-							sqlStrBuf.append( ") SELECT " ).append( StringUtils.join( beanSelectCriteria, "," ) );
-							sqlStrBuf.append( " FROM " ).append( standardDbName );
-							sqlStrBuf.append( "." ).append( archivableTable.getTableName() );
-							sqlStrBuf.append( " WHERE " ).append( primaryFieldInfo.getSqlName() );
-							sqlStrBuf.append( " = " ).append( tempId );
-							ApplicationUtil.executeSql( sqlStrBuf.toString(), connection );
+							try {
+								sqlStrBuf = new StringBuffer( "INSERT INTO " );
+								sqlStrBuf.append( archiveDbName ).append( "." );
+								sqlStrBuf.append( archivableTable.getTableName() ).append( " (" );
+								sqlStrBuf.append( StringUtils.join( beanSelectCriteria, "," ) );
+								sqlStrBuf.append( ") SELECT " ).append( StringUtils.join( beanSelectCriteria, "," ) );
+								sqlStrBuf.append( " FROM " ).append( standardDbName );
+								sqlStrBuf.append( "." ).append( archivableTable.getTableName() );
+								sqlStrBuf.append( " WHERE " ).append( primaryFieldInfo.getSqlName() );
+								sqlStrBuf.append( " = " ).append( tempId );
+								ApplicationUtil.executeSql( sqlStrBuf.toString(), connection );
+							} catch( Exception ex ) {
+								/*
+								 * This should be removed.  It was added in because Altrui
+								 * had a lot of duplicate warnings, I couldn't see how this could happen
+								 * with the code so wanted to remove the duplicates to see if it happens
+								 * again.
+								 */
+								if( !ex.getMessage().contains( "Duplicate" ) ) {
+									ApplicationUtil.handleError( ex );
+									break;
+								}
+							}
 							
 							sqlStrBuf = new StringBuffer( "UPDATE " );
 							sqlStrBuf.append( standardDbName ).append( "." );
@@ -96,8 +109,6 @@ public class ArchiverJob extends ScheduledJob<Boolean> {
 			archiveConnection.commit();
 		} catch( Exception ex ) {
 			ApplicationUtil.handleError( ex );
-			ApplicationUtil.rollbackConnection( connection );
-			ApplicationUtil.rollbackConnection( archiveConnection );
 		} finally {
 			ApplicationUtil.closeConnection( connection );
 			ApplicationUtil.closeConnection( archiveConnection );

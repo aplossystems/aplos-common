@@ -11,7 +11,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
@@ -25,7 +24,6 @@ import com.aplos.common.backingpage.BackingPage;
 import com.aplos.common.backingpage.DatabaseLockedPage;
 import com.aplos.common.backingpage.LoginPage;
 import com.aplos.common.backingpage.PaidFeaturePage;
-import com.aplos.common.beans.ActiveLogin;
 import com.aplos.common.beans.PageRequest;
 import com.aplos.common.beans.SystemUser;
 import com.aplos.common.beans.Website;
@@ -155,27 +153,6 @@ public class PageBindingPhaseListener implements PhaseListener {
 	        FacesContext facesContext = event.getFacesContext();
 	        
 	        FacesMessagesUtils.saveMessages(facesContext, facesContext.getExternalContext().getSessionMap());
-
-	        SystemUser currentUser = JSFUtil.getLoggedInUser();
-	        if( currentUser != null ) {
-	        	Map<String, ActiveLogin> activeLoginMap = (Map<String, ActiveLogin>) JSFUtil.getApplicationMap().get( "activeLoginMap" );
-	        	if( activeLoginMap != null ) {
-		        	ActiveLogin activeLogin = activeLoginMap.get( String.valueOf( currentUser.getId() ) );
-		        	if( activeLogin != null ) {
-		        		Cookie cookies[] = JSFUtil.getRequest().getCookies();
-		        		if( cookies != null ) {
-			        		for(Cookie cookie : cookies){
-			        		    if("JSESSIONID".equals(cookie.getName())){
-			        		        activeLogin.setCookieDomain( cookie.getDomain() );
-			        		        activeLogin.setCookieMaxAge( String.valueOf( cookie.getMaxAge() ) );
-			        		        activeLogin.setCookiePath( cookie.getPath() );
-			        		        activeLogin.setHttpOnly( String.valueOf( cookie.isHttpOnly() ) );
-			        		    }
-			        		}
-		        		}
-		        	}
-	        	}
-	        }
 	        
 			if (event.getPhaseId() == PhaseId.RESTORE_VIEW) {
 				AplosRequestContext aplosRequestContext = JSFUtil.getAplosRequestContext();

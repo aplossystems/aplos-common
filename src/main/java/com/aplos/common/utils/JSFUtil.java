@@ -116,7 +116,7 @@ public class JSFUtil {
 			} else {
 				if( createIfNotExists ) {
 					String requestUri = request.getRequestURI();
-					String contextPath = request.getSession().getServletContext().getContextPath();
+					String contextPath = request.getServletContext().getContextPath();
 					if( requestUri.startsWith( contextPath ) ) {
 						requestUri = requestUri.replaceFirst( contextPath, "" );
 					}

@@ -41,7 +41,7 @@ public class RedirectFilter implements Filter {
 		boolean isResourceRequest = request.getRequestURI().contains( "/javax.faces.resource" );
 		
 		if( !isResourceRequest ) {
-			ServletContext servletContext = request.getSession().getServletContext();
+			ServletContext servletContext = request.getServletContext();
 			
 	
 			if( request.getCookies() != null ) {

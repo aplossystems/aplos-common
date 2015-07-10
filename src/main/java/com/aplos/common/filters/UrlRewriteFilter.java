@@ -30,7 +30,7 @@ public class UrlRewriteFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
-		ServletContext servletContext = request.getSession().getServletContext();
+		ServletContext servletContext = request.getServletContext();
 		AplosContextListener aplosContextListener = (AplosContextListener) servletContext.getAttribute( AplosScopedBindings.CONTEXT_LISTENER );
 		String requestUrl = request.getRequestURL().toString();
 		

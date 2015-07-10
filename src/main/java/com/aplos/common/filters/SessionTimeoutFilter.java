@@ -10,8 +10,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.aplos.common.AplosRequestContext;
+import com.aplos.common.appconstants.AplosScopedBindings;
 import com.aplos.common.utils.CommonUtil;
 import com.aplos.common.utils.JSFUtil;
 
@@ -26,16 +28,29 @@ public class SessionTimeoutFilter implements Filter {
 
 	@Override
 	public void doFilter( ServletRequest request, ServletResponse response, FilterChain filterChain ) throws IOException, ServletException {
+		HttpServletRequest httpServletRequest = null;
 		if ( ( request instanceof HttpServletRequest ) && ( response instanceof HttpServletResponse ) ) {
-			HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+			httpServletRequest = (HttpServletRequest)request;
 			String requestUrl = httpServletRequest.getRequestURL().toString();
 			// is session invalid ?
-			if( !CommonUtil.isResourceRequest( requestUrl ) && isSessionInvalid( httpServletRequest ) ) {
-				AplosRequestContext aplosRequestContext = JSFUtil.getAplosRequestContext( httpServletRequest, true );
-				aplosRequestContext.setSessionInvalid( true );
+			if( !CommonUtil.isResourceRequest( requestUrl ) ) {
+				if( isSessionInvalid( httpServletRequest ) ) {
+					AplosRequestContext aplosRequestContext = JSFUtil.getAplosRequestContext( httpServletRequest, true );
+					aplosRequestContext.setSessionInvalid( true );
+				}
 			}
 		}
 		filterChain.doFilter( request, response );
+		
+		if ( httpServletRequest != null ) {
+			HttpSession httpSession = httpServletRequest.getSession( false );
+			if( httpSession != null && httpSession.getAttribute( AplosScopedBindings.SESSION_CREATED ) != null ) {
+				AplosRequestContext aplosRequestContext = JSFUtil.getAplosRequestContext( httpServletRequest, true );
+				if( aplosRequestContext.getPageRequest() != null ) {
+					aplosRequestContext.getPageRequest().setSessionCreated(true);
+				}
+			}
+		}
 	}
 
 	private boolean isSessionInvalid( HttpServletRequest httpServletRequest ) {

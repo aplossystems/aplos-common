@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:aploscc="http://java.sun.com/jsf/composite/components"
 	xmlns:aplos="http://www.aplossystems.co.uk/aplosComponents">
 
@@ -312,7 +313,8 @@
 						<td class="aplos-label"></td>
 						<td class="aplos-field">
 							<aplos:panel layout="block" id="foldersDiv">
-								<ui:repeat value="#{aplosEmail.createEmailFolderListFromSet()}" var="selectedSource">
+								<!-- Using C:forEach because of include in the quickview -->
+								<c:forEach items="#{aplosEmail.createEmailFolderListFromSet()}" var="selectedSource">
 									<span class="tag aplos-recipient">
 										<aploscc:quickView text="#{selectedSource.displayName}" bean="#{selectedSource}"  rendered="#{ backingPage.isAssociatedWithEditPage(selectedSource) }" />
 										<h:outputText value="#{selectedSource.displayName}" rendered="#{ !backingPage.isAssociatedWithEditPage(selectedSource) }" />
@@ -320,7 +322,7 @@
 								   			<p:ajax event="click" listener="#{backingPage.removeEmailFolder}" update="foldersDiv"/>
 								   		</h:commandButton>
 									</span>
-								</ui:repeat>
+								</c:forEach>
 							</aplos:panel>
 						</td>
 					</tr>
