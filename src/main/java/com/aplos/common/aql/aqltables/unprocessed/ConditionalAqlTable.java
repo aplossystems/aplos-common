@@ -25,9 +25,9 @@ public class ConditionalAqlTable extends UnprocessedAqlTable {
 	@Override
 	public AqlTable createAqlTable( ProcessedBeanDao processedBeanDao, boolean isAddingTable ) {
 		try {
-			AqlParser aqlParser = AqlParser.getInstance( leftCondition );
+			AqlParser aqlParser = processedBeanDao.getBeanDao().getAqlParser().updateString( leftCondition );
 			UnevaluatedTableVariable leftCriteria = (UnevaluatedTableVariable) aqlParser.parseAqlVariable( processedBeanDao.getBeanDao(), null );
-			aqlParser = AqlParser.getInstance( rightCondition );
+			aqlParser.updateString( rightCondition );
 			UnevaluatedTableVariable rightCriteria = (UnevaluatedTableVariable) aqlParser.parseAqlVariable( processedBeanDao.getBeanDao(), null );
 
 			AqlTable parentAqlTable;

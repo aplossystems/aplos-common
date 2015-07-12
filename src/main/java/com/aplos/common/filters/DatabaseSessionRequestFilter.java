@@ -11,6 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.log4j.Logger;
@@ -103,8 +104,23 @@ public class DatabaseSessionRequestFilter implements javax.servlet.Filter {
 			if( !isResourceRequest ) {
 //				logger.debug( "Committing the database transaction" );
 //
+				HttpSession httpSession = httpRequest.getSession( false );
+				
 				aplosRequestContext.getPageRequest().setDuration(System.nanoTime() - aplosRequestContext.getPageRequest().getPageRequestedTime());
+				
+
+				if( httpSession != null ) {
+					aplosRequestContext.getPageRequest().setSessionId( httpSession.getId() );
+					aplosRequestContext.getPageRequest().setLoggedInUser(JSFUtil.getLoggedInUser());
+					if( httpSession.getAttribute( AplosScopedBindings.SESSION_CREATED ) != null ) {
+						httpSession.setAttribute( AplosScopedBindings.SESSION_CREATED, null );
+						if( aplosRequestContext.getPageRequest() != null ) {
+							aplosRequestContext.getPageRequest().setSessionCreated(true);
+						}
+					}
+				}
 				aplosRequestContext.getPageRequest().saveDetails();
+				
 				if( aplosRequestContext.getPageRequest().getId() % 10000 == 0 ) {
 					ApplicationUtil.executeSql( "DELETE FROM " + AplosBean.getTableName( PageRequest.class ) + " WHERE id < " + (aplosRequestContext.getPageRequest().getId() - 10000) );
 				}

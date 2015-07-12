@@ -70,6 +70,7 @@ public class JoinedAqlTable extends UnprocessedAqlTable {
 				}
 			}
 		}
+		aqlTable.setAddingAllCriteria(isAddingAllCriteria() || aqlTable.isAddingAllCriteria());
 		return aqlTable;
 	}
 	

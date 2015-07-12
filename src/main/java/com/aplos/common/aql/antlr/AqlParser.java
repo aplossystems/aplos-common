@@ -8,9 +8,11 @@ import java.util.Set;
 import java.util.Stack;
 
 import antlr.ASTFactory;
+import antlr.CharBuffer;
+import antlr.LexerSharedInputState;
 import antlr.MismatchedTokenException;
 import antlr.RecognitionException;
-import antlr.TokenStream;
+import antlr.TokenBuffer;
 import antlr.TokenStreamException;
 
 import com.aplos.common.aql.BeanDao;
@@ -19,15 +21,14 @@ import com.aplos.common.aql.OrderByCriteria;
 import com.aplos.common.aql.SubBeanDao;
 import com.aplos.common.aql.WhereConditionGroup;
 import com.aplos.common.aql.aqltables.AqlTable.JoinType;
-import com.aplos.common.aql.aqlvariables.AqlTableVariable;
 import com.aplos.common.aql.aqlvariables.AqlVariable;
 import com.aplos.common.aql.aqlvariables.BasicAqlVariable;
 import com.aplos.common.aql.aqlvariables.BetweenWhereCondition;
 import com.aplos.common.aql.aqlvariables.ConcatenatedAqlVariable;
-import com.aplos.common.aql.aqlvariables.UnevaluatedTableVariable;
 import com.aplos.common.aql.aqlvariables.FunctionAqlVariable;
 import com.aplos.common.aql.aqlvariables.IntervalAqlVariable;
 import com.aplos.common.aql.aqlvariables.QueryAqlVariable;
+import com.aplos.common.aql.aqlvariables.UnevaluatedTableVariable;
 import com.aplos.common.aql.selectcriteria.NewClassSelectCriteria;
 import com.aplos.common.aql.selectcriteria.SelectCriteria;
 import com.aplos.common.beans.AplosAbstractBean;
@@ -46,6 +47,7 @@ public class AqlParser extends antlr.LLkParser implements AqlTokenTypes {
 	
 	private Stack<OpenedGroup> openedGroups = new Stack<OpenedGroup>();
 	private Integer uniqueFunctionId = 0;
+	private AqlBaseLexer aqlBaseLexer; 
 	
 	static {
 		functionsSet.add(COUNT);
@@ -127,14 +129,23 @@ public class AqlParser extends antlr.LLkParser implements AqlTokenTypes {
         AqlBaseLexer lexer = new AqlBaseLexer( new StringReader( hql ) );
 		return new AqlParser( lexer );
 	}
+	
+	public AqlParser updateString( String aql ) {
+		LexerSharedInputState lexerSharedInputState = new LexerSharedInputState(new CharBuffer(new StringReader(aql)));
+		aqlBaseLexer.setInputState(lexerSharedInputState);
+		setTokenBuffer(new TokenBuffer(aqlBaseLexer));
+		initialize();
+		return this;
+	}
 
-	private AqlParser(TokenStream lexer) {
+	private AqlParser(AqlBaseLexer lexer) {
 		this(lexer,3);
 		initialize();
 	}
 
-	protected AqlParser(TokenStream lexer, int k) {
+	protected AqlParser(AqlBaseLexer lexer, int k) {
 	  super(lexer,k);
+	  aqlBaseLexer = lexer;
 //	  tokenNames = _tokenNames;
 //	  buildTokenTypeASTClassMap();
 	  astFactory = new ASTFactory(getTokenTypeToASTClassMap());

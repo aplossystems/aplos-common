@@ -34,23 +34,13 @@ public class SessionTimeoutFilter implements Filter {
 			String requestUrl = httpServletRequest.getRequestURL().toString();
 			// is session invalid ?
 			if( !CommonUtil.isResourceRequest( requestUrl ) ) {
+				AplosRequestContext aplosRequestContext = JSFUtil.getAplosRequestContext( httpServletRequest, true );
 				if( isSessionInvalid( httpServletRequest ) ) {
-					AplosRequestContext aplosRequestContext = JSFUtil.getAplosRequestContext( httpServletRequest, true );
 					aplosRequestContext.setSessionInvalid( true );
 				}
 			}
 		}
 		filterChain.doFilter( request, response );
-		
-		if ( httpServletRequest != null ) {
-			HttpSession httpSession = httpServletRequest.getSession( false );
-			if( httpSession != null && httpSession.getAttribute( AplosScopedBindings.SESSION_CREATED ) != null ) {
-				AplosRequestContext aplosRequestContext = JSFUtil.getAplosRequestContext( httpServletRequest, true );
-				if( aplosRequestContext.getPageRequest() != null ) {
-					aplosRequestContext.getPageRequest().setSessionCreated(true);
-				}
-			}
-		}
 	}
 
 	private boolean isSessionInvalid( HttpServletRequest httpServletRequest ) {

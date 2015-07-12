@@ -25,6 +25,14 @@
 					</h:selectBooleanCheckbox>
 				</td>
 			</tr>
+			<tr>
+				<td class="aplos-label">Only created sessions</td>
+				<td class="aplos-field">
+					<h:selectBooleanCheckbox value="#{ backingPage.dataTableState.lazyDataModel.showingOnlySessionIdCreated }" >
+						<p:ajax event="change" update=":listForm:tableWrapper" />
+					</h:selectBooleanCheckbox>
+				</td>
+			</tr>
 		</table>
 		<aplos:panel id="tableWrapper">
 			<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }">
@@ -40,41 +48,13 @@
 					<f:facet name="header">Requested</f:facet>
 					<aplos:standardDateTableCell value="#{tableBean.pageRequestedDateTime}" />
 				</p:column>
-				<p:column sortBy="#{ tableBean.restoreViewBeforeBindTime }" filterBy="#{ tableBean.restoreViewBeforeBindTime }" width="40px" style="width:40px">
-					<f:facet name="header">RV1</f:facet>
-					#{tableBean.restoreViewBeforeBindTimeInMillis}
+				<p:column sortBy="#{ tableBean.loggedInUser.firstName }" filterBy="#{ tableBean.loggedInUser.firstName }">
+					<f:facet name="header">User</f:facet>
+					<aploscc:quickView bean="#{tableBean.loggedInUser}" text="#{tableBean.loggedInUser.displayName}"/>
 				</p:column>
-				<p:column sortBy="#{ tableBean.restoreViewAfterBindTime }" filterBy="#{ tableBean.restoreViewAfterBindTime }">
-					<f:facet name="header">RV2</f:facet>
-					#{tableBean.restoreViewAfterBindTimeInMillis}
-				</p:column>
-				<p:column sortBy="#{ tableBean.applyRequestValuesTime }" filterBy="#{ tableBean.applyRequestValuesTime }">
-					<f:facet name="header">ARV</f:facet>
-					#{tableBean.applyRequestValuesTimeInMillis}
-				</p:column>
-				<p:column sortBy="#{ tableBean.processValidationsTime }" filterBy="#{ tableBean.processValidationsTime }">
-					<f:facet name="header">PV</f:facet>
-					#{tableBean.processValidationsTimeInMillis}
-				</p:column>
-				<p:column sortBy="#{ tableBean.updateModelValuesTime }" filterBy="#{ tableBean.updateModelValuesTime }">
-					<f:facet name="header">UMV</f:facet>
-					#{tableBean.updateModelValuesTimeInMillis}
-				</p:column>
-				<p:column sortBy="#{ tableBean.invokeApplicationTime }" filterBy="#{ tableBean.invokeApplicationTime }">
-					<f:facet name="header">IA</f:facet>
-					#{tableBean.invokeApplicationTimeInMillis}
-				</p:column>
-				<p:column sortBy="#{ tableBean.renderResponseBeforeBindTime }" filterBy="#{ tableBean.renderResponseBeforeBindTime }">
-					<f:facet name="header">RR1</f:facet>
-					#{tableBean.renderResponseBeforeBindTimeInMillis}
-				</p:column>
-				<p:column sortBy="#{ tableBean.renderResponseAfterBindTime }" filterBy="#{ tableBean.renderResponseAfterBindTime }">
-					<f:facet name="header">RR2</f:facet>
-					#{tableBean.renderResponseAfterBindTimeInMillis}
-				</p:column>
-				<p:column sortBy="#{ tableBean.renderResponseCompleteTime }" filterBy="#{ tableBean.renderResponseCompleteTime }">
-					<f:facet name="header">RR3</f:facet>
-					#{tableBean.renderResponseCompleteTimeInMillis}
+				<p:column sortBy="#{ tableBean.sessionId }" filterBy="#{ tableBean.sessionId }" style="#{ backingPage.dataTableState.lazyDataModel.sessionIdStyle  }">
+					<f:facet name="header">Session ID</f:facet>
+					#{tableBean.sessionId}
 				</p:column>
 				<p:column sortBy="#{ tableBean.duration }" filterBy="#{ tableBean.duration }">
 					<f:facet name="header">Duration</f:facet>

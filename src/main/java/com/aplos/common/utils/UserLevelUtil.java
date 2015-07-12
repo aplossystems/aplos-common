@@ -24,6 +24,10 @@ public class UserLevelUtil extends AplosBean {
 	
 	@OneToOne
 	private UserLevel marketerLevel;
+	
+	public UserLevelUtil() {
+		// TODO Auto-generated constructor stub
+	}
 
 	public static boolean isCurrentUserAdminLevel() {
 		return JSFUtil.getLoggedInUser().isAdmin();

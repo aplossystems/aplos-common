@@ -39,6 +39,7 @@ public class AqlTable extends AqlTableAbstract {
 	private List<AqlTableAbstract> subTables = new ArrayList<AqlTableAbstract>();
 	private PersistentClassSelectCriteria persistentClassSelectCriteria;
 	private Boolean isIncludedInFromClause;
+	private boolean isAddingAllCriteria = false;
 	
 	/*
 	 * A joined table represents the joined table in the db.  This isn't often in
@@ -450,5 +451,13 @@ public class AqlTable extends AqlTableAbstract {
 
 	public void setIsIncludedInFromClause(Boolean isIncludedInFromClause) {
 		this.isIncludedInFromClause = isIncludedInFromClause;
+	}
+
+	public boolean isAddingAllCriteria() {
+		return isAddingAllCriteria;
+	}
+
+	public void setAddingAllCriteria(boolean isAddingAllCriteria) {
+		this.isAddingAllCriteria = isAddingAllCriteria;
 	}
 }

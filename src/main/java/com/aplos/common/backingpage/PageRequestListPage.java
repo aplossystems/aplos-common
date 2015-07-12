@@ -36,6 +36,7 @@ public class PageRequestListPage extends ListPage {
 		private static final String BACKEND_ONLY = "Backend only";
 		
 		private boolean isShowingOnlyStatus404 = false;
+		private boolean isShowingOnlySessionIdCreated = false;
 		private String selectedPageVisibility;
 		
 		public PageRequestLdm(DataTableState dataTableState, BeanDao aqlBeanDao) {
@@ -54,7 +55,18 @@ public class PageRequestListPage extends ListPage {
 			} else if( BACKEND_ONLY.equals( getSelectedPageVisibility() ) ) {
 				getBeanDao().addWhereCriteria( "bean.isFrontend = false" );
 			}
+			if( isShowingOnlySessionIdCreated() ) {
+				getBeanDao().addWhereCriteria( "bean.sessionCreated = true" );
+			}
 			return super.load(first, pageSize, sortField, sortOrder, filters);
+		}
+		
+		public String getSessionIdStyle() {
+			PageRequest pageRequest = (PageRequest) getAplosBean();
+			if( pageRequest != null && pageRequest.isSessionCreated() ) {
+				return "background-color:green";
+			}
+			return "";
 		}
 		
 		public List<SelectItem> getPageVisibilitySelectItems() {
@@ -79,6 +91,15 @@ public class PageRequestListPage extends ListPage {
 
 		public void setSelectedPageVisibility(String selectedPageVisibility) {
 			this.selectedPageVisibility = selectedPageVisibility;
+		}
+
+		public boolean isShowingOnlySessionIdCreated() {
+			return isShowingOnlySessionIdCreated;
+		}
+
+		public void setShowingOnlySessionIdCreated(
+				boolean isShowingOnlySessionIdCreated) {
+			this.isShowingOnlySessionIdCreated = isShowingOnlySessionIdCreated;
 		}
 	}
 }

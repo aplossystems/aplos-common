@@ -333,6 +333,20 @@ public class PersistentClassSelectCriteria extends SelectCriteria implements Aql
 	public void addAllCriteria( ProcessedBeanDao processedBeanDao ) {
 		List<SelectCriteria> selectCriteriaList = new ArrayList<SelectCriteria>();
 		getAqlTable().addAllCriteria( processedBeanDao, selectCriteriaList );
+		
+		for( AqlTableAbstract tempAqlTable : processedBeanDao.getQueryTables().values() ) {
+			if( tempAqlTable instanceof AqlTable ) {
+				if( ((AqlTable) tempAqlTable).getParentTable() != null && ((AqlTable) tempAqlTable).getParentTable().equals( getAqlTable() ) && ((AqlTable) tempAqlTable).isAddingAllCriteria() ) {
+					for( int i = 0, n = selectCriteriaList.size(); i < n; i++ ) {
+						if( selectCriteriaList.get(i).getAqlVariable().getName().equals( ((AqlTable) tempAqlTable).getExternalVariable().getSqlName(true) ) ) {
+							selectCriteriaList.set(i, ((AqlTable) tempAqlTable).getPersistentClassSelectCriteria());
+							((AqlTable) tempAqlTable).getPersistentClassSelectCriteria().addAllCriteria(processedBeanDao);
+							break;
+						}
+					}
+				}
+			}
+		}
 		for( int j = 0, p = selectCriteriaList.size(); j < p; j++ ) {
 			addProcessedSelectCriteria( selectCriteriaList.get( j ) );
 		}

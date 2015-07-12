@@ -19,13 +19,11 @@ import com.aplos.common.aql.antlr.AqlParser;
 import com.aplos.common.aql.aqltables.AqlSubTable;
 import com.aplos.common.aql.aqltables.AqlTable;
 import com.aplos.common.aql.aqltables.AqlTableAbstract;
-import com.aplos.common.aql.aqltables.unprocessed.CommaAqlTable;
 import com.aplos.common.aql.aqltables.unprocessed.ConditionalAqlTable;
 import com.aplos.common.aql.aqltables.unprocessed.JoinedAqlTable;
 import com.aplos.common.aql.aqltables.unprocessed.ReverseJoinedAqlTable;
 import com.aplos.common.aql.aqltables.unprocessed.UnprocessedAqlSubTable;
 import com.aplos.common.aql.aqltables.unprocessed.UnprocessedAqlTable;
-import com.aplos.common.aql.aqlvariables.AqlVariable;
 import com.aplos.common.aql.aqlvariables.SubQueryAqlVariable;
 import com.aplos.common.aql.aqlvariables.UnevaluatedTableVariable;
 import com.aplos.common.aql.selectcriteria.PersistentClassSelectCriteria;
@@ -82,13 +80,14 @@ public class BeanDao {
 	private String rootAlias;
 	private UnprocessedAqlTable rootTable;
 	private boolean isAddingDefaultOrderByToLists = true;
+	private AqlParser aqlParser = AqlParser.getInstance( "" );
 
 	public BeanDao( String aql ) {
 		// TODO parse string, it must contain a valid beanClass in FROM statement
 //		this( beanClass, "bean" );
-		AqlParser parser = AqlParser.getInstance( aql );
 		try {
-			parser.parseSelectStatement(this);
+			getAqlParser().updateString( aql );
+			getAqlParser().parseSelectStatement(this);
 		} catch( TokenStreamException tsEx ) {
 			ApplicationUtil.handleError( tsEx );
 		} catch( RecognitionException rEx ) {
@@ -162,9 +161,9 @@ public class BeanDao {
 	}
 	
 	public void processWhereCriteria( String whereCriteria, boolean distributeChildDaos, WhereConditionGroup outerWhereConditionGroup ) {
-		AqlParser parser = AqlParser.getInstance( whereCriteria );
+		getAqlParser().updateString( whereCriteria );
 		try {
-			WhereConditionGroup innerWhereConditionGroup = parser.parseWhereCriteria( this );
+			WhereConditionGroup innerWhereConditionGroup = getAqlParser().parseWhereCriteria( this );
 			outerWhereConditionGroup.addWhereCondition( "AND", innerWhereConditionGroup );
 		} catch( TokenStreamException ex ) {
 			ApplicationUtil.handleError( ex );
@@ -255,6 +254,9 @@ public class BeanDao {
 			cachedBean = persistenceContext.findBean( (Class<? extends AplosAbstractBean>) persistentClass.getDbPersistentClass().getTableClass(), id );
 		}
 		if( cachedBean == null || ((PersistenceBean) cachedBean).isLazilyLoaded() ) {
+			if( cachedBean != null ) {
+				aplosAbstractBean = cachedBean;
+			}
 			WhereConditionGroup oldWhereConditionGroup = (WhereConditionGroup) getWhereConditionGroup().copy();
 			addWhereCriteria( "bean.id = " + id );
 			Boolean oldIsReturningActiveBeans = getIsReturningActiveBeans();
@@ -476,8 +478,8 @@ public class BeanDao {
 
 	public BeanDao setSelectCriteria( String newSelectCriteria ) {
 		getUnprocessedSelectCriteriaList().clear();
-		AqlParser aqlParser = AqlParser.getInstance( newSelectCriteria );
-		aqlParser.parseAllSelectCriteria(this);
+		getAqlParser().updateString( newSelectCriteria );
+		getAqlParser().parseAllSelectCriteria(this);
 		return this;
 	}
 
@@ -488,8 +490,8 @@ public class BeanDao {
 	}
 
 	public BeanDao addSelectCriteria( String newSelectCriteria ) {
-		AqlParser aqlParser = AqlParser.getInstance( newSelectCriteria );
-		aqlParser.parseAllSelectCriteria( this );
+		getAqlParser().updateString( newSelectCriteria );
+		getAqlParser().parseAllSelectCriteria( this );
 		return this;
 	}
 
@@ -687,9 +689,9 @@ public class BeanDao {
 	}
 
 	public BeanDao addWhereCriteria(String newWhereCriteria) {
-		AqlParser aqlParser = AqlParser.getInstance( newWhereCriteria );
+		getAqlParser().updateString( newWhereCriteria );
 		try {
-			getWhereConditionGroup().addWhereCondition( "AND", aqlParser.parseWhereCriteria( this ) );
+			getWhereConditionGroup().addWhereCondition( "AND", getAqlParser().parseWhereCriteria( this ) );
 		} catch( TokenStreamException tsEx ) {
 			ApplicationUtil.handleError( tsEx );
 		} catch( RecognitionException rEx ) {
@@ -981,5 +983,13 @@ public class BeanDao {
 
 	public void setGroupByCriteria(String groupByCriteria) {
 		this.groupByCriteria = groupByCriteria;
+	}
+
+	public AqlParser getAqlParser() {
+		return aqlParser;
+	}
+
+	public void setAqlParser(AqlParser aqlParser) {
+		this.aqlParser = aqlParser;
 	}
 }

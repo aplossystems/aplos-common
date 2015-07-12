@@ -362,7 +362,7 @@ public class PersistentClass extends PersistableTable {
 		AqlTableVariable aqlVariable = new AqlTableVariable( aqlTable, getDbPersistentClass().getDiscriminatorFieldInfo() );
 		aqlVariable.evaluateCriteriaTypes(processedBeanDao, false);
 
-		AqlParser aqlParser = AqlParser.getInstance( fieldValue );
+		AqlParser aqlParser = processedBeanDao.getBeanDao().getAqlParser().updateString( fieldValue );
 		try {
 			AqlVariable rightHandVariable = aqlParser.parseAqlVariable( processedBeanDao.getBeanDao(), null );
 			IndividualWhereCondition whereCondition = new IndividualWhereCondition( processedBeanDao.getBeanDao(), aqlVariable, "=", rightHandVariable );

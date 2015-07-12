@@ -21,7 +21,7 @@ import com.aplos.common.utils.JSFUtil;
 public class ClassAccessPage extends BackingPage {
 
 	private static final long serialVersionUID = 5159757601183238019L;
-	private List<TabClass> enabledClasses = new ArrayList<TabClass>();
+	private List<TabClass> enabledClasses;
 	private List<TabClass> availableClasses = new ArrayList<TabClass>();
 	private List<TabClass> selectedEnabledClasses = new ArrayList<TabClass>();
 	private List<TabClass> selectedAvailableClasses = new ArrayList<TabClass>();
@@ -29,43 +29,31 @@ public class ClassAccessPage extends BackingPage {
 	private StringBuffer attachedClassesText=null;;
 
 	public ClassAccessPage() {
+
+	}
+	
+	@Override
+	public boolean responsePageLoad() {
+		boolean continueLoad = super.responsePageLoad();
+
 		BeanDao classDao = new BeanDao(TabClass.class);
 
-		classDao.setWhereCriteria("bean.isPaidForAndAccessible=true");
-		classDao.addWhereCriteria("bean.backingPageClass!=null");
-		enabledClasses = classDao.setIsReturningActiveBeans(true).getAll();
-
-//		for (int i=enabledClasses.size()-1; i >= 0; i--) {
-//			try {
-//				BackingPage backingPage = enabledClasses.get(i).getBackingPageClass().newInstance();
-//				if (backingPage.isGlobalAccess()) {
-//					enabledClasses.remove(i);
-//				}
-//			} catch (Exception e) {
-//				//dont do anything, if one accidentally shows it isnt important
-//			}
-//		}
-
-		classDao.setWhereCriteria("bean.isPaidForAndAccessible!=true");
-		classDao.addWhereCriteria("bean.backingPageClass!=null");
-		availableClasses = classDao.setIsReturningActiveBeans(true).getAll();
-		for( int i = availableClasses.size() - 1; i >= 0; i-- ) {
-			if( availableClasses.get( i ).getBackingPageClass().getAnnotation( GlobalAccess.class ) != null ) {
-				availableClasses.remove( i );
+		if( enabledClasses == null ) {
+			classDao.setWhereCriteria("bean.isPaidForAndAccessible=true");
+			classDao.addWhereCriteria("bean.backingPageClass!=null");
+			enabledClasses = classDao.setIsReturningActiveBeans(true).getAll();
+		
+			classDao.setWhereCriteria("bean.isPaidForAndAccessible!=true");
+			classDao.addWhereCriteria("bean.backingPageClass!=null");
+			availableClasses = classDao.setIsReturningActiveBeans(true).getAll();
+			for( int i = availableClasses.size() - 1; i >= 0; i-- ) {
+				if( availableClasses.get( i ).getBackingPageClass().getAnnotation( GlobalAccess.class ) != null ) {
+					availableClasses.remove( i );
+				}
 			}
 		}
-
-//		for (int i=availableClasses.size()-1; i >= 0; i--) {
-//			try {
-//				BackingPage backingPage = availableClasses.get(i).getBackingPageClass().newInstance();
-//				if (backingPage.isGlobalAccess()) {
-//					availableClasses.remove(i);
-//				}
-//			} catch (Exception e) {
-//				//dont do anything, if one accidentally shows it isnt important
-//			}
-//		}
-
+		
+		return continueLoad;
 	}
 
 	public String getAttachedClassesText() {

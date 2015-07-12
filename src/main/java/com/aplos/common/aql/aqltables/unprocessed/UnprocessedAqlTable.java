@@ -16,6 +16,7 @@ public abstract class UnprocessedAqlTable {
 	private String alias;
 	private JoinType joinType = JoinType.LEFT_OUTER_JOIN;
 	private CaseAqlVariable caseSelectCriteria;
+	private boolean isAddingAllCriteria = false;
 	
 	public UnprocessedAqlTable() {
 	}
@@ -43,5 +44,13 @@ public abstract class UnprocessedAqlTable {
 
 	public void setCaseSelectCriteria(CaseAqlVariable caseSelectCriteria) {
 		this.caseSelectCriteria = caseSelectCriteria;
+	}
+
+	public boolean isAddingAllCriteria() {
+		return isAddingAllCriteria;
+	}
+
+	public void setAddingAllCriteria(boolean isAddingAllCriteria) {
+		this.isAddingAllCriteria = isAddingAllCriteria;
 	}
 }

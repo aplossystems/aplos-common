@@ -484,7 +484,7 @@ public class ProcessedBeanDao {
 	
 	public void evaluateOrderByCriteria() {
 		if( getOrderByCriteria().size() == 0 && !CommonUtil.isNullOrEmpty( getBeanDao().getOrderByCriteria() ) ) {
-			AqlParser aqlParser = AqlParser.getInstance( getBeanDao().getOrderByCriteria() );
+			AqlParser aqlParser = getBeanDao().getAqlParser().updateString( getBeanDao().getOrderByCriteria() );
 			setOrderByCriteria( aqlParser.parseOrderBy( getBeanDao() ) );
 		}
 		
@@ -501,7 +501,7 @@ public class ProcessedBeanDao {
 	
 	public void evaluateGroupByCriteria() {
 		if( getGroupByCriteria().size() == 0 && !CommonUtil.isNullOrEmpty( getBeanDao().getGroupByCriteria() ) ) {
-			AqlParser aqlParser = AqlParser.getInstance( getBeanDao().getGroupByCriteria() );
+			AqlParser aqlParser = getBeanDao().getAqlParser().updateString( getBeanDao().getGroupByCriteria() );
 			setGroupByCriteria( aqlParser.parseGroupBy( getBeanDao() ) );
 		}
 		
@@ -803,7 +803,7 @@ public class ProcessedBeanDao {
 			if( CommonUtil.isNullOrEmpty( getBeanDao().getOrderByCriteria() ) 
 					&& getBeanDao().isAddingDefaultOrderByToLists()
 					&& (getBeanDao().getMaxResults() == -1 || getBeanDao().getMaxResults() > 1 ) ) {
-				AqlParser aqlParser = AqlParser.getInstance( getBeanDao().getRootAlias() + ".id desc" );
+				AqlParser aqlParser = getBeanDao().getAqlParser().updateString( getBeanDao().getRootAlias() + ".id desc" );
 				setOrderByCriteria( aqlParser.parseOrderBy( getBeanDao() ) );
 			}
 			PreparedStatement preparedStatement = getAllPreparedStatement(conn);
