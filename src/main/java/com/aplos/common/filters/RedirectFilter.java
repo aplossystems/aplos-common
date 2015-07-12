@@ -99,14 +99,25 @@ public class RedirectFilter implements Filter {
 	
 			if( siteRedirect != null ) {
 				String oldUrl = request.getRequestURI();
-				StringBuffer urlBuf = new StringBuffer( oldUrl );
-				if( request.getQueryString() != null ) {
-					urlBuf.append( "?" ).append( request.getQueryString() );
+				StringBuffer urlBuf = new StringBuffer();
+				String destinationUrl = siteRedirect.getDestinationSiteUrl(); 
+				if( !destinationUrl.endsWith( "$" ) ) {
+					urlBuf.append( oldUrl );
+					if( request.getQueryString() != null ) {
+						urlBuf.append( "?" ).append( request.getQueryString() );
+					}
+				} else {
+					destinationUrl = destinationUrl.substring( 0, destinationUrl.length() - 1 );
 				}
-				if( !oldUrl.startsWith( "/" ) ) {
-					urlBuf.insert( 0, "/" );
+				if( !destinationUrl.startsWith( "http" ) ) {
+					if( !oldUrl.startsWith( "/" ) ) {
+						urlBuf.insert( 0, "/" );
+					}
+					urlBuf.insert( 0, destinationUrl );
+					urlBuf.insert( 0, "http://" );
+				} else {
+					urlBuf.insert( 0, destinationUrl );
 				}
-				urlBuf.insert( 0, siteRedirect.getDestinationSiteUrl() ).insert( 0, "http://" );
 				response.setContentType("text/html");
 				response.setDateHeader("Expires", 0);
 				response.setHeader("Location", urlBuf.toString() );
