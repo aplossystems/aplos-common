@@ -42,7 +42,7 @@ public void doFilter(ServletRequest req,
 //	    // the actual date when testing through a browser.
 //		cal.add( Calendar.DAY_OF_YEAR, 1 );
 //		SimpleDateFormat sdf = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss z" );
-	    response.addHeader( "Cache-Control", "max-age=" + (3600 * 31) + ", public" );
+	    response.addHeader( "cache-control", "public, max-age=" + (3600 * 24 * 31) );
   }
 
   @Override
