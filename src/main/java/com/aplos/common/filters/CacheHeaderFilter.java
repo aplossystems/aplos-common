@@ -1,11 +1,7 @@
 package com.aplos.common.filters;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.GregorianCalendar;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -39,15 +35,14 @@ public void doFilter(ServletRequest req,
   }
   
   public static void addResourceCacheHeaders( HttpServletResponse response ) {
-		Calendar cal = new GregorianCalendar();
-		cal.setTime( new Date() );
-		cal.add( Calendar.MONTH, 1 );
-	    // Add an extra day also just so it's easier to see that the expires is different
-	    // the actual date when testing through a browser.
-		cal.add( Calendar.DAY_OF_YEAR, 1 );
-		SimpleDateFormat sdf = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss z" );
-		response.addHeader( "Expires", sdf.format( cal.getTime() ) );
-	    response.addHeader( "Cache-Control", "public, max-age=" + (3600 * 31) );
+//		Calendar cal = new GregorianCalendar();
+//		cal.setTime( new Date() );
+//		cal.add( Calendar.MONTH, 1 );
+//	    // Add an extra day also just so it's easier to see that the expires is different
+//	    // the actual date when testing through a browser.
+//		cal.add( Calendar.DAY_OF_YEAR, 1 );
+//		SimpleDateFormat sdf = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss z" );
+	    response.addHeader( "Cache-Control", "max-age=" + (3600 * 31) + ", public" );
   }
 
   @Override

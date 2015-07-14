@@ -503,6 +503,8 @@ public abstract class AplosContextListener implements ServletContextListener {
 			
 			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.PROCESSED_RESOURCES_DIR.getDirectoryPath(true) ) );
 			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.COMBINED_RESOURCES.getDirectoryPath(true) ) );
+			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.MINIFIED_JS.getDirectoryPath(true) ) );
+			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.MINIFIED_CSS.getDirectoryPath(true) ) );
 			
 			if( getInitParameter("autoLogin") != null && getInitParameter("autoLogin").equals("1") ) {
 				setAutoLogin(true);

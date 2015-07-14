@@ -19,7 +19,9 @@ public enum CommonWorkingDirectory implements AplosWorkingDirectoryInter {
 	APLOS_EMAIL_FILE_DIR ( "aplosEmailFileDir/", false ),
 	POTENTIAL_COMPANY_CSV ("potential_companys/", false ),
 	BASIC_CONTACT_DETAILS_CSV ("basic_contact_details_csv/", false),
-	COMBINED_RESOURCES ("combinedResources/", false);
+	COMBINED_RESOURCES ("combinedResources/", false),
+	MINIFIED_JS ("minifiedJs/", false),
+	MINIFIED_CSS ("minifiedCss/", false);
 
 	String directoryPath;
 	boolean restricted;
