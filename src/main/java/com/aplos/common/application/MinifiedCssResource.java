@@ -32,18 +32,20 @@ public class MinifiedCssResource extends ResourceWrapper {
     
     @Override
     public InputStream getInputStream() throws IOException {
-    	if( minifyTask != null && minifyTask.isDone() ) {
+    	if( minifyTask != null && minifyTask.isDone()  ) {
     		try {
-    			return new FileInputStream( minifyTask.get() );
+    			File file = minifyTask.get();
+    			if( file != null ) {
+    				return new FileInputStream( file );
+    			}
     		} catch( ExecutionException eex ) {
     			ApplicationUtil.handleError( eex, false );
     		} catch( InterruptedException iex ) {
     			ApplicationUtil.handleError( iex, false );
     		}
-    	} else {
-        	return new FileInputStream( getProcessedFile(getResourceName(), super.getInputStream()) );	
-    	}
-    	return super.getInputStream();
+    	} 
+        
+    	return new FileInputStream( getProcessedFile(getResourceName(), super.getInputStream()) );
     }
     
     public synchronized static File getProcessedFile( String resourceName, InputStream resourceInputStream ) throws IOException {
