@@ -64,6 +64,7 @@ public class Website extends AplosBean {
 	private String googleAnalyticsId;
 	
 	private CombinedResourceStatus combinedResourceStatus = CombinedResourceStatus.DISABLED;
+	private CombinedResourceStatus deferScriptStatus = CombinedResourceStatus.DISABLED;
 	
 	private SslProtocolEnum defaultSslProtocolEnum = SslProtocolEnum.FORCE_HTTP;
 
@@ -190,6 +191,21 @@ public class Website extends AplosBean {
 
 	public void setName( String name ) {
 		this.name = name;
+	}
+	
+	public boolean isDeferringScript() {
+		if( getDeferScriptStatus() != null
+			&& !CombinedResourceStatus.DISABLED.equals( getDeferScriptStatus() ) ) {
+			
+			if( CombinedResourceStatus.FRONT_END_ONLY.equals( getDeferScriptStatus() ) && !JSFUtil.determineIsFrontEnd() ) {
+				return false;
+			} else if( CombinedResourceStatus.BACK_END_ONLY.equals( getDeferScriptStatus() ) && JSFUtil.determineIsFrontEnd() ) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void createDefaultWebsiteObjects( AplosContextListener aplosContextListener ) {}
@@ -548,5 +564,13 @@ public class Website extends AplosBean {
 
 	public void setCombinedResourceStatus(CombinedResourceStatus combinedResourceStatus) {
 		this.combinedResourceStatus = combinedResourceStatus;
+	}
+
+	public CombinedResourceStatus getDeferScriptStatus() {
+		return deferScriptStatus;
+	}
+
+	public void setDeferScriptStatus(CombinedResourceStatus deferScriptStatus) {
+		this.deferScriptStatus = deferScriptStatus;
 	}
 }

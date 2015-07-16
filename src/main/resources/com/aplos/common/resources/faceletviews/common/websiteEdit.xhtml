@@ -52,6 +52,15 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="aplos-label">Defer script status</td>
+				<td class="aplos-required-asterisk">*</td>
+				<td class="aplos-field">
+					<h:selectOneMenu label="defer script status" value="#{website.deferScriptStatus}" converter="selectItemsConverter">
+						<f:selectItems value="#{ backingPage.combinedResourceStatusSelectItems }" />				
+					</h:selectOneMenu>
+				</td>
+			</tr>
+			<tr>
 				<td class="aplos-label">Is SSL enabled?</td>
 				<td></td>
 				<td class="aplos-field"><h:selectBooleanCheckbox value="#{ website.sslEnabled }" /></td>
