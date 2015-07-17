@@ -44,6 +44,16 @@ public class CommonModule extends AplosModuleImpl {
 	}
 	
 	@Override
+	public void loadupClearCache() {
+		try {
+			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.PROCESSED_RESOURCES_DIR.getDirectoryPath(true) ) );
+			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.COMBINED_RESOURCES.getDirectoryPath(true) ) );
+		} catch( IOException ioex ) {
+			ApplicationUtil.handleError(ioex);
+		}
+	}
+	
+	@Override
 	public void clearCache() {
 		try {
 			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.PROCESSED_RESOURCES_DIR.getDirectoryPath(true) ) );

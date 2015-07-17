@@ -51,6 +51,7 @@ public interface AplosModule {
 	public void registerInboundSms( InboundSms inboundSms );
 	public void configureArchivableTables();
 	public void clearCache();
+	public void loadupClearCache();
 
 	//  This is to retrieve project specific objects from non-implementation projects
 	public SelectItem[] getCountrySelectItems();

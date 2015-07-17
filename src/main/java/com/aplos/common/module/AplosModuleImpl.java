@@ -46,6 +46,11 @@ public abstract class AplosModuleImpl implements AplosModule {
 	}
 	
 	@Override
+	public void loadupClearCache() {
+		
+	}
+	
+	@Override
 	public void clearCache() {	
 	}
 	

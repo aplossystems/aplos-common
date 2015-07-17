@@ -53,6 +53,12 @@ public class AplosModuleFilterer {
 		}
 	}
 
+	public void loadupClearCache() {
+		for( int i = 0, n = aplosModuleList.size(); i < n; i++ ) {
+			aplosModuleList.get( i ).loadupClearCache();
+		}
+	}
+
 	public boolean getFaceletEvent( String url ) {
 		Boolean tempResult;
 		for( int i = 0, n = aplosModuleList.size(); i < n; i++ ) {
