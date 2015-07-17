@@ -65,6 +65,7 @@ public class Website extends AplosBean {
 	
 	private CombinedResourceStatus combinedResourceStatus = CombinedResourceStatus.DISABLED;
 	private CombinedResourceStatus deferScriptStatus = CombinedResourceStatus.DISABLED;
+	private CombinedResourceStatus deferStyleStatus = CombinedResourceStatus.DISABLED;
 	
 	private SslProtocolEnum defaultSslProtocolEnum = SslProtocolEnum.FORCE_HTTP;
 
@@ -191,6 +192,21 @@ public class Website extends AplosBean {
 
 	public void setName( String name ) {
 		this.name = name;
+	}
+	
+	public boolean isDeferringStyle() {
+		if( getDeferStyleStatus() != null
+			&& !CombinedResourceStatus.DISABLED.equals( getDeferStyleStatus() ) ) {
+			
+			if( CombinedResourceStatus.FRONT_END_ONLY.equals( getDeferStyleStatus() ) && !JSFUtil.determineIsFrontEnd() ) {
+				return false;
+			} else if( CombinedResourceStatus.BACK_END_ONLY.equals( getDeferStyleStatus() ) && JSFUtil.determineIsFrontEnd() ) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean isDeferringScript() {
@@ -572,5 +588,13 @@ public class Website extends AplosBean {
 
 	public void setDeferScriptStatus(CombinedResourceStatus deferScriptStatus) {
 		this.deferScriptStatus = deferScriptStatus;
+	}
+
+	public CombinedResourceStatus getDeferStyleStatus() {
+		return deferStyleStatus;
+	}
+
+	public void setDeferStyleStatus(CombinedResourceStatus deferStyleStatus) {
+		this.deferStyleStatus = deferStyleStatus;
 	}
 }
