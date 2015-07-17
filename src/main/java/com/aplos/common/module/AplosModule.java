@@ -50,6 +50,7 @@ public interface AplosModule {
 	public String getJDynamiTeValue( String variableKey, AplosEmail aplosEmail, BulkEmailSource bulkEmailSource );
 	public void registerInboundSms( InboundSms inboundSms );
 	public void configureArchivableTables();
+	public void clearCache();
 
 	//  This is to retrieve project specific objects from non-implementation projects
 	public SelectItem[] getCountrySelectItems();

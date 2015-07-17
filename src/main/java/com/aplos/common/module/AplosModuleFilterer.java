@@ -1,5 +1,6 @@
 package com.aplos.common.module;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -11,10 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
+
 import com.aplos.common.beans.AplosAbstractBean;
 import com.aplos.common.beans.Currency;
 import com.aplos.common.beans.communication.AplosEmail;
 import com.aplos.common.beans.communication.InboundSms;
+import com.aplos.common.enums.CommonWorkingDirectory;
 import com.aplos.common.interfaces.BulkEmailSource;
 import com.aplos.common.listeners.AplosContextListener;
 import com.aplos.common.utils.JSFUtil;
@@ -40,6 +44,12 @@ public class AplosModuleFilterer {
 	public void registerInboundSms( InboundSms inboundSms ) {
 		for( int i = 0, n = aplosModuleList.size(); i < n; i++ ) {
 			aplosModuleList.get( i ).registerInboundSms( inboundSms );
+		}
+	}
+
+	public void clearCache() {
+		for( int i = 0, n = aplosModuleList.size(); i < n; i++ ) {
+			aplosModuleList.get( i ).clearCache();
 		}
 	}
 

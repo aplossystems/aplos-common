@@ -1,11 +1,15 @@
 package com.aplos.common.module;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.FileUtils;
 
 import com.aplos.common.aql.BeanDao;
 import com.aplos.common.beans.AplosBean;
@@ -36,6 +40,18 @@ public class CommonModule extends AplosModuleImpl {
 			return restrictedPaths;
 		} else {
 			return null;
+		}
+	}
+	
+	@Override
+	public void clearCache() {
+		try {
+			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.PROCESSED_RESOURCES_DIR.getDirectoryPath(true) ) );
+			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.COMBINED_RESOURCES.getDirectoryPath(true) ) );
+			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.MINIFIED_JS.getDirectoryPath(true) ) );
+			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.MINIFIED_CSS.getDirectoryPath(true) ) );
+		} catch( IOException ioex ) {
+			ApplicationUtil.handleError(ioex);
 		}
 	}
 	

@@ -46,6 +46,10 @@ public abstract class AplosModuleImpl implements AplosModule {
 	}
 	
 	@Override
+	public void clearCache() {	
+	}
+	
+	@Override
 	public void registerInboundSms(InboundSms inboundSms) {}
 	
 
