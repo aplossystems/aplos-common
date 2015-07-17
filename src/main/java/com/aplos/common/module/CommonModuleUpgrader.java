@@ -25,7 +25,8 @@ public class CommonModuleUpgrader extends ModuleUpgrader {
 	}
 	
 	private void upgradeTo1_10_1() {
-		setDefault( Website.class, "deferScripts", "1" );
+		setDefault( Website.class, "deferScriptStatus", "1" );
+		setDefault( Website.class, "deferStyleStatus", "1" );
 		setPatchVersionNumber(1);
 	}
 
