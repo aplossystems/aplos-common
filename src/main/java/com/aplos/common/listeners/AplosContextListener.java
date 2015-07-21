@@ -501,7 +501,8 @@ public abstract class AplosContextListener implements ServletContextListener {
 			ApplicationUtil.getJobScheduler().startScheduler(this);
 			getAplosThreads().add( ApplicationUtil.getJobScheduler() );
 			
-			ApplicationUtil.getAplosModuleFilterer().loadupClearCache();
+			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.PROCESSED_RESOURCES_DIR.getDirectoryPath(true) ) );
+			FileUtils.cleanDirectory( new File( CommonWorkingDirectory.COMBINED_RESOURCES.getDirectoryPath(true) ) );
 			
 			if( getInitParameter("autoLogin") != null && getInitParameter("autoLogin").equals("1") ) {
 				setAutoLogin(true);

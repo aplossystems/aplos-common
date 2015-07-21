@@ -176,6 +176,9 @@ public class CommonConfiguration extends ModuleConfiguration {
 	private String subHeaderColour = "#ededed";
 	private String subHeaderTextColour = "#beae94";
 
+	private String nexemoKey = null;
+	private String nexemoSecretKey = null;
+
 	@Transient
 	private Map<BulkMessageFinderEnum, BasicBulkMessageFinder> bulkMessageFinderMap = new HashMap<BulkMessageFinderEnum, BasicBulkMessageFinder>();
 
@@ -1151,5 +1154,21 @@ public class CommonConfiguration extends ModuleConfiguration {
 
 	public void setSubHeaderTextColour(String subHeaderTextColour) {
 		this.subHeaderTextColour = subHeaderTextColour;
+	}
+
+	public String getNexemoKey() {
+		return nexemoKey;
+	}
+
+	public void setNexemoKey(String nexemoKey) {
+		this.nexemoKey = nexemoKey;
+	}
+
+	public String getNexemoSecretKey() {
+		return nexemoSecretKey;
+	}
+
+	public void setNexemoSecretKey(String nexemoSecretKey) {
+		this.nexemoSecretKey = nexemoSecretKey;
 	}
 }

@@ -101,9 +101,6 @@ public class SmsMessage extends AplosBean implements EmailGenerator {
 	@Transient
 	private Set<BulkSmsSource> filteredSourceSet;
 	
-	private static final String nexemoKey = null;
-	private static final String nexemoSecretKey = null;
-	
 	
 	public SmsMessage() {
 	}
@@ -319,7 +316,8 @@ public class SmsMessage extends AplosBean implements EmailGenerator {
 	public int sendNexemo( List<String> processedToAddresses, BulkSmsSource bulkSmsSource ) throws IOException {
         NexmoSmsClient client = null;
         try {
-            client = new NexmoSmsClientSSL(nexemoKey, nexemoSecretKey);
+        	CommonConfiguration commonConfiguration = CommonConfiguration.getCommonConfiguration();
+            client = new NexmoSmsClientSSL(commonConfiguration.getNexemoKey(), commonConfiguration.getNexemoSecretKey());
         } catch (Exception e) {
         	ApplicationUtil.handleError(e);
         	return 0;
