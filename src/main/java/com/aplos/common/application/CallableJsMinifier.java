@@ -24,14 +24,16 @@ public class CallableJsMinifier implements Callable<File> {
 	public File call() throws Exception {
 		resourceName = resourceName.replace( "/", "_" );
 		File minifiedFile = new File(CommonWorkingDirectory.MINIFIED_JS.getDirectoryPath(true) + resourceName );
-		FileOutputStream fileOutputStream = new FileOutputStream(minifiedFile);
-		IOUtils.copy(resourceInputStream, fileOutputStream);
-		resourceInputStream.close();
-		fileOutputStream.close();
-		UglifyJs uglifyJs = new UglifyJs();
-		String[] args = new String[] { "-nc", minifiedFile.getAbsolutePath() };
-		String result = uglifyJs.uglify( args );
-		CommonUtil.writeStringToFile( result, minifiedFile, true, false );
+		if( !minifiedFile.exists() ) {
+			FileOutputStream fileOutputStream = new FileOutputStream(minifiedFile);
+			IOUtils.copy(resourceInputStream, fileOutputStream);
+			resourceInputStream.close();
+			fileOutputStream.close();
+			UglifyJs uglifyJs = new UglifyJs();
+			String[] args = new String[] { "-nc", minifiedFile.getAbsolutePath() };
+			String result = uglifyJs.uglify( args );
+			CommonUtil.writeStringToFile( result, minifiedFile, true, false );
+		}
 		return minifiedFile;
 	}
 }

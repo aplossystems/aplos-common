@@ -31,12 +31,13 @@ public class CallableCssMinifier implements Callable<File> {
 	    Writer out = null;
 	    File minifiedFile = null; 
 	    try {
-	        CssCompressor compressor = new CssCompressor(new InputStreamReader(new FileInputStream(processedFile)));
-
 			String processedResourceName = resourceName.replace( "/", "_" );
 			minifiedFile = new File(CommonWorkingDirectory.MINIFIED_CSS.getDirectoryPath(true) + processedResourceName );
-	        out = new OutputStreamWriter(new FileOutputStream(minifiedFile));
-	        compressor.compress(out, 0);
+			if( !minifiedFile.exists() ) {
+		        CssCompressor compressor = new CssCompressor(new InputStreamReader(new FileInputStream(processedFile)));
+		        out = new OutputStreamWriter(new FileOutputStream(minifiedFile));
+		        compressor.compress(out, 0);
+			}
 	    } finally {
 	        IOUtils.closeQuietly(out);
 	    }
