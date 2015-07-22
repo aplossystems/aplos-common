@@ -120,6 +120,7 @@ public abstract class AplosContextListener implements ServletContextListener {
     private AplosFaceletCache aplosFaceletCache;
     private Set<AplosThread> aplosThreads = new HashSet<AplosThread>();
     private boolean isErrorEmailActivated = true;
+    private String projectNameOverride;
 	
 	private Map<Thread,Map<String,Object>> threadSessionMap = new HashMap<Thread,Map<String,Object>>();
 	
@@ -354,6 +355,7 @@ public abstract class AplosContextListener implements ServletContextListener {
 			getContext().setAttribute(AplosScopedBindings.ACTIVE_USERS, new HashMap<String,HttpSession>() );
 			getContext().setAttribute(CommonUtil.getBinding( AplosModuleFilterer.class ), aplosModuleFilterer );
 			String serverUrl = getInitParameter("serverUrl" );
+			setProjectNameOverride( getInitParameter("projectNameOverride" ) );
 			getContext().setAttribute(AplosScopedBindings.SERVER_URL, serverUrl );
 			setServerUrl( serverUrl );
 			getContext().setAttribute(AplosScopedBindings.CONTEXT_LISTENER, this);
@@ -1316,6 +1318,14 @@ public abstract class AplosContextListener implements ServletContextListener {
 
 	public void setErrorEmailActivated(boolean isErrorEmailActivated) {
 		this.isErrorEmailActivated = isErrorEmailActivated;
+	}
+
+	public String getProjectNameOverride() {
+		return projectNameOverride;
+	}
+
+	public void setProjectNameOverride(String projectNameOverride) {
+		this.projectNameOverride = projectNameOverride;
 	}
 }
 

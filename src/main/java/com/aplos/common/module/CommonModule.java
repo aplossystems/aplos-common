@@ -67,7 +67,11 @@ public class CommonModule extends AplosModuleImpl {
 	
 	@Override
 	public AplosWorkingDirectoryInter[] createWorkingDirectoryEnums() {
-		CommonWorkingDirectory.createDirectories( ApplicationUtil.getAplosContextListener().getImplementationModule().getModuleName().replaceAll( " ", "" ) );
+		String projectName = ApplicationUtil.getAplosContextListener().getImplementationModule().getModuleName().replaceAll( " ", "" );
+		if( !CommonUtil.isNullOrEmpty( ApplicationUtil.getAplosContextListener().getProjectNameOverride() ) ) {
+			projectName = ApplicationUtil.getAplosContextListener().getProjectNameOverride();
+		}
+		CommonWorkingDirectory.createDirectories( projectName );
 		return CommonWorkingDirectory.values();
 	}
 
