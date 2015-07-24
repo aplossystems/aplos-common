@@ -35,7 +35,7 @@ public class MinifiedCssResource extends ResourceWrapper {
     	if( minifyTask != null && minifyTask.isDone()  ) {
     		try {
     			File file = minifyTask.get();
-    			if( file != null ) {
+    			if( file != null && file.exists() ) {
     				return new FileInputStream( file );
     			}
     		} catch( ExecutionException eex ) {

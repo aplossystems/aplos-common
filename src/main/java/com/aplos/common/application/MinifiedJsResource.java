@@ -27,7 +27,10 @@ public class MinifiedJsResource extends ResourceWrapper {
     public InputStream getInputStream() throws IOException {
     	if( minifyTask != null && minifyTask.isDone() ) {
     		try {
-    			return new FileInputStream( minifyTask.get() );
+    			File file = minifyTask.get();
+    			if( file != null && file.exists() ) {
+    				return new FileInputStream( file );
+    			}
     		} catch( ExecutionException eex ) {
     			ApplicationUtil.handleError( eex, false );
     		} catch( InterruptedException iex ) {
