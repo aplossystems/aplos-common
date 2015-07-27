@@ -30,3 +30,6 @@ Once you have these installed and ready to go then you can download all of these
 
 Once you have checked these out then you'll need to convert them to maven projects and run the maven install on them.  
 
+Video Tutorial
+-----------------------------------------
+We have created a video to guide you through the process of installing the prerequisites, downloading the code and creating your first project from the Aplos Archetype.  To watch this video please go to https://youtu.be/2tSHpR9Izok
