@@ -487,7 +487,7 @@ public class AplosEmailEditPage extends EditPage implements DataTableStateCreato
 			FileDetails fileDetails = new FileDetails();
 			fileDetails.setFileDetailsOwner(CommonWorkingDirectory.APLOS_EMAIL_FILE_DIR.getAplosWorkingDirectory());
 			fileDetails.updateFile(attachmentUploadedFile);
-			aplosEmail.getSaveableAttachments().add( fileDetails );
+			aplosEmail.addSaveableAttachment( fileDetails );
 			
 			for( SingleEmailRecord tempSingleEmailRecord : aplosEmail.getSingleEmailRecordMap().values() ) {
 				tempSingleEmailRecord.getSaveableAttachments().add( fileDetails );
@@ -646,7 +646,7 @@ public class AplosEmailEditPage extends EditPage implements DataTableStateCreato
 		AplosEmail aplosEmail = resolveAssociatedBean();
 		for (int i = getAdditionalAttachments().size() -1; i >= 0; i--) {
 			if (!aplosEmail.getSaveableAttachments().contains(getAdditionalAttachments().get(i))) {
-				aplosEmail.getSaveableAttachments().add( getAdditionalAttachments().get(i) );
+				aplosEmail.addSaveableAttachment( getAdditionalAttachments().get(i) );
 			}
 			getAdditionalAttachments().remove(i);
 		}

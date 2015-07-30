@@ -509,6 +509,13 @@ public class AplosEmail extends AplosSiteBean {
 		}
 	}
 	
+	public void addSaveableAttachment( FileDetails fileDetails ) {
+		getSaveableAttachments().add( fileDetails );
+		for( SingleEmailRecord tempSingleEmailRecord : getSingleEmailRecordMap().values() ) {
+			tempSingleEmailRecord.getSaveableAttachments().add( fileDetails );
+		}
+	}
+	
 	public List<EmailFolder> createEmailFolderListFromSet() {
 		return new ArrayList<EmailFolder>( getEmailFolders() );
 	}

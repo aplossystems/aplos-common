@@ -458,7 +458,7 @@ public class IncomingEmailJob implements EmailManagerJob {
 					fileDetails.setFilename( fileName );
 					fileDetails.saveDetails();
 					saveFile(fileDetails.getFile(), part);
-					aplosEmail.getSaveableAttachments().add(fileDetails);
+					aplosEmail.addSaveableAttachment(fileDetails);
 				}
 			} // end of multipart for loop
 		} catch( ParseException parseException ) {

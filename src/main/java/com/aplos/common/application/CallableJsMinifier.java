@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.aplos.common.compression.uglify.UglifyJs;
 import com.aplos.common.enums.CommonWorkingDirectory;
+import com.aplos.common.utils.ApplicationUtil;
 import com.aplos.common.utils.CommonUtil;
 
 public class CallableJsMinifier implements Callable<File> {
@@ -33,11 +34,13 @@ public class CallableJsMinifier implements Callable<File> {
 				UglifyJs uglifyJs = new UglifyJs();
 				String[] args = new String[] { "-nc", minifiedFile.getAbsolutePath() };
 				String result = uglifyJs.uglify( args );
-				CommonUtil.writeStringToFile( result, minifiedFile, true, false );
+				if( result != null ) {
+					CommonUtil.writeStringToFile( result, minifiedFile, true, false );
+				} else {
+					ApplicationUtil.handleError( new Exception( "Failed to minify file: " + minifiedFile.getAbsolutePath() ) );
+				}
 			} catch( Exception ex ) {
 				throw ex;
-			} finally {
-				minifiedFile.delete();
 			}
 		}
 		return minifiedFile;
