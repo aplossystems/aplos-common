@@ -430,6 +430,10 @@ public class AplosEmailEditPage extends EditPage implements DataTableStateCreato
 	
 	public void removeEmailFolder() {
 		EmailFolder emailFolder = (EmailFolder) JSFUtil.getRequest().getAttribute( "selectedSource" );
+		removeEmailFolder(emailFolder);
+	}
+	
+	public void removeEmailFolder(EmailFolder emailFolder) {
 		getAplosEmail().getEmailFolders().remove( emailFolder );
 	}
 

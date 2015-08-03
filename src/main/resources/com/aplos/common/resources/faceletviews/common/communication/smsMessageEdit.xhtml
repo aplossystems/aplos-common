@@ -52,7 +52,7 @@
 				<tr>
 					<td class="aplos-label">Template</td>
 					<td class="aplos-field">
-						<h:selectOneMenu value="#{ smsMessage.smsTemplate }" converter="aplosAbstractBeanConverter">
+						<h:selectOneMenu id="templateMenu" value="#{ smsMessage.smsTemplate }" converter="aplosAbstractBeanConverter">
 							<f:selectItems value="#{ backingPage.smsTemplateSelectItems }" />  
 							<p:ajax process="@form" event="change" update="smsTemplateContentPnl" />
 						</h:selectOneMenu>
@@ -85,7 +85,7 @@
 					<tr>
 						<td class="aplos-label">Sms source</td>
 						<td class="aplos-field">
-							<h:outputText label="Sms source" value="#{ smsMessage.firstSmsSourceFullName }" style="width:400px" />
+							<h:outputText id="smsSourceTxt" label="Sms source" value="#{ smsMessage.firstSmsSourceFullName }" style="width:400px" />
 						</td>
 					</tr>
 				</table>
@@ -96,7 +96,7 @@
 						<tr>
 							<td class="aplos-label">Recipient type</td>
 							<td class="aplos-field">
-								<h:selectOneMenu value="#{ backingPage.selectedSmsFinder }" converter="aplosAbstractBeanConverter" rendered="#{ !backingPage.messageSent }">
+								<h:selectOneMenu id="recipientType" value="#{ backingPage.selectedSmsFinder }" converter="aplosAbstractBeanConverter" rendered="#{ !backingPage.messageSent }">
 									<f:selectItems value="#{ backingPage.bulkMessageSourceGroupFilterSelectItems }" />
 									<f:ajax event="change" render="sendToPanel" />
 								</h:selectOneMenu>
@@ -108,10 +108,10 @@
 						<td class="aplos-field" style="width:500px">
 							<h:panelGroup id="sendToPanel">
 								<h:panelGroup layout="block" style="line-height:14px;">
-									<ui:repeat value="#{smsMessage.messageSourceList}" var="recipient">
+									<ui:repeat id="messageSourceRepeat" value="#{smsMessage.messageSourceList}" var="recipient">
 										<span class="tag aplos-recipient"> 
-											<h:outputText value="#{recipient.sourceUniqueDisplayName}" />
-											<h:commandLink action="#{backingPage.removeSmsRecipient}" rendered="#{ !backingPage.messageSent }">
+											<h:outputText id="messageSourceName" value="#{recipient.sourceUniqueDisplayName}" />
+											<h:commandLink id="removeMessageSourceLink" action="#{backingPage.removeSmsRecipient}" rendered="#{ !backingPage.messageSent }">
 												<img src="#{request.contextPath}/images/action_delete.gif" />
 												<p:ajax process="@form" event="click" listener="#{backingPage.removeSmsRecipient}" oncomplete="updateCounts()" update="sendToPanel" />  
 											</h:commandLink> 
@@ -142,20 +142,20 @@
 					<tr>
 						<td class="aplos-label">Send from</td>
 						<td class="aplos-field" style="width:400px">
-							<h:selectOneMenu label="Send from" value="#{ backingPage.selectedBulkMessageSourceGroup }" converter="aplosAbstractBeanConverter">
+							<h:selectOneMenu id="sendFromMenu" label="Send from" value="#{ backingPage.selectedBulkMessageSourceGroup }" converter="aplosAbstractBeanConverter">
 								<f:selectItems value="#{ backingPage.bulkMessageSourceGroupSelectItems }" />
 							</h:selectOneMenu>
-							<aploscc:ajaxButton value="Add" action="#{ backingPage.addSelectedBulkMessageSourceGroup() }" rendered="#{ !backingPage.messageSent }" />
+							<aploscc:ajaxButton id="addFromBtn" value="Add" action="#{ backingPage.addSelectedBulkMessageSourceGroup() }" rendered="#{ !backingPage.messageSent }" />
 						</td>
 					</tr>
 					<tr>
 						<td class="aplos-label"></td>
 						<td class="aplos-field">
 							<aplos:panel layout="block" id="recipientsDiv">
-								<ui:repeat value="#{smsMessage.messageSourceList}" var="selectedSource">
+								<ui:repeat id="messageSourceRepeat2" value="#{smsMessage.messageSourceList}" var="selectedSource">
 									<span class="tag aplos-recipient"> 
-										<h:outputText value="#{selectedSource.sourceUniqueDisplayName}" />
-										<h:commandButton value="Delete" image="/images/action_delete.gif" rendered="#{ !backingPage.messageSent }" >
+										<h:outputText id="messageSourceName" value="#{selectedSource.sourceUniqueDisplayName}" />
+										<h:commandButton id="deleteMessageSourceLink" value="Delete" image="/images/action_delete.gif" rendered="#{ !backingPage.messageSent }" >
 								   			<p:ajax event="click" listener="#{backingPage.removeBulkMessageSourceGroup}" update="recipientsDiv"/>
 								   		</h:commandButton>
 									</span>
@@ -170,7 +170,7 @@
 					<tr>
 						<td class="aplos-label">Template</td>
 						<td class="aplos-field">
-							<h:outputText value="#{ smsMessage.smsTemplate.name }" />
+							<h:outputText id="templateTxt" value="#{ smsMessage.smsTemplate.name }" />
 						</td>
 					</tr>
 				</table>
@@ -179,7 +179,7 @@
 				<tr>
 					<td class="aplos-label">Send from</td>
 					<td class="aplos-field">
-						<h:inputText value="#{ smsMessage.sourceNumber }" disabled="#{ backingPage.messageSent }" />
+						<h:inputText id="sendFromTxt" value="#{ smsMessage.sourceNumber }" disabled="#{ backingPage.messageSent }" />
 					</td>
 				</tr>
 			</table>
@@ -189,7 +189,7 @@
 						<tr>
 							<td class="aplos-label">Prefix</td>
 							<td class="aplos-field">
-								<h:outputText value="#{ backingPage.prefix }" />
+								<h:outputText id="prefixTxt" value="#{ backingPage.prefix }" />
 							</td>
 							<td style="vertical-align:bottom;"></td>
 						</tr>
@@ -202,7 +202,7 @@
 						<td class="aplos-label">Message</td>
 						<td class="aplos-field">
 							<h:inputTextarea id="messageBox" value="#{backingPage.smsMessage.content}" style="width:480px;height:100px;" onkeyup="checkEncoding(charsPerMessage);" disabled="#{ backingPage.messageSent }"/>
-							<aplos:ajaxJsFunction name="checkEncoding" action="#{backingPage.checkEncoding}" process="@form" oncomplete="updateCounts()" delay="400">
+							<aplos:ajaxJsFunction id="checkEncoding" name="checkEncoding" action="#{backingPage.checkEncoding}" process="@form" oncomplete="updateCounts()" delay="400">
 								<aplos:param name="charsPerMessage" assignTo="#{backingPage.charsPerMessage}" readAndWrite="true" />
 							</aplos:ajaxJsFunction>
 						</td>
@@ -225,7 +225,7 @@
 						<tr>
 							<td class="aplos-label">Suffix</td>
 							<td class="aplos-field">
-								<h:outputText value="#{ backingPage.suffix }" />
+								<h:outputText id="suffixTxt" value="#{ backingPage.suffix }" />
 							</td>
 							<td style="vertical-align:bottom;"></td>
 						</tr>
@@ -237,7 +237,7 @@
 					<tr>
 						<td class="aplos-label">Sent date</td>
 						<td class="aplos-field">
-							<h:outputText value="#{ smsMessage.sentDateStdStr }" />
+							<h:outputText id="sentDateTxt" value="#{ smsMessage.sentDateStdStr }" />
 						</td>
 					</tr>
 				</table>
@@ -251,7 +251,7 @@
 				<aploscc:ajaxButton id="sendMessageButton" action="#{backingPage.sendSMS}" value="Send" rendered="#{ backingPage.templateSelected and !backingPage.messageSent }" />
 				<aploscc:ajaxButton id="nextScreenButton" action="#{backingPage.smsTemplateSelected}" value="Next" rendered="#{ !backingPage.templateSelected }"/>
 				
-				<aploscc:quickView textOnly="true" text="Info" button="true" bean="#{backingPage.resolveAssociatedBean()}" view="audit" title="Audit Information" />
+				<aploscc:quickView id="infoQuickview" textOnly="true" text="Info" button="true" bean="#{backingPage.resolveAssociatedBean()}" view="audit" title="Audit Information" />
 			</f:facet>
 		</aploscc:controlPanel>
 	</ui:define>

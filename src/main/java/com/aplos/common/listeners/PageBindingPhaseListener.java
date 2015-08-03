@@ -175,6 +175,7 @@ public class PageBindingPhaseListener implements PhaseListener {
 						requestCommandParameters = new ArrayList<String>();	
 						JSFUtil.addToTabSession( AplosScopedBindings.REQUEST_COMMAND_LIST, requestCommandParameters );
 					}
+					StringBuffer commandBuf = new StringBuffer( "[");
 					while( enumeration.hasMoreElements() ) {
 						tempRequestKey = enumeration.nextElement();
 						if( !CommonUtil.isNullOrEmpty( JSFUtil.getRequestParameter( tempRequestKey ) )
@@ -182,9 +183,14 @@ public class PageBindingPhaseListener implements PhaseListener {
 							if( JSFUtil.isAjaxRequest() ) {
 								tempRequestKey = "(" + JSFUtil.getRequest().getParameter( "javax.faces.source" ) + ") " + tempRequestKey; 
 							}
-							requestCommandParameters.add( tempRequestKey );
+							if( commandBuf.length() > 1 ) {
+								commandBuf.append( "," );
+							}
+							commandBuf.append( tempRequestKey );
 						}
 					}
+					commandBuf.append("] ").append( FormatUtil.formatTime( new Date() ) );
+					requestCommandParameters.add( commandBuf.toString() );
 				}
 
 //				String sendRedirect = JSFUtil.getRequest().getParameter(
