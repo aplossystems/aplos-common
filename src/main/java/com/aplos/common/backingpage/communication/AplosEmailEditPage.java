@@ -116,10 +116,7 @@ public class AplosEmailEditPage extends EditPage implements DataTableStateCreato
 				setFromAddressStr( getAplosEmail().determineDefaultFromAddress() );
 			}
 		}
-		/*
-		 * This is done for the html iframe content
-		 */
-		JSFUtil.addToFlashViewMap( "aplosEmailEditPage", this);
+		
 		createAttachmentSelectItems();
 		createEmailFrameSelectItems();
 		createBulkMessageSourceGroupSelectItems();

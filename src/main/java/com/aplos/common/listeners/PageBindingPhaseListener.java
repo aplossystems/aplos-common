@@ -189,6 +189,9 @@ public class PageBindingPhaseListener implements PhaseListener {
 							commandBuf.append( tempRequestKey );
 						}
 					}
+					if( commandBuf.length() == 1 ) {
+						commandBuf.append( JSFUtil.getRequest().getMethod() );
+					}
 					commandBuf.append("] ").append( FormatUtil.formatTime( new Date() ) );
 					requestCommandParameters.add( commandBuf.toString() );
 				}
