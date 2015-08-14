@@ -190,7 +190,7 @@ public class PageBindingPhaseListener implements PhaseListener {
 						}
 					}
 					if( commandBuf.length() == 1 ) {
-						commandBuf.append( JSFUtil.getRequest().getMethod() );
+						commandBuf.append( JSFUtil.getRequest().getRequestURI() );
 					}
 					commandBuf.append("] ").append( FormatUtil.formatTime( new Date() ) );
 					requestCommandParameters.add( commandBuf.toString() );

@@ -986,13 +986,14 @@ public class AplosEmailEditPage extends EditPage implements DataTableStateCreato
 		}
 		
 		@Override
-		public void selectBean(boolean redirect) {
+		public AplosBean selectBean(boolean redirect) {
 			SingleEmailRecord singleEmailRecord = (SingleEmailRecord) JSFUtil.getRequest().getAttribute( "tableBean" );
 			if( singleEmailRecord.getBulkEmailSource() instanceof AplosBean ) {
 				((AplosBean) singleEmailRecord.getBulkEmailSource()).redirectToEditPage();
 			} else {
 				JSFUtil.addMessage("Cannot redirect to edit page");
 			}
+			return null;
 		}
 	}
 }

@@ -34,6 +34,7 @@ public class BasicContact extends AplosBean implements BulkEmailSource, BulkSmsS
 	@RemoveEmpty
 	@Cascade({CascadeType.ALL})
 	private Address address;
+	private String position;
 	@ManyToMany
 	private Set<BasicContactTag> basicContactTags = new HashSet<BasicContactTag>();
 	
@@ -178,6 +179,14 @@ public class BasicContact extends AplosBean implements BulkEmailSource, BulkSmsS
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
 	}
 
 	public Set<BasicContactTag> getBasicContactTags() {

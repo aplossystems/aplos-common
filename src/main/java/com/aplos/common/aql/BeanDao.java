@@ -140,18 +140,19 @@ public class BeanDao {
 		setRootTable( aqlBeanDao.getRootTable() );
 //		setEntity( AqlBeanDao.getEntity() );
 //		setBinding( AqlBeanDao.getBinding() );
-//		setWhereCriteria( AqlBeanDao.getWhereCriteria() );
-//		setSearchCriteria( AqlBeanDao.getSearchCriteria() );
+		WhereConditionGroup whereConditionGroup = (WhereConditionGroup) aqlBeanDao.getWhereConditionGroup().copy();
+		whereConditionGroup.setAqlBeanDao(this);
+		setWhereConditionGroup( whereConditionGroup );
+		setUnprocessedSearchList( aqlBeanDao.getUnprocessedSearchList() );
 		setUnprocessedAqlTables( new HashMap<String,UnprocessedAqlTable>( getUnprocessedAqlTables() ) );
-//		setCountFields( AqlBeanDao.getCountFields() );
-//		setJoinFetch( AqlBeanDao.getJoinFetch() );
+		setCountFields( aqlBeanDao.getCountFields() );
 		setGroupByCriteria( aqlBeanDao.getGroupByCriteria() );
-//		setOrderBy( AqlBeanDao.getOrderBy() );
+		setOrderByCriteria( aqlBeanDao.getOrderByCriteria() );
 		setMaxResults( aqlBeanDao.getMaxResults() );
 		setUnprocessedFilterList( aqlBeanDao.getUnprocessedFilterList() );
 //		setSessionRetriever( AqlBeanDao.getSessionRetriever() );
 //		setAliasesForOptimisation( AqlBeanDao.getAliasesForOptimisation() );
-		setIsReturningActiveBeans( getIsReturningActiveBeans() );
+		setIsReturningActiveBeans( aqlBeanDao.getIsReturningActiveBeans() );
 
 		return this;
 	}

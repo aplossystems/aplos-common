@@ -629,7 +629,7 @@ public class ProcessedBeanDao {
 			hql.append( " WHERE " +  getProcessedWhereConditionGroup().generateCondition() );
 		}
 
-		if( getGroupByCriteria().size() > 1 ) {
+		if( getGroupByCriteria().size() > 0 ) {
 			hql.append( " GROUP BY " );
 			for( int i = 0, n = getGroupByCriteria().size(); i < n; i++ ) {
 				hql.append( getGroupByCriteria().get( i ).getSqlPath(true) );

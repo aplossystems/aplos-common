@@ -431,17 +431,17 @@ public class AplosLazyDataModel extends LazyDataModel<Object> {
 	}
 
 
-	public void selectBean() {
-		selectBean( true );
+	public AplosBean selectBean() {
+		return selectBean( true );
 	}
 
-	public void selectBean( boolean redirect ) {
+	public AplosBean selectBean( boolean redirect ) {
 		AplosBean aplosBean = getAplosBean();
-		selectBean( determineBeanClass( aplosBean ), aplosBean.getId(), redirect );
+		return selectBean( determineBeanClass( aplosBean ), aplosBean.getId(), redirect );
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void selectBean( Class<? extends AplosBean> loadBeanClass, Long loadBeanId, boolean redirect ) {
+	public AplosBean selectBean( Class<? extends AplosBean> loadBeanClass, Long loadBeanId, boolean redirect ) {
 		AplosBean loadedAplosBean = new BeanDao( loadBeanClass ).get( loadBeanId );
 		loadedAplosBean = (AplosBean) loadedAplosBean.getSaveableBean();
 		loadedAplosBean.addToScope(BackingPage.determineScope( getBeanDao().getListPageClass(), getBeanDao().getBeanClass() ) );
@@ -453,6 +453,7 @@ public class AplosLazyDataModel extends LazyDataModel<Object> {
 				JSFUtil.addMessageForError("Edit page class is null. Cannot Redirect.");
 			}
 		}
+		return loadedAplosBean;
 	}
 	
 	protected void setDeleteBean( AplosBean deleteBean ) {

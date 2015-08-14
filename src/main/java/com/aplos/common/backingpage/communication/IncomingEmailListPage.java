@@ -75,13 +75,13 @@ public class IncomingEmailListPage extends AplosEmailListPage {
 		@Override
 		
 		
-		public void selectBean() {
-			super.selectBean();
-			AplosEmail aplosEmail = getAssociatedBeanFromScope();
+		public AplosEmail selectBean() {
+			AplosEmail aplosEmail = (AplosEmail) super.selectBean();
 			if( aplosEmail.getEmailReadDate() == null ) {
 				aplosEmail.setEmailReadDate( new Date() );
 				aplosEmail.saveDetails();
 			}
+			return aplosEmail;
 		}
 		
 		@Override
