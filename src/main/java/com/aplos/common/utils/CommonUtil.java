@@ -119,6 +119,15 @@ public class CommonUtil {
     	return null;
     }
     
+    public static boolean dateMatch( Calendar cal1, Calendar cal2 ) {
+    	if( cal1.get( Calendar.YEAR ) == cal2.get( Calendar.YEAR ) 
+    			&& cal1.get( Calendar.MONTH ) == cal2.get( Calendar.MONTH )
+    			&& cal1.get( Calendar.DAY_OF_YEAR ) == cal2.get( Calendar.DAY_OF_YEAR ) ) {
+			return true;
+		} 
+    	return false;
+    }
+    
     public static IOException  close(Closeable resource) {
 		if (resource != null) {
 			try {

@@ -71,6 +71,8 @@ import com.aplos.common.module.DatabaseLoader;
 import com.aplos.common.module.ModuleConfiguration;
 import com.aplos.common.persistence.PersistentApplication;
 import com.aplos.common.persistence.PersistentClass;
+import com.aplos.common.push.AtmosphereFrameworkUtil;
+import com.aplos.common.push.CalendarTest;
 import com.aplos.common.tabpanels.SiteTabPanel;
 import com.aplos.common.tabpanels.TabClass;
 import com.aplos.common.templates.PrintTemplate;
@@ -133,7 +135,6 @@ public abstract class AplosContextListener implements ServletContextListener {
 	}
 	
 	public void systemUserLoggedIn( SystemUser systemUser ) {
-		
 	}
 	
 	public void systemUserLoggedOut( SystemUser systemUser ) {}

@@ -18,6 +18,7 @@ import org.atmosphere.cpr.MetaBroadcaster;
 import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
 import org.atmosphere.util.IOUtils;
 
+import com.aplos.common.push.AtmosphereFrameworkUtil;
 import com.aplos.common.push.CalendarTest;
 import com.aplos.common.push.EventBusFactory;
 import com.aplos.common.utils.ApplicationUtil;
@@ -57,13 +58,6 @@ public class PushServlet extends AtmosphereServlet {
         framework().interceptor(new AtmosphereResourceLifecycleInterceptor())
                 .interceptor(new TrackMessageSizeInterceptor());
         
-        try {
-	        Class<? extends Broadcaster> b = (Class<? extends Broadcaster>) IOUtils.loadClass(this.getClass(), framework().getDefaultBroadcasterClassName());
-	
-	        framework().addAtmosphereHandler("/aplospush/calendar", new CalendarTest(), broadcaster(framework(), b, "/aplospush/calendar"), new ArrayList<AtmosphereInterceptor>());
-        } catch( Exception ex ) {
-        	ApplicationUtil.handleError( ex );
-        }
 
         framework().getAtmosphereConfig().startupHook(new AtmosphereConfig.StartupHook() {
             public void started(AtmosphereFramework framework) {
@@ -73,7 +67,8 @@ public class PushServlet extends AtmosphereServlet {
 
         framework().init(sc);
         
-
+        new AtmosphereFrameworkUtil( framework() );
+        
         EventBusFactory f = new EventBusFactory(framework().getAtmosphereConfig().metaBroadcaster());
         framework().getAtmosphereConfig().properties().put("eventBus", f.getDefault());
 
