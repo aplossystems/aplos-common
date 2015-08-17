@@ -31,6 +31,18 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>${jsf.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-impl</artifactId>
+			<version>${jsf.version}</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-catalina</artifactId>
 			<version>7.0.23</version>
@@ -89,6 +101,12 @@
             <artifactId>aspectjrt</artifactId>
             <scope>compile</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.atmosphere</groupId>
+            <artifactId>atmosphere-runtime</artifactId>
+            <version>2.4.0-RC3</version>
+        </dependency>
 		
 		<dependency>
 		    <groupId>com.mortennobel</groupId>
@@ -142,18 +160,6 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>${jsf.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-impl</artifactId>
-			<version>${jsf.version}</version>
 		</dependency>
 
 		<dependency>
@@ -398,53 +404,6 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-	            <plugin>
-	                <groupId>org.codehaus.mojo</groupId>
-	                <artifactId>aspectj-maven-plugin</artifactId>
-	                <version>1.5</version>
-	                <configuration>
-	                    <complianceLevel>1.6</complianceLevel>
-	                    <includes>
-	                        <include>**/*.java</include>
-	                        <include>**/*.aj</include>
-	                    </includes>
-	                </configuration>
-	                <executions>
-	                    <execution>
-	                        <id>compile_with_aspectj</id>
-	                        <goals>
-	                            <goal>compile</goal>
-	                        </goals>
-	                    </execution>
-	                    <execution>
-	                        <id>test-compile_with_aspectj</id>
-	                        <goals>
-	                            <goal>test-compile</goal>
-	                        </goals>
-	                    </execution>
-	                </executions>
-	                <dependencies>
-	                    <dependency>
-	                        <groupId>org.aspectj</groupId>
-	                        <artifactId>aspectjrt</artifactId>
-	                        <version>${aspectj.runtime.version}</version>
-	                    </dependency>
-	                    <dependency>
-	                        <groupId>org.aspectj</groupId>
-	                        <artifactId>aspectjtools</artifactId>
-	                        <version>${aspectj.runtime.version}</version>
-	                    </dependency>
-	                </dependencies>
-	            </plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
-					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
-					</configuration>
-				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
