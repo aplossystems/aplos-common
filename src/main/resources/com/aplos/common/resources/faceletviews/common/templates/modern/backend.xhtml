@@ -31,6 +31,7 @@
 <div class="bodyWrapper">
 	<aploscc:windowIdUpdater />
 	<h:form id="editForm">
+		<aplos:socket onMessage="handlePushMessage" channel="/user/#{currentUser.id}" widgetVar='calendarPush' rendered="#{ currentUser.loggedIn and commonConfiguration.includingPush }"/>
 		<aplos:ajaxJsFunction name="registerScan" action="#{backingPage.registerScan}" >
 			<aplos:param name="scannedStr" assignTo="#{backingPage.scannedStr}" readAndWrite="true" />
 		</aplos:ajaxJsFunction>

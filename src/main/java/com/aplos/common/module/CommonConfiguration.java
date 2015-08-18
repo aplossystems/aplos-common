@@ -126,6 +126,8 @@ public class CommonConfiguration extends ModuleConfiguration {
 	private boolean isUsingEmailBodyDivider = false;
 	private boolean isSelectableRowsAllowed = true;
 	
+	private boolean isIncludingPush = false;
+	
 	@OneToOne(fetch=FetchType.LAZY)
 	private UserLevelUtil userLevelUtil;
 	
@@ -1170,5 +1172,13 @@ public class CommonConfiguration extends ModuleConfiguration {
 
 	public void setNexemoSecretKey(String nexemoSecretKey) {
 		this.nexemoSecretKey = nexemoSecretKey;
+	}
+
+	public boolean isIncludingPush() {
+		return isIncludingPush;
+	}
+
+	public void setIncludingPush(boolean isIncludingPush) {
+		this.isIncludingPush = isIncludingPush;
 	}
 }
