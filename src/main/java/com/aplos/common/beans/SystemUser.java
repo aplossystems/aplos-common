@@ -141,6 +141,8 @@ public class SystemUser extends AplosBean implements SaltHolder<SystemUser>, For
 	private Date lastLoggedInDate;
 	private Date lastPageAccessDate;
 	private String lastPageAccessed;
+	
+	private String assignedColour;
 
 	public SystemUser() {}
 	
@@ -577,6 +579,14 @@ public class SystemUser extends AplosBean implements SaltHolder<SystemUser>, For
 		} else {
 			this.title = title;
 		}
+	}
+
+	public String getAssignedColour() {
+		return assignedColour;
+	}
+
+	public void setAssignedColour(String assignedColour) {
+		this.assignedColour = assignedColour;
 	}
 
 	public String getResetCode() {

@@ -852,6 +852,10 @@ public abstract class AplosContextListener implements ServletContextListener {
 		handleError( JSFUtil.getRequest(), JSFUtil.getResponse(), throwable, getCurrentUrlsHtml(),true );
 	}
 
+	public void handleError(Throwable throwable, String message ) {
+		handleError( JSFUtil.getRequest(), JSFUtil.getResponse(), throwable, getCurrentUrlsHtml() + "<br/>" + message,true );
+	}
+
 	public void handleError(Throwable throwable, boolean redirectToIssueReported) {
 		handleError( JSFUtil.getRequest(), JSFUtil.getResponse(), throwable, getCurrentUrlsHtml(), redirectToIssueReported );
 	}

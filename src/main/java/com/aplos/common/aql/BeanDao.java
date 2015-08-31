@@ -238,6 +238,13 @@ public class BeanDao {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public <T extends AplosAbstractBean> T getSaveable(long id) {
+		T aplosAbstractBean = get( id, null, true );
+		aplosAbstractBean = aplosAbstractBean.getSaveableBean();
+		return aplosAbstractBean;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <T extends AplosAbstractBean> T get(long id) {
 		return get( id, null, true );
 	}

@@ -308,10 +308,7 @@ public abstract class AplosEmailListPage extends ListPage {
 			aplosEmail.updateEmailTemplate( CommonEmailTemplateEnum.GENERAL_EMAIL );
 		}
 		
-		public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters, boolean clearWhereCriteria, boolean clearSelectJoin ) {
-			if( clearWhereCriteria ) {
-				getBeanDao().clearWhereCriteria();
-			}
+		public void addWhereCriteria(String sortField, Map<String, String> filters) {
 			if( getMailServerSettings() != null ) {
 				getBeanDao().addWhereCriteria( "bean.mailServerSettings.id = " + getMailServerSettings().getId() );
 			}
@@ -321,9 +318,6 @@ public abstract class AplosEmailListPage extends ListPage {
 					emailTemplateCondition.append( " OR bean.emailTemplate.id = " ).append( getOtherEmailTemplates().get( i ).getId() );
 				}
 				getBeanDao().addWhereCriteria( emailTemplateCondition.toString() );
-			}
-			if( clearSelectJoin ) {
-//				getBeanDao().setSelectJoin( "" );
 			}
 			if( getEmailFolders().size() > 0 ) {
 				getBeanDao().addQueryTable( "efl", "bean.emailFolders");
@@ -343,6 +337,13 @@ public abstract class AplosEmailListPage extends ListPage {
 			if( filters.containsKey( "toAddress:toAddress" ) || (sortField != null && sortField.contains( "'toAddress:toAddress'" ) ) ) {
 				getBeanDao().addQueryTable( "toAddress", "bean.toAddresses");
 			}
+		}
+		
+		public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters, boolean clearWhereCriteria, boolean clearSelectJoin ) {
+			if( clearWhereCriteria ) {
+				getBeanDao().clearWhereCriteria();
+			}
+			addWhereCriteria(sortField, filters);
 			return super.load(first, pageSize, sortField, sortOrder, filters);
 		}
 		

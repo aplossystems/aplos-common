@@ -74,7 +74,7 @@ public class PushServlet extends AtmosphereServlet {
 
 
         if (framework().getAtmosphereHandlers().size() == 0) {
-            ApplicationUtil.handleError( new Exception("No Annotated class using @PushEndpoint found. Push will not work.") );
+            ApplicationUtil.handleError( new Exception("No Annotated class using @PushEndpoint found. Push will not work."), false );
         }
         return this;
     }

@@ -62,8 +62,8 @@ public class IncomingEmailListPage extends AplosEmailListPage {
 		private static final long serialVersionUID = 8682282018989288781L;
 		private List<EmailFilterStatus> emailFilterStatusesToShow = new ArrayList<EmailFilterStatus>();
 
-		public IncomingAplosEmailLdm(DataTableState dataTableState, BeanDao aqlBeanDao) {
-			super(dataTableState, aqlBeanDao);
+		public IncomingAplosEmailLdm(DataTableState dataTableState, BeanDao beanDao) {
+			super(dataTableState, beanDao);
 		}
 		
 		@Override
@@ -85,9 +85,8 @@ public class IncomingEmailListPage extends AplosEmailListPage {
 		}
 		
 		@Override
-		public List<Object> load(int first, int pageSize, String sortField,
-				SortOrder sortOrder, Map<String, String> filters) {
-			getBeanDao().clearWhereCriteria();
+		public void addWhereCriteria(String sortField, Map<String, String> filters) {
+			super.addWhereCriteria(sortField, filters);
 			getBeanDao().addWhereCriteria( "bean.emailType = " + EmailType.INCOMING.ordinal() );
 			
 			if( getEmailFilterStatusesToShow().size() > 0 ) {
@@ -97,7 +96,6 @@ public class IncomingEmailListPage extends AplosEmailListPage {
 				}
 				getBeanDao().addWhereCriteria( StringUtils.join( statusWhereCrierias, " OR " ) );
 			}
-			return super.load(first, pageSize, sortField, sortOrder, filters, false, true);
 		}
 
 		public List<EmailFilterStatus> getEmailFilterStatusesToShow() {

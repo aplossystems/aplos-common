@@ -276,13 +276,16 @@ public class FieldInfo {
 			}
 			strBuf.append( ")" );
 		}
-		if( !getApplicationType().isNullable() ) {
+		
+		boolean isNotNull = !getApplicationType().isNullable() || isPrimaryKey(); 
+		
+		if( isNotNull ) {
 			strBuf.append( " NOT NULL" );  
 		}
 		
 		if( getApplicationType().getDefaultValue() != null ) {
 			strBuf.append( " DEFAULT " + getApplicationType().getDefaultValue() );
-		} else if( getApplicationType().isNullable() ) {
+		} else if( !isNotNull ) {
 			strBuf.append( " DEFAULT NULL" );
 		}
 		

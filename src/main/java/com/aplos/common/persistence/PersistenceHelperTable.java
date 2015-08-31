@@ -117,7 +117,7 @@ public class PersistenceHelperTable {
 							try {
 								unmatchedFieldInfos.get( j ).alterColumn( persistableTable, getName(), conn );
 							} catch( SQLException sqlEx ) {
-								ApplicationUtil.handleError(sqlEx);
+								ApplicationUtil.handleError(sqlEx, "Editing table " + persistableTable.determineSqlTableName() + " and field " + getName() );
 							}
 //							ApplicationUtil.getAplosContextListener().handleError( new Exception( "Column names match but other settings are off for " + getName() + " " + persistedColumns[ i ].split( " " )[ 0 ] ), false );
 							unmatchedFieldInfos.remove( j );

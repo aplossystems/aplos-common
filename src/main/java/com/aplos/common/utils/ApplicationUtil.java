@@ -113,6 +113,10 @@ public class ApplicationUtil {
 		getAplosContextListener().handleError( ex );
 	}
 	
+	public static void handleError( Throwable ex, String message ) {
+		getAplosContextListener().handleError( ex, message );
+	}
+	
 	public static void handleError( Throwable ex, boolean redirect ) {
 		getAplosContextListener().handleError( ex, redirect );
 	}
@@ -190,7 +194,7 @@ public class ApplicationUtil {
 			executeSql(sql, conn);
 			statementExecuted = true;
 		} catch( SQLException sqlEx ) {
-			getAplosContextListener().handleError(sqlEx);
+			getAplosContextListener().handleError(sqlEx, sql);
 		} finally {
 			closeConnection( conn );
 		}
