@@ -199,7 +199,7 @@ public class TabPanelEditPage extends EditPage {
 	public SelectItem[] getFullTabListSelectItemBeans() {
 		TabPanel dtab = resolveAssociatedBean();
 		if (dtab != null && dtab.getFullTabList().size() > 0) {
-			return AplosAbstractBean.getSelectItemBeans(dtab.getFullTabList());
+			return AplosAbstractBean.getSelectItemBeans(new ArrayList<MenuTab>(dtab.getFullTabList()));
 		} else {
 			return new SelectItem[] { new SelectItem(null,"No Tabs Available") };
 		}

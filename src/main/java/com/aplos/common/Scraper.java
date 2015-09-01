@@ -2,6 +2,7 @@ package com.aplos.common;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -22,6 +23,8 @@ public class Scraper {
 	private String keepAlive;
 	private String connection;
 	private String host;
+	private boolean isUsingGZipInputStream = true;
+	private boolean isInstanceFollowRedirects = true;
 	
 	public Scraper() {
 	
@@ -56,9 +59,12 @@ public class Scraper {
 		conn.setRequestProperty( "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		conn.setRequestProperty( "Accept-Encoding", "gzip, deflate");
 		conn.setRequestProperty( "Accept-Language", "en-gb,en;q=0.5");
-//		conn.setInstanceFollowRedirects(false);
-//
+		conn.setInstanceFollowRedirects(isInstanceFollowRedirects());
+
+		byte[] postDataBytes = null; 
 		if( postData != null ) {
+			postDataBytes = postData.getBytes();
+			conn.setRequestProperty("Content-Length", String.valueOf( postDataBytes.length ) );
 			conn.setRequestMethod("POST");
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
@@ -72,7 +78,7 @@ public class Scraper {
 		if( postData != null ) {
 			OutputStream ostream = conn.getOutputStream();
 			postData += "\r";
-			ostream.write(postData.getBytes());
+			ostream.write(postDataBytes);
 			ostream.flush();
 			ostream.close();
 		}
@@ -86,9 +92,12 @@ public class Scraper {
 		openConnection( url, null );
 	}
 
-	private void getSource(HttpURLConnection conn) throws IOException {
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(conn.getInputStream())));
+	private void getSource(HttpURLConnection conn) throws IOException {		
+		InputStream inputStream = conn.getInputStream();
+		if( isUsingGZipInputStream() ) {
+			inputStream = new GZIPInputStream(inputStream);
+		}
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		String line;
 		setPageSource("");
 		while ((line = reader.readLine()) != null) {
@@ -218,6 +227,22 @@ public class Scraper {
 
 	public void setHost(String host) {
 		this.host = host;
+	}
+
+	public boolean isUsingGZipInputStream() {
+		return isUsingGZipInputStream;
+	}
+
+	public void setUsingGZipInputStream(boolean isUsingGZipInputStream) {
+		this.isUsingGZipInputStream = isUsingGZipInputStream;
+	}
+
+	public boolean isInstanceFollowRedirects() {
+		return isInstanceFollowRedirects;
+	}
+
+	public void setInstanceFollowRedirects(boolean isInstanceFollowRedirects) {
+		this.isInstanceFollowRedirects = isInstanceFollowRedirects;
 	}
 
 }
