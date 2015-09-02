@@ -140,7 +140,7 @@ public class BeanDao {
 		setRootTable( aqlBeanDao.getRootTable() );
 //		setEntity( AqlBeanDao.getEntity() );
 //		setBinding( AqlBeanDao.getBinding() );
-		WhereConditionGroup whereConditionGroup = (WhereConditionGroup) aqlBeanDao.getWhereConditionGroup().copy();
+		WhereConditionGroup whereConditionGroup = (WhereConditionGroup) aqlBeanDao.getWhereConditionGroup().copy(this);
 		whereConditionGroup.setAqlBeanDao(this);
 		setWhereConditionGroup( whereConditionGroup );
 		setUnprocessedSearchList( aqlBeanDao.getUnprocessedSearchList() );
@@ -265,7 +265,7 @@ public class BeanDao {
 			if( cachedBean != null ) {
 				aplosAbstractBean = cachedBean;
 			}
-			WhereConditionGroup oldWhereConditionGroup = (WhereConditionGroup) getWhereConditionGroup().copy();
+			WhereConditionGroup oldWhereConditionGroup = (WhereConditionGroup) getWhereConditionGroup().copy(this);
 			addWhereCriteria( "bean.id = " + id );
 			Boolean oldIsReturningActiveBeans = getIsReturningActiveBeans();
 			setIsReturningActiveBeans( null );

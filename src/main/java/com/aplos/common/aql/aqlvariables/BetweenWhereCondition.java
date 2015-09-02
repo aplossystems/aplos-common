@@ -60,8 +60,8 @@ public class BetweenWhereCondition implements WhereCondition {
 	}
 	
 	@Override
-	public WhereCondition copy() {
-		return new BetweenWhereCondition(getBeanDao(),getLeftHandVariable(),getFirstDateExpression(),getSecondDateExpression());
+	public WhereCondition copy(BeanDao beanDao) {
+		return new BetweenWhereCondition(beanDao,getLeftHandVariable(),getFirstDateExpression(),getSecondDateExpression());
 	}
 
 	public AqlVariable getSecondDateExpression() {

@@ -251,7 +251,7 @@ public class ProcessedBeanDao {
 			for( AqlTableAbstract tempAqlTable : getQueryTables().values() ) {
 				tempAqlTable.getNonDbFieldInfos().clear();
 			}
-			setProcessedWhereConditionGroup(new WhereConditionGroup(getBeanDao().getWhereConditionGroup()));
+			setProcessedWhereConditionGroup(new WhereConditionGroup(getBeanDao().getWhereConditionGroup(), getBeanDao()));
 			getBeanDao().preCriteriaEvaluation(this);
 			
 			setRootTable( getBeanDao().createRootTable(this) );

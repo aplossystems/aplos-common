@@ -14,25 +14,25 @@ public class WhereConditionGroup implements WhereCondition {
 	public WhereConditionGroup() {
 	}
 	
-	public WhereConditionGroup(WhereConditionGroup sourceWhereConditionGroup) {
-		copy(sourceWhereConditionGroup);
+	public WhereConditionGroup(WhereConditionGroup sourceWhereConditionGroup, BeanDao beanDao) {
+		copy(sourceWhereConditionGroup, beanDao);
 	}
 	
 	public WhereConditionGroup( BeanDao aqlBeanDao ) {
 		setAqlBeanDao(aqlBeanDao);
 	}
 	
-	public void copy(WhereConditionGroup sourceWhereConditionGroup) {
+	public void copy(WhereConditionGroup sourceWhereConditionGroup, BeanDao beanDao) {
 		for( int i = 0, n = sourceWhereConditionGroup.getWhereConditions().size(); i < n; i++ ) {
-			getWhereConditions().add( sourceWhereConditionGroup.getWhereConditions().get( i ).copy() );
+			getWhereConditions().add( sourceWhereConditionGroup.getWhereConditions().get( i ).copy(beanDao) );
 		}
 		setLogicalOperators( new ArrayList<String>( sourceWhereConditionGroup.getLogicalOperators() ) );
 		setAqlBeanDao( sourceWhereConditionGroup.getAqlBeanDao() );
 	}
 	
 	@Override
-	public WhereCondition copy() {
-		return new WhereConditionGroup( this );
+	public WhereCondition copy(BeanDao beanDao) {
+		return new WhereConditionGroup( this, beanDao );
 	}
 	
 	@Override

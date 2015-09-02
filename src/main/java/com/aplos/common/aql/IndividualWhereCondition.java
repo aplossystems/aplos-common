@@ -17,8 +17,8 @@ public class IndividualWhereCondition implements WhereCondition {
 		setBeanDao(beanDao);
 	}
 	
-	public IndividualWhereCondition( IndividualWhereCondition sourceCondition ) {
-		copy( sourceCondition ); 
+	public IndividualWhereCondition( IndividualWhereCondition sourceCondition, BeanDao beanDao ) {
+		copy( sourceCondition, beanDao ); 
 	}
 	
 	public IndividualWhereCondition( BeanDao beanDao, AqlVariable leftHandVariable, String conditionalOperator, AqlVariable rightHandVariable ) {
@@ -28,16 +28,16 @@ public class IndividualWhereCondition implements WhereCondition {
 		this.setRightHandVariable(rightHandVariable);
 	}
 	
-	public void copy( IndividualWhereCondition sourceCondition ) {
-		setBeanDao( sourceCondition.getBeanDao() );
+	public void copy( IndividualWhereCondition sourceCondition, BeanDao beanDao ) {
+		setBeanDao( beanDao );
 		setLeftHandVariable( sourceCondition.getLeftHandVariable() );
 		setRightHandVariable( sourceCondition.getRightHandVariable() );
 		setConditionalOperator( sourceCondition.getConditionalOperator() );
 	}
 	
 	@Override
-	public WhereCondition copy() {
-		return new IndividualWhereCondition(this);
+	public WhereCondition copy(BeanDao beanDao) {
+		return new IndividualWhereCondition(this, beanDao);
 	}
 	
 	@Override
