@@ -566,6 +566,16 @@ public class BeanDao {
     	return myList;
 	}
 	
+	public List getAll( boolean isSaveable ) {
+    	List myList = getAll();
+    	if( isSaveable ) {
+	    	for( int i = 0, n = myList.size(); i < n; i++ ) {
+	    		myList.set( i, ((AplosAbstractBean) myList.get( i )).getSaveableBean() );
+	    	}
+    	}
+    	return myList;
+	}
+	
 	public List getResultFields() {
 		Connection conn = null;
 		List resultList = null;

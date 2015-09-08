@@ -1330,15 +1330,15 @@ public class AplosEmail extends AplosSiteBean {
 	
 	@Override
 	public void hardDelete() {
+		ApplicationUtil.executeSql( "UPDATE AplosEmail SET originalEmail_id = null WHERE originalEmail_id = " + getId() );
+		ApplicationUtil.executeSql( "UPDATE AplosEmail SET repliedEmail_id = null WHERE repliedEmail_id = " + getId() );
+		ApplicationUtil.executeSql( "UPDATE AplosEmail SET forwardedEmail_id = null WHERE forwardedEmail_id = " + getId() );
 		if( EmailType.INCOMING.equals( getEmailType() ) ) {
 			for( int i = 0, n = saveableAttachments.size(); i < n; i++ ) {
 				saveableAttachments.get( i ).hardDelete();
 			}
 			EmailManager.addEmailForDeletion( this );
 		}
-		ApplicationUtil.executeSql( "UPDATE AplosEmail SET originalEmail_id = null WHERE originalEmail_id = " + getId() );
-		ApplicationUtil.executeSql( "UPDATE AplosEmail SET originalEmail_id = null WHERE repliedEmail_id = " + getId() );
-		ApplicationUtil.executeSql( "UPDATE AplosEmail SET originalEmail_id = null WHERE forwardedEmail_id = " + getId() );
 		super.hardDelete();
 	}
 

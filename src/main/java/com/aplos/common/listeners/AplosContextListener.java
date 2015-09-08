@@ -861,6 +861,7 @@ public abstract class AplosContextListener implements ServletContextListener {
 	}
 
 	public void handleError( HttpServletRequest httpRequest, HttpServletResponse httpResponse, Throwable throwable, String errorUrls, boolean redirectToIssueReported ) {
+		logger.error( errorUrls );
 		logger.error( "Exception caught in request filter", throwable );
 
 		boolean isExternalContextRedirect = false;

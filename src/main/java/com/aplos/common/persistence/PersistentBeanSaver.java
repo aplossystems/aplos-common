@@ -33,6 +33,7 @@ import com.aplos.common.persistence.fieldinfo.PersistentMapKeyFieldInfo;
 import com.aplos.common.persistence.type.applicationtype.EnumIntType;
 import com.aplos.common.persistence.type.applicationtype.EnumStringType;
 import com.aplos.common.utils.ApplicationUtil;
+import com.aplos.common.utils.CommonUtil;
 
 public class PersistentBeanSaver {
 	private static Logger logger = Logger.getLogger( PersistentBeanSaver.class );
@@ -535,8 +536,10 @@ public class PersistentBeanSaver {
 	private static void updatePersistentCollectionFieldInfo( AplosAbstractBean aplosAbstractBean, FieldInfo tempFieldInfo, PersistentClass dbPersistentClass ) throws IllegalAccessException, SQLException {
 		PersistentCollectionFieldInfo collectionFieldInfo = (PersistentCollectionFieldInfo) tempFieldInfo;
 		JunctionTable collectionTable = collectionFieldInfo.getJunctionTable( dbPersistentClass.getTableClass() );
-		String sqlTableName = collectionTable.getSqlTableName();
-		
+		if( collectionTable == null ) {
+			ApplicationUtil.handleError( new Exception( "Cannot find collection table " + collectionFieldInfo.getSqlName() + " for " + dbPersistentClass.determineSqlTableName() + " tableKeys " + CommonUtil.join( collectionFieldInfo.getJunctionTables().keySet() ) ) );
+		}
+		String sqlTableName = collectionTable.getSqlTableName();		
 
 		String propertyName = tempFieldInfo.getField().getName();
 

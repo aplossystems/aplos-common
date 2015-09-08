@@ -220,7 +220,7 @@ public class FieldInfo {
 		strBuf.append( getApplicationType().getMySqlType().getDbTypeClass().getSimpleName() ).append( " " );
 		strBuf.append( getApplicationType().getColumnSize() ).append( " " );
 		strBuf.append( getApplicationType().getDecimalDigits() ).append( " " );
-		strBuf.append( getApplicationType().isNullable() ).append( " " );
+		strBuf.append( getApplicationType().isNullable() && !isPrimaryKey() ).append( " " );
 		strBuf.append( getApplicationType().getDefaultValue() ).append( " " );
 		return strBuf.toString();
 	}
@@ -277,15 +277,15 @@ public class FieldInfo {
 			strBuf.append( ")" );
 		}
 		
-		boolean isNotNull = !getApplicationType().isNullable() || isPrimaryKey(); 
+		boolean isNullable = getApplicationType().isNullable() && !isPrimaryKey(); 
 		
-		if( isNotNull ) {
+		if( !isNullable ) {
 			strBuf.append( " NOT NULL" );  
 		}
 		
 		if( getApplicationType().getDefaultValue() != null ) {
 			strBuf.append( " DEFAULT " + getApplicationType().getDefaultValue() );
-		} else if( !isNotNull ) {
+		} else if( isNullable ) {
 			strBuf.append( " DEFAULT NULL" );
 		}
 		

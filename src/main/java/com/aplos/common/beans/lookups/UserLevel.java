@@ -109,7 +109,12 @@ public class UserLevel extends LookupBean {
 				}
 			}
 			// Even if the tab isn't visible may want to allow access from other routes than the menu system
-			if (tab.getSubTabPanel() != null && ( tab.getTabAction() == null || tab.getSubTabPanel().isLinkedToBean() ) ) {
+			/*
+			 * I'm not sure why it wasn't adding visibility to all subTabPanels but it was stopping tab panels from being
+			 * viewed in the project tab panels of NetEase
+			 */
+//			if (tab.getSubTabPanel() != null && (tab.getTabAction() == null || tab.getSubTabPanel().isLinkedToBean() ) ) {
+			if (tab.getSubTabPanel() != null ) {
 				addAccessUrlsFromTabPanel(tab.getSubTabPanel(), accessPages);
 			}
 		}

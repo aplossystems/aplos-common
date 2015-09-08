@@ -121,7 +121,7 @@ public class PersistentApplication {
 			
 			persistentClass.checkDynamicMetaValues( getDynamicMetaValuesMap() );
 		}
-
+		logger.debug( "Initialising persistent classes" );
 		for( PersistentClass persistentClass : getPersistentClassMap().values() ) {
 			if( persistentClass.isIncludeInApp() && persistentClass.isDbTable() ) {
 				getPersistableTableBySqlNameMap().put( persistentClass.determineSqlTableName().toLowerCase(), persistentClass );

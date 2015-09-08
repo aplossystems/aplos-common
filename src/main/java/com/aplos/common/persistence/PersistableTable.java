@@ -88,6 +88,7 @@ public abstract class PersistableTable {
 	
 	public void initialiseDbInformation() {
 		if( !isDbInitialised ) {
+			logger.debug( determineSqlTableName() + " initialise information");
 			createDbFieldInfoLists();
 			setFullDbFieldInfos( new ArrayList<FieldInfo>( getFullDbFieldInfoMap().values() ) );
 			createForeignKeysAndIndexes();
