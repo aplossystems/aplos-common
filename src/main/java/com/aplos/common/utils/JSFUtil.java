@@ -363,6 +363,11 @@ public class JSFUtil {
 			}
 		}
 
+		// Check the Web Content directory
+		if (url == null ) {
+			url = JSFUtil.class.getResource("/../../" + resourceName);
+		}
+
 		// Then check the aplos modules
 		if (url == null) {
 			List<AplosModule> aplosModuleList = ApplicationUtil.getAplosContextListener().getAplosModuleList();
@@ -413,11 +418,6 @@ public class JSFUtil {
 								("/com/aplos/core/" + resourcePath + resourceName)
 										.replace("//", "/"));
 			}
-		}
-
-		// Check the Web Content directory
-		if (url == null ) {
-			url = JSFUtil.class.getResource("/../../" + resourceName);
 		}
 		
 		return url;
