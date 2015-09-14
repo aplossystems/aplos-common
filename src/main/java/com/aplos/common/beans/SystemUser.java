@@ -139,6 +139,7 @@ public class SystemUser extends AplosBean implements SaltHolder<SystemUser>, For
 	private String encryptionSalt;
 	
 	private Date lastLoggedInDate;
+	private Date previousLastLoggedInDate;
 	private Date lastPageAccessDate;
 	private String lastPageAccessed;
 	
@@ -368,7 +369,7 @@ public class SystemUser extends AplosBean implements SaltHolder<SystemUser>, For
 		if( getFailedLoginAttempts() != 0 ) {
 			saveableSystemUser.resetFailedLoginAttempts();
 		}
-		saveableSystemUser.setLastLoggedInDate( new Date() );
+		saveableSystemUser.updateLastLoggedInDate( new Date() );
 		saveableSystemUser.saveDetails();
 		JSFUtil.getSessionTemp().setMaxInactiveInterval( ApplicationUtil.getAplosContextListener().getMaxInactiveInterval() );
 		JSFUtil.setLoggedInUser( this );
@@ -907,6 +908,11 @@ public class SystemUser extends AplosBean implements SaltHolder<SystemUser>, For
 		this.lastLoggedInDate = lastLoggedInDate;
 	}
 
+	public void updateLastLoggedInDate(Date lastLoggedInDate) {
+		setPreviousLastLoggedInDate( getLastLoggedInDate() );
+		setLastLoggedInDate( lastLoggedInDate );
+	}
+
 	public Date getLastPageAccessDate() {
 		return lastPageAccessDate;
 	}
@@ -921,5 +927,13 @@ public class SystemUser extends AplosBean implements SaltHolder<SystemUser>, For
 
 	public void setLastPageAccessed(String lastPageAccessed) {
 		this.lastPageAccessed = lastPageAccessed;
+	}
+
+	public Date getPreviousLastLoggedInDate() {
+		return previousLastLoggedInDate;
+	}
+
+	public void setPreviousLastLoggedInDate(Date previousLastLoggedInDate) {
+		this.previousLastLoggedInDate = previousLastLoggedInDate;
 	}
 }
