@@ -94,7 +94,7 @@ public class PersistentBeanSaver {
 			for( PersistentClass tempPersistentClass : persistentClassList ) {
 				List<String> updateCommands = new ArrayList<String>();
 				for( int i = 0, n = cascadeMemories.size(); i < n; i++ ) {
-					if( cascadeMemories.get( i ).getFieldInfo().getParentPersistentClass().equals( tempPersistentClass ) ) {
+					if( cascadeMemories.get( i ).getFieldInfo().getParentPersistentClass().getDbPersistentClass().equals( tempPersistentClass ) ) {
 						updateCommands.add( cascadeMemories.get( i ).reinstateBean(aplosAbstractBean) );
 					}
 				}

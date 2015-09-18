@@ -173,10 +173,11 @@ public class CommonConfiguration extends ModuleConfiguration {
 	@ManyToOne
 	private EmailFrame outerEmailFrame;
 	
-	private String highlightColour = "#f37c36";
-	private String mainHeaderColour = "#beae94";
-	private String subHeaderColour = "#ededed";
-	private String subHeaderTextColour = "#beae94";
+	private String highlightColour = "f37c36";
+	private String mainHeaderColour = "beae94";
+	private String mainTextColour = "beae94";
+	private String subHeaderColour = "ededed";
+	private String subHeaderTextColour = "beae94";
 
 	private String nexemoKey = null;
 	private String nexemoSecretKey = null;
@@ -1116,6 +1117,10 @@ public class CommonConfiguration extends ModuleConfiguration {
 		return highlightColour;
 	}
 
+	public String getHighlightColourWithHash() {
+		return "#" + highlightColour;
+	}
+
 	public void setHighlightColour(String highlightColour) {
 		this.highlightColour = highlightColour;
 	}
@@ -1124,12 +1129,20 @@ public class CommonConfiguration extends ModuleConfiguration {
 		return mainHeaderColour;
 	}
 
+	public String getMainHeaderColourWithHash() {
+		return "#" + mainHeaderColour;
+	}
+
 	public void setMainHeaderColour(String mainHeaderColour) {
 		this.mainHeaderColour = mainHeaderColour;
 	}
 
 	public String getSubHeaderColour() {
 		return subHeaderColour;
+	}
+
+	public String getSubHeaderColourWithHash() {
+		return "#" + subHeaderColour;
 	}
 
 	public void setSubHeaderColour(String subHeaderColour) {
@@ -1152,6 +1165,10 @@ public class CommonConfiguration extends ModuleConfiguration {
 
 	public String getSubHeaderTextColour() {
 		return subHeaderTextColour;
+	}
+
+	public String getSubHeaderTextColourWithHash() {
+		return "#" + subHeaderTextColour;
 	}
 
 	public void setSubHeaderTextColour(String subHeaderTextColour) {
@@ -1180,5 +1197,17 @@ public class CommonConfiguration extends ModuleConfiguration {
 
 	public void setIncludingPush(boolean isIncludingPush) {
 		this.isIncludingPush = isIncludingPush;
+	}
+
+	public String getMainTextColourWithHash() {
+		return "#" + mainTextColour;
+	}
+
+	public String getMainTextColour() {
+		return mainTextColour;
+	}
+
+	public void setMainTextColour(String mainTextColour) {
+		this.mainTextColour = mainTextColour;
 	}
 }

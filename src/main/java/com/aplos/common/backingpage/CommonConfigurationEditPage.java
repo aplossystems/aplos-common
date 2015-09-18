@@ -18,6 +18,7 @@ import com.aplos.common.beans.Currency;
 import com.aplos.common.beans.SystemUser;
 import com.aplos.common.beans.VatType;
 import com.aplos.common.beans.communication.EmailFrame;
+import com.aplos.common.beans.communication.MailServerSettings;
 import com.aplos.common.beans.lookups.UserLevel;
 import com.aplos.common.enums.PaymentGateway;
 import com.aplos.common.module.CommonConfiguration;
@@ -55,6 +56,12 @@ public class CommonConfigurationEditPage extends EditPage {
 		super.responsePageLoad();
 		JSFUtil.resolveVariable( "commonConfiguration" );
 		CommonConfiguration commonConfiguration = resolveAssociatedEditBean();
+		if( commonConfiguration.getMailServerSettings().isReadOnly() && commonConfiguration.getMailServerSettings() != null ) {
+			commonConfiguration.setMailServerSettings( (MailServerSettings) commonConfiguration.getMailServerSettings().getSaveableBean() ); 
+		}
+		if( commonConfiguration.getErrorMailServerSettings().isReadOnly() && commonConfiguration.getErrorMailServerSettings() != null ) {
+			commonConfiguration.setErrorMailServerSettings( (MailServerSettings) commonConfiguration.getErrorMailServerSettings().getSaveableBean() ); 
+		}
 		defaultLanguageStr = commonConfiguration.getDefaultLanguageStr();
 		isInternationalizedApplication = commonConfiguration.getIsInternationalizedApplication();
 		return true;
