@@ -16,11 +16,15 @@ import cb.jdynamite.JDynamiTe;
 
 import com.aplos.common.AplosUrl;
 import com.aplos.common.AplosUrl.Protocol;
+import com.aplos.common.annotations.persistence.Cascade;
+import com.aplos.common.annotations.persistence.CascadeType;
 import com.aplos.common.annotations.persistence.Column;
 import com.aplos.common.annotations.persistence.DiscriminatorColumn;
 import com.aplos.common.annotations.persistence.Entity;
+import com.aplos.common.annotations.persistence.FetchType;
 import com.aplos.common.annotations.persistence.Inheritance;
 import com.aplos.common.annotations.persistence.InheritanceType;
+import com.aplos.common.annotations.persistence.ManyToMany;
 import com.aplos.common.annotations.persistence.ManyToOne;
 import com.aplos.common.annotations.persistence.Transient;
 import com.aplos.common.appconstants.AplosAppConstants;
@@ -61,6 +65,11 @@ public abstract class EmailTemplate<EMAIL_SOURCE extends BulkEmailSource, CONTEN
 	private EmailFrame outerEmailFrame;
 	
 	private EmailFromAddressType emailFromAddressType = EmailFromAddressType.CURRENT_USER;
+	
+	@ManyToMany(fetch=FetchType.LAZY)
+	@Cascade({CascadeType.ALL})
+	private List<FileDetails> saveableAttachments = new ArrayList<FileDetails>();
+	
 	private String otherFromAddress;
 	
 	private boolean isUsingDefaultContent = true;
@@ -80,6 +89,17 @@ public abstract class EmailTemplate<EMAIL_SOURCE extends BulkEmailSource, CONTEN
 	
 	public String getEditorCssUrl( AplosEmail aplosEmail ) {
 		return null;
+	}
+	
+	public void removeSaveableAttachment( FileDetails fileDetails ) {
+		getSaveableAttachments().remove( fileDetails );
+	}
+	
+	public void downloadSaveableAttachment(FileDetails fileDetails) {
+		if( fileDetails instanceof CreatedPrintTemplate && CommonUtil.isNullOrEmpty(fileDetails.getFilename()) ) {
+			((CreatedPrintTemplate) fileDetails).generateAndSavePDFFile();
+		}
+		fileDetails.redirectToAplosUrl(true);
 	}
 
 	/**
@@ -142,7 +162,9 @@ public abstract class EmailTemplate<EMAIL_SOURCE extends BulkEmailSource, CONTEN
 	}
 	
 	public List<FileDetails> getAttachments( CONTENT_SOURCE emailGenerator ) {
-		return new ArrayList<FileDetails>();
+		List<FileDetails> attachments = new ArrayList<FileDetails>();
+		attachments.addAll(getSaveableAttachments());
+		return attachments;
 	}
 	
 	public FileDetails generateAttachment(CreatedPrintTemplate createdPrintTemplate, SingleEmailRecord singleEmailRecord,
@@ -462,5 +484,13 @@ public abstract class EmailTemplate<EMAIL_SOURCE extends BulkEmailSource, CONTEN
 	 */
 	public void setValidated(boolean isValidated) {
 		this.isValidated = isValidated;
+	}
+
+	public List<FileDetails> getSaveableAttachments() {
+		return saveableAttachments;
+	}
+
+	public void setSaveableAttachments(List<FileDetails> saveableAttachments) {
+		this.saveableAttachments = saveableAttachments;
 	}
 }

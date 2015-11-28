@@ -489,10 +489,6 @@ public class AplosEmailEditPage extends EditPage implements DataTableStateCreato
 			fileDetails.setFileDetailsOwner(CommonWorkingDirectory.APLOS_EMAIL_FILE_DIR.getAplosWorkingDirectory());
 			fileDetails.updateFile(attachmentUploadedFile);
 			aplosEmail.addSaveableAttachment( fileDetails );
-			
-			for( SingleEmailRecord tempSingleEmailRecord : aplosEmail.getSingleEmailRecordMap().values() ) {
-				tempSingleEmailRecord.getSaveableAttachments().add( fileDetails );
-			}
 		}
 	}
 	

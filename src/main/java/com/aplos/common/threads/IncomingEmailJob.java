@@ -75,6 +75,7 @@ public class IncomingEmailJob implements EmailManagerJob {
 		try {
 			// Create empty properties
 			Properties props = new Properties();
+			props.setProperty("mail.imaps.partialfetch", "false");
 	
 			// Get the session
 			Session session = Session.getInstance(props, null);
@@ -461,13 +462,11 @@ public class IncomingEmailJob implements EmailManagerJob {
 					aplosEmail.addSaveableAttachment(fileDetails);
 				}
 			} // end of multipart for loop
-		} catch( ParseException parseException ) {
-			aplosEmail.setHtmlBody( "Could not parse email due to error : " + parseException.getMessage() );
-			aplosEmail.setPlainTextBody( "Could not parse email due to error : " + parseException.getMessage() );
-		} catch( MessagingException messagingException ) {
-			aplosEmail.setHtmlBody( "Could not parse email due to error : " + messagingException.getMessage() );
-			aplosEmail.setPlainTextBody( "Could not parse email due to error : " + messagingException.getMessage() );
-		}
+		} catch( Exception exception ) {
+			aplosEmail.setHtmlBody( "Could not parse email due to error : " + exception.getMessage() );
+			aplosEmail.setPlainTextBody( "Could not parse email due to error : " + exception.getMessage() );
+			ApplicationUtil.handleError( exception, false );
+		} 
 	}
 	
 	/*

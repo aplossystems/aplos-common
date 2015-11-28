@@ -90,8 +90,13 @@ public class RedirectFilter implements Filter {
 	
 			String serverName = request.getServerName();
 			SiteRedirect siteRedirect = null;
+			/*
+			 * This used to check for startsWith which seems odd.  It was breaking 
+			 * allergy test clinic which doesn't use the www. so I changed it to 
+			 * contains.
+			 */
 			for( SiteRedirect tempSiteRedirect : siteRedirectList ) {
-				if( serverName.startsWith( tempSiteRedirect.getSourceSiteUrl() ) ) {
+				if( serverName.contains( tempSiteRedirect.getSourceSiteUrl() ) ) {
 					siteRedirect = tempSiteRedirect;
 					break;
 				}

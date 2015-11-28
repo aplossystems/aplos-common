@@ -59,6 +59,32 @@
 		</aplos:panel>
 		<table class="aplos-form-table">
 			<tr>
+				<td class="aplos-label">Attachments</td>
+				<td class="aplos-field" style="width:400px">
+					<table>
+						<ui:repeat id="attachmentsList" value="#{ emailTemplate.saveableAttachments }" var="saveableAttachment">
+							<tr>
+								<td>
+									<h:commandLink id="attachmentQuickview" value="#{ saveableAttachment.name }" action="#{aplosEmail.openSaveableAttachment(saveableAttachment)}" target="_blank" rendered="#{backingPage.isReadyToPrint(saveableAttachment) }"/>
+									<h:outputText id="attachmentName" value="#{ saveableAttachment.name }" rendered="#{!backingPage.isReadyToPrint(saveableAttachment) }"/>
+								</td>
+								<td style="padding-left:20px">
+									<aploscc:ajaxButton id="removeBtn" value="Remove" action="#{emailTemplate.removeSaveableAttachment(saveableAttachment)}"/>
+								</td>
+								<td style="padding-left:20px">
+									<aploscc:ajaxButton id="downloadBtn" value="Download" action="#{emailTemplate.downloadSaveableAttachment(saveableAttachment)}"/>
+								</td>
+							</tr>
+						</ui:repeat>
+					</table>	
+					<br/>
+					<p:fileUpload mode="simple" id="attachmentUploader" value="#{backingPage.attachmentUploadedFile}" />
+					<aploscc:ajaxButton id="addAttachmentBtn" action="#{ backingPage.addAttachment }" value="Add" />
+				</td>
+			</tr>
+		</table>
+		<table class="aplos-form-table">
+			<tr>
 				<td class="aplos-label">Subject</td>
 				<td class="aplos-field"><h:inputText value="#{emailTemplate.subject}" style="width:400px" /></td>
 			</tr>

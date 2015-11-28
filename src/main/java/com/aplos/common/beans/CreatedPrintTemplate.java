@@ -7,6 +7,8 @@ import java.util.Date;
 
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
+import antlr.StringUtils;
+
 import com.aplos.common.annotations.DynamicMetaValues;
 import com.aplos.common.annotations.PluralDisplayName;
 import com.aplos.common.annotations.persistence.Any;
@@ -21,6 +23,7 @@ import com.aplos.common.utils.ApplicationUtil;
 import com.aplos.common.utils.CommonUtil;
 import com.aplos.common.utils.FormatUtil;
 import com.aplos.common.utils.XmlEntityUtil;
+import com.aplos.common.utils.XmlEntityUtil.EncodingType;
 
 @Entity
 @PluralDisplayName(name="created templates")

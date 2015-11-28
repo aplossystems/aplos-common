@@ -22,7 +22,6 @@ import com.aplos.common.interfaces.IndexableFieldInfo;
 import com.aplos.common.interfaces.PersistenceBean;
 import com.aplos.common.persistence.PersistentClass.InheritanceType;
 import com.aplos.common.persistence.collection.PersistentAbstractCollection;
-import com.aplos.common.persistence.collection.PersistentCollection;
 import com.aplos.common.persistence.fieldinfo.CollectionFieldInfo;
 import com.aplos.common.persistence.fieldinfo.FieldInfo;
 import com.aplos.common.persistence.fieldinfo.ForeignFieldInfo;
@@ -91,10 +90,20 @@ public class PersistentBeanSaver {
 				handleCascadeObjects( tempPersistentClass, aplosAbstractBean, conn );
 			}
 			
+			PersistentClass dbPersistentClassWithField;
 			for( PersistentClass tempPersistentClass : persistentClassList ) {
 				List<String> updateCommands = new ArrayList<String>();
 				for( int i = 0, n = cascadeMemories.size(); i < n; i++ ) {
-					if( cascadeMemories.get( i ).getFieldInfo().getParentPersistentClass().getDbPersistentClass().equals( tempPersistentClass ) ) {
+					dbPersistentClassWithField = cascadeMemories.get( i ).getFieldInfo().getParentPersistentClass();
+					/*
+					 * This should fire most of the time except with Joined Tables where the dbPersistentClass
+					 * is the root class but we don't want to update that here as the parentClass is generally
+					 * a Db table also which will contain this field.
+					 */
+					if( !(dbPersistentClassWithField.isDbTable() && InheritanceType.JOINED_TABLE.equals( dbPersistentClassWithField.getInheritanceType() )) ) {
+						dbPersistentClassWithField = dbPersistentClassWithField.getDbPersistentClass();
+					}
+					if( dbPersistentClassWithField.equals( tempPersistentClass ) ) {
 						updateCommands.add( cascadeMemories.get( i ).reinstateBean(aplosAbstractBean) );
 					}
 				}
