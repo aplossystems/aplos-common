@@ -36,6 +36,7 @@ public class InternationalNumber extends AplosBean {
 		if( !CommonUtil.isNullOrEmpty(mobileNumberStr) ) {
 			String countryCode;
 			String mobileNumber;
+			mobileNumberStr = FormatUtil.stripNonNumeric( mobileNumberStr );
 			
 			if( mobileNumberStr.startsWith( "+" ) ) {
 				mobileNumberStr = mobileNumberStr.substring( 1 );
@@ -45,7 +46,7 @@ public class InternationalNumber extends AplosBean {
 			}
 			
 			if( mobileNumberStr.length() > 2 ) {
-				if( mobileNumberStr.startsWith( "0" ) ) {
+				if( mobileNumberStr.trim().startsWith( "0" ) ) {
 					countryCode = "44";
 					mobileNumber = mobileNumberStr.substring( 1 );
 				} else {
@@ -56,6 +57,7 @@ public class InternationalNumber extends AplosBean {
 				countryCode = "44";
 				mobileNumber = mobileNumberStr;
 			}
+		
 			
 			return new InternationalNumber( countryCode, mobileNumber );
 		} else {

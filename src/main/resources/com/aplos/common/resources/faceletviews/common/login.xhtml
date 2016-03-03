@@ -24,36 +24,55 @@
 						Login Failed. Attempt #{backingPage.failedAttempts} / #{commonConfiguration.maxFailedLoginAttempts}
 					</div>
 				</h:panelGroup>
-				<table class="aplos-form-table">
-					<tr>
-						<td class="aplos-label">Username</td>
-						<td class="aplos-field"><h:inputText value="#{backingPage.username}" /></td>
-					</tr>
-					<tr>
-						<td class="aplos-label">Password</td>
-						<td class="aplos-field">
-							<h:inputSecret value="#{backingPage.password}" onkeydown="quickLogin(event)"/>
-						</td>
-					</tr>
-				</table>
-				<aplos:panel rendered="#{ commonConfiguration.moduleConfiguration.showingLoginRememberMe }">
-					<table class="aplos-form-table">
-						<tr>
-							<td class="aplos-label"></td>
-							<td style="width:150px;text-align:left"><h:selectBooleanCheckbox id="aplosRememberMeChk" value="#{ backingPage.rememberMe }" />&#160;Remember me?</td>
-						</tr>
-					</table>
+				<aplos:panel id="loginFields">
+					<aplos:panel rendered="#{ !backingPage.showingSecondAuthentication }" >
+						<table class="aplos-form-table">
+							<tr>
+								<td class="aplos-label">Username</td>
+								<td class="aplos-field"><h:inputText value="#{backingPage.username}" /></td>
+							</tr>
+							<tr>
+								<td class="aplos-label">Password</td>
+								<td class="aplos-field">
+									<h:inputSecret value="#{backingPage.password}" onkeydown="quickLogin(event)"/>
+								</td>
+							</tr>
+						</table>
+						<aplos:panel rendered="#{ commonConfiguration.moduleConfiguration.showingLoginRememberMe }">
+							<table class="aplos-form-table">
+								<tr>
+									<td class="aplos-label"></td>
+									<td style="width:150px;text-align:left"><h:selectBooleanCheckbox id="aplosRememberMeChk" value="#{ backingPage.rememberMe }" />&#160;Remember me?</td>
+								</tr>
+							</table>
+						</aplos:panel>
+						<table class="aplos-form-table">
+							<tr>
+								<td class="aplos-label"></td>
+								<td class="aplos-field"><h:commandLink value="Forgotten your password?" action="#{backingPage.goToForgottenPassword}" /></td>
+							</tr>
+							<tr>
+								<td class="aplos-label"></td>
+								<td class="aplos-field" style="text-align:right"><aploscc:ajaxButton id="aplosLoginBtn" action="#{backingPage.login}" value="login" /></td>
+							</tr>
+						</table>
+					</aplos:panel>
+					
+					<aplos:panel rendered="#{ backingPage.showingSecondAuthentication }" >
+						<table class="aplos-form-table">
+							<tr>
+								<td class="aplos-label">Google authentication code</td>
+								<td class="aplos-field"><h:inputText value="#{backingPage.googleAuthenticationCode}" /></td>
+							</tr>
+						</table>
+						<table class="aplos-form-table">
+							<tr>
+								<td class="aplos-label"></td>
+								<td class="aplos-field" style="text-align:right"><aploscc:ajaxButton id="aplosAuthenticationLoginBtn" action="#{backingPage.login}" value="login" /></td>
+							</tr>
+						</table>
+					</aplos:panel>
 				</aplos:panel>
-				<table class="aplos-form-table">
-					<tr>
-						<td class="aplos-label"></td>
-						<td class="aplos-field"><h:commandLink value="Forgotten your password?" action="#{backingPage.goToForgottenPassword}" /></td>
-					</tr>
-					<tr>
-						<td class="aplos-label"></td>
-						<td class="aplos-field" style="text-align:right"><aploscc:ajaxButton id="aplosLoginBtn" action="#{backingPage.login}" value="login" /></td>
-					</tr>
-				</table>
 				<aplos:jsFunction name="login" action="#{backingPage.login}"  />
 	
 			</h:form>

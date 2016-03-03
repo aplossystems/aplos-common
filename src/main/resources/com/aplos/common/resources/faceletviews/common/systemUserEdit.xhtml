@@ -168,6 +168,19 @@
 				</aplos:panel>
 			</aplos:panel>
 		</aplos:panel>
+		<aplos:panel id="googleAuthenticationPnl" rendered="#{ commonConfiguration.usingGoogleAuthentication }" >
+			<table class="aplos-form-table-with-required">
+				<tr>
+					<td class="aplos-label">Google Authentication</td>
+					<td class="aplos-required-asterisk"></td>
+					<td class="aplos-field">
+						<h:outputText id="secretKey" value="#{ backingPage.googleSecretKey }" />
+						<aploscc:ajaxButton value="Generate new key" action="#{ backingPage.generateNewSecretKey }" reRender="googleAuthenticationPnl"/>
+						<aploscc:ajaxButton value="Clear key" action="#{ backingPage.clearSecretKey }" rendered="#{systemUser.googleSecretKey != null}" reRender="googleAuthenticationPnl"/>
+					</td>
+				</tr>
+			</table>
+		</aplos:panel>
 		<table class="aplos-form-table-with-required">
 			<tr>
 				<td class="aplos-label">Website visibility restricted?</td>

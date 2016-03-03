@@ -73,6 +73,8 @@ public class SystemUser extends AplosBean implements SaltHolder<SystemUser>, For
 	private String password;
 	private String passwordSalt;
 	private String cookieSalt;
+	
+	private String googleSecretKey;
 
 	private String title;
 	private String surname;
@@ -935,5 +937,13 @@ public class SystemUser extends AplosBean implements SaltHolder<SystemUser>, For
 
 	public void setPreviousLastLoggedInDate(Date previousLastLoggedInDate) {
 		this.previousLastLoggedInDate = previousLastLoggedInDate;
+	}
+
+	public String getGoogleSecretKey() {
+		return googleSecretKey;
+	}
+
+	public void setGoogleSecretKey(String googleSecretKey) {
+		this.googleSecretKey = googleSecretKey;
 	}
 }

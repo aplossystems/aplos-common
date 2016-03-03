@@ -70,7 +70,7 @@
 		</div>
 		<aplos:panel layout="block" id="tableWrapper"> 
 			<aploscc:ajaxButton value="New newsletter" action="#{backingPage.goToNewNewsletter()}" rendered="#{ backingPage.showingNewNewsletterBtn }"/>
-			<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }" multiSelect="true"  >
+			<aploscc:wrappedDataTable2 dataTableState="#{ backingPage.dataTableState }" multiSelect="true" twoStageHardDelete="true"  >
 				<aplos:column sortBy="#{ tableBean.subject }" filterBy="#{ tableBean.subject }" style="#{ tableBean.rowStyle }" actionAllowed="false">
 					<f:facet name="header">Subject</f:facet>
 					<aploscc:quickView bean="#{tableBean}" text="#{tableBean.subject}" view="aplosemail" />

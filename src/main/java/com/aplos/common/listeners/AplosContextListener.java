@@ -144,6 +144,10 @@ public abstract class AplosContextListener implements ServletContextListener {
 	public void addFonts( ITextRenderer renderer ) throws IOException, DocumentException {
 	}
 	
+	public String getBackendImageLinkUrl() {
+		return "https://www.aplossystems.co.uk";
+	}
+	
 	public void toggleDebugMode() {
 		setDebugMode(!isDebugMode());
 	}
@@ -189,6 +193,18 @@ public abstract class AplosContextListener implements ServletContextListener {
 		jBossElFix();
 		ApplicationUtil.getPersistentApplication().closeCpds();
 		logger.info( "Shutdown completed successfully for " + serverUrl );
+	}
+	
+	public boolean isShowingAplosWebsiteLink() {
+		return true;
+	}
+	
+	public String getBackendTemplateEmail() {
+		return "0800 520 0690";
+	}
+	
+	public String getBackendTemplatePhone() {
+		return "info@aplossystems.co.uk";
 	}
 	
 	public void jBossElFix() {

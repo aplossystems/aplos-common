@@ -1333,6 +1333,12 @@ public class AplosEmail extends AplosSiteBean {
 		ApplicationUtil.executeSql( "UPDATE AplosEmail SET originalEmail_id = null WHERE originalEmail_id = " + getId() );
 		ApplicationUtil.executeSql( "UPDATE AplosEmail SET repliedEmail_id = null WHERE repliedEmail_id = " + getId() );
 		ApplicationUtil.executeSql( "UPDATE AplosEmail SET forwardedEmail_id = null WHERE forwardedEmail_id = " + getId() );
+		BeanDao singleEmailRecordDao = new BeanDao(SingleEmailRecord.class);
+		singleEmailRecordDao.addWhereCriteria("bean.aplosEmail.id = " + getId() );
+		List<SingleEmailRecord> singleEmailRecords = singleEmailRecordDao.getAll();
+		for(SingleEmailRecord singleEmailRecord : singleEmailRecords) {
+			singleEmailRecord.hardDelete();
+		}
 		if( EmailType.INCOMING.equals( getEmailType() ) ) {
 			for( int i = 0, n = saveableAttachments.size(); i < n; i++ ) {
 				saveableAttachments.get( i ).hardDelete();

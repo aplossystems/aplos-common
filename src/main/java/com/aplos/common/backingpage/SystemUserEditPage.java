@@ -1,7 +1,9 @@
 package com.aplos.common.backingpage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,18 +13,16 @@ import javax.faces.model.SelectItem;
 
 import com.aplos.common.annotations.AssociatedBean;
 import com.aplos.common.aql.BeanDao;
-import com.aplos.common.backingpage.communication.AplosEmailEditPage;
 import com.aplos.common.beans.AplosBean;
 import com.aplos.common.beans.SystemUser;
 import com.aplos.common.beans.Website;
-import com.aplos.common.beans.communication.AplosEmail;
 import com.aplos.common.beans.communication.MailServerSettings;
 import com.aplos.common.beans.lookups.UserLevel;
-import com.aplos.common.enums.CommonEmailTemplateEnum;
 import com.aplos.common.utils.ApplicationUtil;
 import com.aplos.common.utils.CommonUtil;
 import com.aplos.common.utils.FormatUtil;
 import com.aplos.common.utils.JSFUtil;
+import com.google.common.io.BaseEncoding;
 
 @ManagedBean
 @ViewScoped
@@ -35,10 +35,34 @@ public class SystemUserEditPage extends EditPage {
 	private String newIpAddress;
 	private UserLevel selectedAdditionalUserLevel; 
 	private String password;
+	private String googleSecretKey;
+	private boolean isShowingSecondAuthentication;
 
 	public SystemUserEditPage() {
 		getBeanDao().setListPageClass( SystemUserListPage.class );
 		fullWebsites = new ArrayList<Website>( ApplicationUtil.getAplosContextListener().getWebsiteList() );
+	}
+	
+	public void generateNewSecretKey() {
+		int secretSize = 10;
+		byte[] buffer = new byte[secretSize];
+		new Random().nextBytes(buffer);
+
+		byte[] secretKey = Arrays.copyOf(buffer, secretSize);
+		googleSecretKey = BaseEncoding.base32().encode(secretKey);
+		SystemUser systemUser = JSFUtil.getBeanFromScope(SystemUser.class);
+		systemUser.setGoogleSecretKey(googleSecretKey);
+		saveBeanWithWrap();
+	}
+	
+	public void clearSecretKey() {
+		SystemUser systemUser = JSFUtil.getBeanFromScope(SystemUser.class);
+		systemUser.setGoogleSecretKey(null);
+		saveBeanWithWrap();
+	}
+	
+	public String getGoogleSecretKey() {
+		return googleSecretKey;
 	}
 
 	public SelectItem[] getUserLevelSelectItems() {
@@ -206,6 +230,14 @@ public class SystemUserEditPage extends EditPage {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isShowingSecondAuthentication() {
+		return isShowingSecondAuthentication;
+	}
+
+	public void setShowingSecondAuthentication(boolean isShowingSecondAuthentication) {
+		this.isShowingSecondAuthentication = isShowingSecondAuthentication;
 	}
 
 

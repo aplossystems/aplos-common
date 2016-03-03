@@ -167,6 +167,8 @@ public class CommonConfiguration extends ModuleConfiguration {
 	private boolean isReadReceiptsRequired = false;
 	private boolean isShowingEmailFolders = false;
 	
+	private boolean isUsingGoogleAuthentication = false;
+	
 	@ManyToOne
 	private EmailFrame emailFrame;
 	
@@ -1209,5 +1211,13 @@ public class CommonConfiguration extends ModuleConfiguration {
 
 	public void setMainTextColour(String mainTextColour) {
 		this.mainTextColour = mainTextColour;
+	}
+
+	public boolean isUsingGoogleAuthentication() {
+		return isUsingGoogleAuthentication;
+	}
+
+	public void setUsingGoogleAuthentication(boolean isUsingGoogleAuthentication) {
+		this.isUsingGoogleAuthentication = isUsingGoogleAuthentication;
 	}
 }
