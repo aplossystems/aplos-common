@@ -35,7 +35,7 @@ public class AtmosphereFrameworkUtil {
 	//	        mapping = "/aplospush/calendar";
 		        atmosphereFramework.addAtmosphereHandler(mapping, atmosphereHandler, broadcaster(atmosphereFramework, b, mapping), new ArrayList<AtmosphereInterceptor>());
 	        } catch( Exception ex ) {
-	        	ApplicationUtil.handleError( ex );
+	        	//ApplicationUtil.handleError( ex );
 	        }
     	}
     }

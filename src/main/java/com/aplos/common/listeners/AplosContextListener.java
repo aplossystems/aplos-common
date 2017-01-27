@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.el.util.ReferenceCache;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -877,6 +878,9 @@ public abstract class AplosContextListener implements ServletContextListener {
 	}
 
 	public void handleError( HttpServletRequest httpRequest, HttpServletResponse httpResponse, Throwable throwable, String errorUrls, boolean redirectToIssueReported ) {
+		if (!StringUtils.isEmpty(errorUrls) && errorUrls.contains("aplospush/user")) {
+			return;
+		}
 		logger.error( errorUrls );
 		logger.error( "Exception caught in request filter", throwable );
 

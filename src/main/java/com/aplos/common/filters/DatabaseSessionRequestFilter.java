@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.log4j.Logger;
+import org.atmosphere.cpr.AtmosphereMappingException;
 
 import com.aplos.common.AplosRequestContext;
 import com.aplos.common.appconstants.AplosAppConstants;
@@ -148,6 +149,7 @@ public class DatabaseSessionRequestFilter implements javax.servlet.Filter {
         } catch ( SocketException cae ) {
 //			hibernateRollback();
         	logger.debug("Aborting transfer.  it happens, no problem.", cae);
+        } catch ( AtmosphereMappingException amex ) {
 		} catch( Throwable ex ) {
 //			hibernateRollback();
 			Throwable exCause = ex;
