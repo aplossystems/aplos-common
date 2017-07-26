@@ -368,6 +368,17 @@ public class AplosLazyDataModel extends LazyDataModel<Object> {
 	public <T extends AplosBean> T getAssociatedBeanFromScope() {
 		return JSFUtil.getBeanFromScope( (Class<? extends AplosBean>) getBeanDao().getBeanClass() );
 	}
+	
+	public void unarchiveAll() {
+		for(Object object : getRecordArray()) {
+			if (object instanceof AplosBean) {
+				AplosBean aplosBean = (AplosBean) object;
+				if(aplosBean.isArchived()) {
+					aplosBean.unarchive();
+				}
+			}
+		}
+	}
 
 	public List<Object> getRecordArray() {
 		return recordArray;

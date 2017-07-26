@@ -85,6 +85,10 @@ public class SmsMessageEditPage extends EditPage {
 		return super.responsePageLoad();
 	}
 	
+	public String getFirstSmsSourceFullName() {
+		return getSmsMessage().getFirstSmsSourceFullName();
+	}
+	
 	public boolean isMessageSent() {
 		return getSmsMessage().getSmsSentDate() != null;
 	}

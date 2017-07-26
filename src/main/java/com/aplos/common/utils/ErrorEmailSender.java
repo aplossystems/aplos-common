@@ -49,22 +49,23 @@ public class ErrorEmailSender {
 				 * have triggered the error in the first place.  This can happen if a change has been 
 				 * made to CommonConfiguration db structure for example.
 				 */
-				if( JSFUtil.getSessionTemp() == null || JSFUtil.getTabSession() == null ) {
-					sendErrorEmail = ApplicationUtil.getAplosContextListener().isErrorEmailActivated();
-				} else {
+				sendErrorEmail = ApplicationUtil.getAplosContextListener().isErrorEmailActivated();
+				ApplicationUtil.getAplosContextListener().setErrorEmailActivated( false );
+				
+				if( sendErrorEmail && (JSFUtil.getSessionTemp() == null || JSFUtil.getTabSession() == null) ) {
+					ApplicationUtil.getAplosContextListener().setErrorEmailActivated( true );
 					Boolean isErrorEmailActivated = (Boolean) JSFUtil.getTabSession().get( AplosScopedBindings.ERROR_EMAIL_ACTIVATED );
 					if( isErrorEmailActivated == null ) {
 						sendErrorEmail = true;
 					} else {
 						sendErrorEmail = isErrorEmailActivated;
 					}
+				} else {
+					isErrorEmailDisabledHere = true;
 				}
 			}
 			if (sendErrorEmail) {
-				if( JSFUtil.getSessionTemp() == null || JSFUtil.getTabSession() == null ) {
-					ApplicationUtil.getAplosContextListener().setErrorEmailActivated( false );
-					isErrorEmailDisabledHere = true;
-				} else {
+				if( ApplicationUtil.getAplosContextListener().isErrorEmailActivated() && (JSFUtil.getSessionTemp() == null || JSFUtil.getTabSession() == null) ) {
 					JSFUtil.getTabSession().put( AplosScopedBindings.ERROR_EMAIL_ACTIVATED, false );
 					isErrorEmailDisabledHere = true;
 				}

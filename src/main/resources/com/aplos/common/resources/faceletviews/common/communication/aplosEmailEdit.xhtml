@@ -92,7 +92,7 @@
 					<tr>
 						<td class="aplos-label">To</td>
 						<td class="aplos-field">
-							<h:inputText id="toAddresses" label="to addresses" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.toAddressesStr }" style="width:400px" />
+							<h:inputText id="toAddresses" label="to addresses" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.toAddressesStr }" style="width:400px" autocomplete="off" />
 							<aplos:panel rendered="false">
 								<h:panelGroup id="toAddressesPanel">
 									<h:panelGroup layout="block" style="line-height:14px;">
@@ -127,13 +127,13 @@
 					<tr>
 						<td class="aplos-label">Cc</td>
 						<td class="aplos-field">
-							<h:inputText id="ccAddresses" label="cc addresses" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.ccAddressesStr }" style="width:400px" />
+							<h:inputText id="ccAddresses" label="cc addresses" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.ccAddressesStr }" style="width:400px" autocomplete="off" />
 						</td>
 					</tr>
 					<tr>
 						<td class="aplos-label">Bcc</td>
 						<td class="aplos-field">
-							<h:inputText id="bccAddresses" label="bcc addresses" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.bccAddressesStr }" style="width:400px" />
+							<h:inputText id="bccAddresses" label="bcc addresses" disabled="#{ !backingPage.emailUpdateAllowed }" value="#{ backingPage.bccAddressesStr }" style="width:400px" autocomplete="off" />
 						</td>
 					</tr>
 				</table>
