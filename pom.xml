@@ -257,13 +257,11 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>${aspectj.runtime.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjtools</artifactId>
-			<version>${aspectj.runtime.version}</version>
 		</dependency>
 
 		<dependency>
