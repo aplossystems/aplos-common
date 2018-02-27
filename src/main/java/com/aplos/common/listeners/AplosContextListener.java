@@ -1022,7 +1022,7 @@ public abstract class AplosContextListener implements ServletContextListener {
 
 	public String getErrorEmailAddress() {
 		//TODO: change this to receive error emails for TBP, don't sync
-		return "error@aplossystems.co.uk";
+		return "anthony.mayfield@hotmail.co.uk";
 	}
 
 	public void insertInitialUserLevelsAndUsers() {
