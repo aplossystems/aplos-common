@@ -20,6 +20,7 @@ import com.aplos.common.beans.VatType;
 import com.aplos.common.beans.communication.EmailFrame;
 import com.aplos.common.beans.communication.MailServerSettings;
 import com.aplos.common.beans.lookups.UserLevel;
+import com.aplos.common.enums.JsfScope;
 import com.aplos.common.enums.PaymentGateway;
 import com.aplos.common.module.CommonConfiguration;
 import com.aplos.common.module.CommonModule;
@@ -54,8 +55,8 @@ public class CommonConfigurationEditPage extends EditPage {
 		}
 		checkEditBean();
 		super.responsePageLoad();
-		JSFUtil.resolveVariable( "commonConfiguration" );
-		CommonConfiguration commonConfiguration = resolveAssociatedEditBean();
+		CommonConfiguration commonConfiguration = (CommonConfiguration) JSFUtil.resolveVariable( "commonConfiguration" );
+		commonConfiguration = resolveAssociatedEditBean();
 		if( commonConfiguration.getMailServerSettings().isReadOnly() && commonConfiguration.getMailServerSettings() != null ) {
 			commonConfiguration.setMailServerSettings( (MailServerSettings) commonConfiguration.getMailServerSettings().getSaveableBean() ); 
 		}
@@ -64,6 +65,7 @@ public class CommonConfigurationEditPage extends EditPage {
 		}
 		defaultLanguageStr = commonConfiguration.getDefaultLanguageStr();
 		isInternationalizedApplication = commonConfiguration.getIsInternationalizedApplication();
+		commonConfiguration.addToScope(JsfScope.VIEW);
 		return true;
 	}
 
@@ -71,6 +73,7 @@ public class CommonConfigurationEditPage extends EditPage {
 		CommonConfiguration commonConfiguration = resolveAssociatedEditBean();
 		List<SystemUser> systemUserList = new BeanDao( SystemUser.class ).getAll();
 		for( SystemUser tempSystemUser : systemUserList ) {
+			tempSystemUser = tempSystemUser.getSaveableBean();
 			tempSystemUser.saveDetails();
 		}
 		commonConfiguration.saveDetails();
@@ -174,7 +177,6 @@ public class CommonConfigurationEditPage extends EditPage {
 		commonConfiguration.setIsInternationalizedApplication(isInternationalizedApplication);
 		commonConfiguration.setDefaultLanguageStr(defaultLanguageStr);
 		return super.saveBean();
-		
 	}
 
 	public void setDefaultLanguageStr(String defaultLanguageStr) {
