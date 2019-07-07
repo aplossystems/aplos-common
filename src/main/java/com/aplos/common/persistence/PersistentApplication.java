@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -29,7 +30,6 @@ import org.xml.sax.SAXException;
 import com.aplos.common.ImplicitPolymorphismEntry;
 import com.aplos.common.ImplicitPolymorphismVariable;
 import com.aplos.common.aql.BeanDao;
-import com.aplos.common.aql.BeanMap;
 import com.aplos.common.beans.AplosAbstractBean;
 import com.aplos.common.comparators.StringComparator;
 import com.aplos.common.persistence.PersistentClass.InheritanceType;
@@ -431,7 +431,7 @@ public class PersistentApplication {
 				getCpds().setAcquireIncrement(5); 
 				getCpds().setMaxPoolSize(20);
 				getCpds().setIdleConnectionTestPeriod(540);
-				getCpds().setCheckoutTimeout(600);
+				getCpds().setCheckoutTimeout(1500);
 				getCpds().setUnreturnedConnectionTimeout(1200);
 				getCpds().setDebugUnreturnedConnectionStackTraces(true);
 				getCpds().setPreferredTestQuery("select 1;");

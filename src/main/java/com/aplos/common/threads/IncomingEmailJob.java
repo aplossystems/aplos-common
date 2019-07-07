@@ -94,6 +94,7 @@ public class IncomingEmailJob implements EmailManagerJob {
 			Message[] messages = folder.getMessages();
 			folder.fetch(messages,profile);
 			String messageUids[] = new String[ messages.length ];
+			System.err.println("Found " + messages.length + " new messages");
 			if( messages.length > 0 ) {
 				Map<String,Message> messageMap = new HashMap<String,Message>();
 				StringBuffer parameterNamesBuf = new StringBuffer();
@@ -119,7 +120,6 @@ public class IncomingEmailJob implements EmailManagerJob {
 	
 				List<Object[]> aplosEmailObjList = aplosEmailDao.getBeanResults();
 				
-				
 				Map<Long,Message> missingContentMessageMap = new HashMap<Long,Message>();
 				
 				String tempMessageUid;
@@ -139,7 +139,9 @@ public class IncomingEmailJob implements EmailManagerJob {
 				aplosEmailCheckDao.addWhereCriteria( "bean.uid = :uid" );
 				Message tempMessage;
 				String tempSubject;
-				
+
+				System.err.println("About to process " + messageMap.keySet().size() + " new messages");
+				int processedEmailCount = 0;
 				for ( String tempUid : messageMap.keySet()) {
 					tempMessage = messageMap.get( tempUid );
 					if( !tempMessage.isSet( Flag.DELETED ) ) {
@@ -156,6 +158,7 @@ public class IncomingEmailJob implements EmailManagerJob {
 						}
 						AplosEmail aplosEmail = new AplosEmail();
 						try {
+							fixIncorrectContentTypes(tempMessage);
 							aplosEmail.setUid(tempUid);
 							aplosEmail.setEmailType( EmailType.INCOMING );
 							aplosEmail.setFromAddress(getFromAddress(tempMessage));
@@ -216,7 +219,6 @@ public class IncomingEmailJob implements EmailManagerJob {
 							// body and attachments
 							aplosEmail.setHtmlBody("");
 
-							fixIncorrectContentTypes(tempMessage);
 							Object content = tempMessage.getContent();
 							if (content instanceof java.lang.String) {
 								aplosEmail.setHtmlBody((String) content);
@@ -260,6 +262,7 @@ public class IncomingEmailJob implements EmailManagerJob {
 							if( mailServerSettings.isDeletingEmailsFromServer() ) {
 								tempMessage.setFlag(Flags.Flag.DELETED, true);
 							}
+							processedEmailCount++;
 						} catch (Exception e) {
 //							HibernateUtil.getCurrentSession().clear();
 							ApplicationUtil.handleError( e );
@@ -267,6 +270,7 @@ public class IncomingEmailJob implements EmailManagerJob {
 //						HibernateUtil.startNewTransaction();
 					}
 				}
+				System.err.println("Processed " + processedEmailCount + " new messages");
 				
 				for ( Long aplosEmailId : missingContentMessageMap.keySet()) {
 					tempMessage = missingContentMessageMap.get( aplosEmailId );

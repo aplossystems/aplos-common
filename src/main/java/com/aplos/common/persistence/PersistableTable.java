@@ -161,7 +161,7 @@ public abstract class PersistableTable {
 		initialiseDbInformation();
 		
 		for( int i = 0, n = fullDbFieldInfos.size(); i < n; i++ ) {
-			fullDbFieldInfos.get( i ).appendCreateTableStr( strBuf, this );
+			fullDbFieldInfos.get( i ).appendCreateTableStr( strBuf, this, fullDbFieldInfos.get( i ).isPrimaryKey() );
 			strBuf.append( ",\n" );
 		}
 		List<String> keysToAddSqlList = null;

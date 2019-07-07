@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 
 import com.aplos.common.annotations.DynamicMetaValues;
@@ -45,11 +49,11 @@ import com.aplos.common.utils.ApplicationUtil;
 import com.aplos.common.utils.CommonUtil;
 import com.aplos.common.utils.FormatUtil;
 import com.aplos.common.utils.JSFUtil;
-import com.nexmo.messaging.sdk.NexmoSmsClient;
-import com.nexmo.messaging.sdk.NexmoSmsClientSSL;
-import com.nexmo.messaging.sdk.SmsSubmissionResult;
-import com.nexmo.messaging.sdk.messages.TextMessage;
-import com.nexmo.messaging.sdk.messages.UnicodeMessage;
+import com.nexmo.client.NexmoClient;
+import com.nexmo.client.auth.AuthMethod;
+import com.nexmo.client.auth.TokenAuthMethod;
+import com.nexmo.client.sms.SmsSubmissionResult;
+import com.nexmo.client.sms.messages.TextMessage;
 
 @Entity
 @PluralDisplayName(name="SMS messages")
@@ -303,7 +307,7 @@ public class SmsMessage extends AplosBean implements EmailGenerator {
 
 	
 	public int sendSms( List<String> processedToAddresses, BulkSmsSource bulkSmsSource ) {
-		if( !ApplicationUtil.getAplosContextListener().isDebugMode() ) {
+		if( true ) {
 			try {
 				return sendNexemo( processedToAddresses, bulkSmsSource );
 			} catch( IOException ioex ) {
@@ -314,10 +318,12 @@ public class SmsMessage extends AplosBean implements EmailGenerator {
 	}
 	
 	public int sendNexemo( List<String> processedToAddresses, BulkSmsSource bulkSmsSource ) throws IOException {
-        NexmoSmsClient client = null;
+		NexmoClient client = null;
+
         try {
         	CommonConfiguration commonConfiguration = CommonConfiguration.getCommonConfiguration();
-            client = new NexmoSmsClientSSL(commonConfiguration.getNexemoKey(), commonConfiguration.getNexemoSecretKey());
+        	AuthMethod auth = new TokenAuthMethod(commonConfiguration.getNexemoKey(), commonConfiguration.getNexemoSecretKey());
+        	client = new NexmoClient(auth);
         } catch (Exception e) {
         	ApplicationUtil.handleError(e);
         	return 0;
@@ -332,7 +338,6 @@ public class SmsMessage extends AplosBean implements EmailGenerator {
 			determinedSmsGenerator = bulkSmsSource;
 		}
 
-		com.nexmo.messaging.sdk.messages.Message tempNexemoMesssage;
 		int creditsUsed = 0;
 		SmsStatus firstStatus = null;
 		for( String destinationNumber : processedToAddresses ) {
@@ -373,17 +378,21 @@ public class SmsMessage extends AplosBean implements EmailGenerator {
 	        if( parsedSourceNumber.startsWith( "0" ) ) {
 	        	parsedSourceNumber = "44" + parsedSourceNumber.substring( 1 );
 	        }
-			if( isUnicode ) {	
-				tempNexemoMesssage = new UnicodeMessage(parsedSourceNumber, destinationNumber, parsedContent.toString());
-			} else {
-				tempNexemoMesssage = new TextMessage(parsedSourceNumber, destinationNumber, parsedContent.toString());
-			}
+	        
+	        TextMessage tempNexemoMesssage = new TextMessage(parsedSourceNumber, destinationNumber, parsedContent.toString(), isUnicode);
 			
 	        // Use the Nexmo client to submit the Text Message ...
 	
 	        SmsSubmissionResult[] results = null;
 	        try {
-	            results = client.submitMessage(tempNexemoMesssage);
+	        	SSLConnectionSocketFactory sslsf = new
+						SSLConnectionSocketFactory(SSLContexts.createDefault(),
+						new String[] { "TLSv1.2" }, null,
+						SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+				
+				HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+				client.setHttpClient(httpClient);
+	            results = client.getSmsClient().submitMessage(tempNexemoMesssage);
 	        } catch (Exception e) {
 	        	ApplicationUtil.handleError(e);
 	        	return 0;

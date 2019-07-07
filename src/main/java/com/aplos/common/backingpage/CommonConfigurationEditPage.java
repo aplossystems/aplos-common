@@ -71,7 +71,7 @@ public class CommonConfigurationEditPage extends EditPage {
 
 	public void passwordEncryptionUpdated() {
 		CommonConfiguration commonConfiguration = resolveAssociatedEditBean();
-		List<SystemUser> systemUserList = new BeanDao( SystemUser.class ).getAll();
+		List<SystemUser> systemUserList = new BeanDao( SystemUser.class ).setIsReturningActiveBeans(null).getAll();
 		for( SystemUser tempSystemUser : systemUserList ) {
 			tempSystemUser = tempSystemUser.getSaveableBean();
 			tempSystemUser.saveDetails();

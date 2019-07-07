@@ -138,7 +138,7 @@ public class ArchivableTable {
 
 		List<String> primaryKeyColumnNames = new ArrayList<String>();
 		for( FieldInfo tempFieldInfo : getArchivableFieldInfos() ) {
-			tempFieldInfo.appendCreateTableStr( strBuf, this.getPersistableTable() );
+			tempFieldInfo.appendCreateTableStr( strBuf, this.getPersistableTable(), tempFieldInfo.isPrimaryKey() );
 			strBuf.append( ",\n" );
 			if( tempFieldInfo.isPrimaryKey() ) {
 				primaryKeyColumnNames.add( tempFieldInfo.getSqlName() );
