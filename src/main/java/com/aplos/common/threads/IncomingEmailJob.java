@@ -116,9 +116,20 @@ public class IncomingEmailJob implements EmailManagerJob {
 				aplosEmailDao.setIsReturningActiveBeans(null);
 				aplosEmailDao.setSelectCriteria( "bean.uid, bean.plainTextBody, bean.htmlBody, bean.id, bean.incomingReadRetryCount, bean.isIncomingEmailDeleted" );
 				aplosEmailDao.setWhereCriteria( "bean.emailType = " + EmailType.INCOMING.ordinal() );
-				aplosEmailDao.addWhereCriteria( "bean.uid IN (" + parameterNamesBuf.substring(0, parameterNamesBuf.length() - 1 ) + ")");
-	
-				List<Object[]> aplosEmailObjList = aplosEmailDao.getBeanResults();
+				if (messageUids.length == 1) {
+					aplosEmailDao.addWhereCriteria("bean.uid = " + parameterNamesBuf.substring(0, parameterNamesBuf.length() - 1));
+				} else {
+					aplosEmailDao.addWhereCriteria("bean.uid IN (" + parameterNamesBuf.substring(0, parameterNamesBuf.length() - 1) + ")");
+				}
+
+				List<Object[]> aplosEmailObjList;
+				try {
+					aplosEmailObjList = aplosEmailDao.getBeanResults();
+				} catch(Exception ex) {
+					System.err.println("About to print error for incoming email");
+					System.err.println(aplosEmailDao.createProcessedBeanDao().getSelectSql());
+					throw ex;
+				}
 				
 				Map<Long,Message> missingContentMessageMap = new HashMap<Long,Message>();
 				

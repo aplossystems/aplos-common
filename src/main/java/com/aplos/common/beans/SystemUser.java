@@ -1,12 +1,6 @@
 package com.aplos.common.beans;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.Cookie;
 
@@ -16,19 +10,7 @@ import com.aplos.common.ThemeManager;
 import com.aplos.common.annotations.BeanScope;
 import com.aplos.common.annotations.DynamicMetaValueKey;
 import com.aplos.common.annotations.RemoveEmpty;
-import com.aplos.common.annotations.persistence.Cache;
-import com.aplos.common.annotations.persistence.Cascade;
-import com.aplos.common.annotations.persistence.CascadeType;
-import com.aplos.common.annotations.persistence.CollectionOfElements;
-import com.aplos.common.annotations.persistence.Column;
-import com.aplos.common.annotations.persistence.DiscriminatorColumn;
-import com.aplos.common.annotations.persistence.DiscriminatorType;
-import com.aplos.common.annotations.persistence.DiscriminatorValue;
-import com.aplos.common.annotations.persistence.Entity;
-import com.aplos.common.annotations.persistence.FetchType;
-import com.aplos.common.annotations.persistence.ManyToOne;
-import com.aplos.common.annotations.persistence.OneToMany;
-import com.aplos.common.annotations.persistence.OneToOne;
+import com.aplos.common.annotations.persistence.*;
 import com.aplos.common.aql.BeanDao;
 import com.aplos.common.backingpage.CreateWebsiteWizardPage;
 import com.aplos.common.beans.communication.AplosEmail;
@@ -146,6 +128,16 @@ public class SystemUser extends AplosBean implements SaltHolder<SystemUser>, For
 	private String lastPageAccessed;
 	
 	private String assignedColour;
+
+	@ManyToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+	@HibernateMapKey(columns = @Column(name = "mapKey"))
+	@JoinTable(
+			joinColumns = @JoinColumn(name = "systemUser_id"),
+			inverseJoinColumns = @JoinColumn(name = "googleCalendarIntegration_id"))
+	@Cache
+	@Cascade({CascadeType.ALL})
+	private Map<String, GoogleCalendarIntegration> googleCalendarIntegrations = new HashMap<>();
+	private String googleEmail;
 
 	public SystemUser() {}
 	
@@ -945,5 +937,25 @@ public class SystemUser extends AplosBean implements SaltHolder<SystemUser>, For
 
 	public void setGoogleSecretKey(String googleSecretKey) {
 		this.googleSecretKey = googleSecretKey;
+	}
+
+	public Map<String, GoogleCalendarIntegration> getGoogleCalendarIntegrations() {
+		return googleCalendarIntegrations;
+	}
+
+	public void setGoogleCalendarIntegrations(Map<String, GoogleCalendarIntegration> googleCalendarIntegrations) {
+		this.googleCalendarIntegrations = googleCalendarIntegrations;
+	}
+
+	public void addGoogleCalendarIntegration(String calendarName, GoogleCalendarIntegration googleCalendarIntegration) {
+		getGoogleCalendarIntegrations().put(calendarName, googleCalendarIntegration);
+	}
+
+	public String getGoogleEmail() {
+		return googleEmail;
+	}
+
+	public void setGoogleEmail(String googleEmail) {
+		this.googleEmail = googleEmail;
 	}
 }

@@ -236,7 +236,7 @@ public class PersistentApplication {
 		Connection connection = null;
 		try {
 			connection = getCpds().getConnection();
-			ResultSet resultSet = connection.prepareStatement( "SELECT * FROM PersistenceHelperTable" ).executeQuery();
+			ResultSet resultSet = connection.prepareStatement( "SELECT * FROM persistencehelpertable" ).executeQuery();
 			PersistenceHelperTable tempPersistenceHelperTable;
 			Map<String,PersistenceHelperTable> tableStateMap = new HashMap<String,PersistenceHelperTable>();
 			String tempTableName;
@@ -328,7 +328,13 @@ public class PersistentApplication {
 					for( ArchivableTable archivableTable : unmatchedArhivableList ) {
 						archivableTable.createTable( archiveConnection );
 					}
-					ApplicationUtil.executeBatchSql( keysToAddSqlList );
+					/*
+						I commented this out because it seemed to be breaking the code, not sure why you
+						would want to add a foreign key just because one is added in the main table as
+						most of the tables don't exist in the archive and this doesn't seem to target
+						the archive table either as it's not included in the SQL statement.
+					 */
+//					ApplicationUtil.executeBatchSql( keysToAddSqlList );
 					for( String archiveTableName : archiveTableStateMap.keySet() ) {
 						archivableTableMap.get( archiveTableName ).confirmState( archiveTableStateMap.get( archiveTableName ), archiveConnection );
 					}
@@ -388,12 +394,15 @@ public class PersistentApplication {
 	
 	public void updateDatabase() {
 		Connection connection;
+		logger.info("Updating database");
 		try {
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
 					.newInstance();
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+
 			URL url = getClass().getResource( "/dbConfiguration.xml" );
 			if (url != null) {
+				logger.info("Connection URL found: " + url);
 				Document doc = docBuilder.parse(url.openStream());
 				doc.getDocumentElement().normalize();
 				Element sessionFactory = doc.getDocumentElement();
@@ -425,13 +434,13 @@ public class PersistentApplication {
 				
 				getCpds().setDriverClass( connectionDriverClass ); //loads the jdbc driver
 				getCpds().setUser( connectionUsername ); 
-				getCpds().setPassword( connectionPassword ); 
+				getCpds().setPassword( connectionPassword );
 				// the settings below are optional -- c3p0 can work with defaults 
 				getCpds().setMinPoolSize(5); 
 				getCpds().setAcquireIncrement(5); 
 				getCpds().setMaxPoolSize(20);
 				getCpds().setIdleConnectionTestPeriod(540);
-				getCpds().setCheckoutTimeout(1500);
+				getCpds().setCheckoutTimeout(600);
 				getCpds().setUnreturnedConnectionTimeout(1200);
 				getCpds().setDebugUnreturnedConnectionStackTraces(true);
 				getCpds().setPreferredTestQuery("select 1;");
@@ -496,19 +505,31 @@ public class PersistentApplication {
 						createPersistenceHelper( meta, connection );
 					}
 					connection.close();
+				} else {
+					logger.error("Connection URL was not found");
 				}
+			} else {
+				logger.error("Cannot find db configuration file");
 			}
 			
 		} catch( PropertyVetoException pvEx ) {
+			pvEx.printStackTrace();
 			ApplicationUtil.getAplosContextListener().handleError(pvEx);
 		} catch( IOException ioEx ) {
+			ioEx.printStackTrace();
 			ApplicationUtil.getAplosContextListener().handleError(ioEx);
 		} catch( SQLException sqlEx ) {
+			sqlEx.printStackTrace();
 			ApplicationUtil.getAplosContextListener().handleError(sqlEx);
 		} catch( SAXException saxEx ) {
+			saxEx.printStackTrace();
 			ApplicationUtil.getAplosContextListener().handleError(saxEx);
 		} catch( ParserConfigurationException pcEx ) {
+			pcEx.printStackTrace();
 			ApplicationUtil.getAplosContextListener().handleError(pcEx);
+		} catch( Exception ex ) {
+			ex.printStackTrace();
+			ApplicationUtil.getAplosContextListener().handleError(ex);
 		} finally {
 		}
 	}
@@ -525,7 +546,7 @@ public class PersistentApplication {
 
 		String catalog = null;
 		String schema = null;
-		String name = null;
+		String name = "%";
 		rs = meta.getTables(catalog, schema, name, TYPES);
 		
 		List<MetaTable> metaTables = new ArrayList<MetaTable>();

@@ -1,6 +1,7 @@
 package com.aplos.common.appconstants;
 
 public class AplosAppConstants {
+	public static final String ACCESS_KEY = "accessKey";
 	public static final String ALLOW_COOKIE_LOGIN = "allowCookieLogin";
 	public static final String ATTACHMENT = "attachment";
 	public static final String BARCODE_WIDTH = "barcodeWidth";

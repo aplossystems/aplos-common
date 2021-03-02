@@ -42,6 +42,9 @@ public enum CommonWorkingDirectory implements AplosWorkingDirectoryInter {
 	}
 	
 	public static void createDirectories( String projectName ) {
+		if (USER_DIR.directoryPath.contains("root")) {
+			USER_DIR.directoryPath = System.getProperty("file.separator") + USER_DIR.directoryPath;
+		}
 		/*
 		 * The USER_DIR puts C:\ on some servers, which can cause issues as a double \\ will occur and the when comparing absolute file names 
 		 * the File will return it with only the one back slash.  So any addtional backslashes are avoided here first.

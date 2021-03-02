@@ -4,11 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.faces.context.FacesContext;
 
@@ -253,6 +249,10 @@ public abstract class EmailTemplate<EMAIL_SOURCE extends BulkEmailSource, CONTEN
 		addContentJDynamiTeValues( dynamiTe, bulkEmailRecipient, emailGenerator, singleEmailRecord); 
 		dynamiTe.parse();
 		return dynamiTe.toString();
+	}
+
+	public List<String> getAdditionalCcAddresses(EMAIL_SOURCE bulkEmailRecipient) {
+		return Collections.EMPTY_LIST;
 	}
 	
 	public void addContentJDynamiTeValues(JDynamiTe jDynamiTe, EMAIL_SOURCE bulkEmailRecipient, CONTENT_SOURCE emailGenerator, SingleEmailRecord singleEmailRecord) {

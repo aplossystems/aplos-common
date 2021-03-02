@@ -72,6 +72,56 @@ public class Address extends AplosBean {
 		}
 	}
 
+	public boolean validateXss() {
+		if (!CommonUtil.validateXss(companyName)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(contactFirstName)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(contactSurname)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(line1)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(line2)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(line3)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(city)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(state)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(postcode)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(phone)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(phone2)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(mobile)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(fax)) {
+			return false;
+		}
+
+		if (subscriber != null) {
+			if (!subscriber.validateXss()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public void copy( Address srcAddress ) {
 		copyAddressOnly( srcAddress );
 		setContactFirstName( srcAddress.getContactFirstName() );

@@ -6,4 +6,7 @@ import com.aplos.common.beans.SystemUser;
 public interface FileDetailsOwnerInter {
 	public FileDetailsOwnerHelper getFileDetailsOwnerHelper();
 	public void superSaveBean( SystemUser currentUser );
+	public default boolean allowFileAccess( SystemUser currentUser ) {
+		return true;
+	}
 }

@@ -78,7 +78,7 @@ public class LoginPage extends BackingPage {
 				saveableSystemUser.saveDetails();
 			}
 		} else {
-			JSFUtil.addMessage( "Username or password is incorrect", FacesMessage.SEVERITY_ERROR );
+			JSFUtil.addMessage( "SystemUser credentials were not recognised", FacesMessage.SEVERITY_ERROR );
 		}
 	}
 
@@ -267,10 +267,10 @@ public class LoginPage extends BackingPage {
 				return systemUser;
 			} else {
 				// TODO, this should not print out the password but is currently needed for debugging 01 Feb 2012
-				logger.warn("SystemUser password '" + password + "' was not recognised when logging in with username '" + username + "', '" + systemUser.getPassword() + "' was in the database" );
+				logger.warn("SystemUser credentials were not recognised" );
 			}
 		} else {
-			logger.warn("SystemUser username '" + username + "' was not recognised when logging in" );
+			logger.warn("SystemUser credentials were not recognised" );
 		}
 
 		return null;

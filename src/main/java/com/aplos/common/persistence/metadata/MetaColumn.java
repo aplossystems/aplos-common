@@ -3,6 +3,7 @@ package com.aplos.common.persistence.metadata;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import com.aplos.common.persistence.type.applicationtype.ApplicationType;
 import com.aplos.common.persistence.type.applicationtype.MySqlType;
@@ -28,7 +29,11 @@ public class MetaColumn {
 		
 		getApplicationType().setColumnSize(rs.getInt("COLUMN_SIZE"));
 		getApplicationType().setDecimalDigits(rs.getInt("DECIMAL_DIGITS"));
-		getApplicationType().setNullable(rs.getBoolean("IS_NULLABLE"));
+		if ("NO".equals(rs.getString("IS_NULLABLE"))) {
+			getApplicationType().setNullable(false);
+		} else {
+			getApplicationType().setNullable(true);
+		}
 		getApplicationType().setDefaultValue( rs.getString("COLUMN_DEF") );
 	}
 	
@@ -41,7 +46,9 @@ public class MetaColumn {
 		strBuf.append( getApplicationType().isNullable() ).append( " " );
 		strBuf.append( getApplicationType().getDefaultValue() ).append( " " );
 		return strBuf.toString();
-	};
+	}
+
+
 
 	public String getName() {
 		return name;
@@ -65,5 +72,20 @@ public class MetaColumn {
 
 	public void setPrimaryKey(boolean isPrimaryKey) {
 		this.isPrimaryKey = isPrimaryKey;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		MetaColumn that = (MetaColumn) o;
+		return isPrimaryKey == that.isPrimaryKey &&
+				Objects.equals(name, that.name) &&
+				Objects.equals(applicationType, that.applicationType);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, applicationType, isPrimaryKey);
 	}
 }

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.aplos.common.utils.JSFUtil;
 import org.apache.log4j.Logger;
 
 import com.aplos.common.AplosUrl;
@@ -61,14 +62,14 @@ public class EditorUploadServlet extends HttpServlet {
 			fileDetails.saveDetails();
 			File newFile = new File( aplosWorkingDirectoryEnum.getDirectoryPath(true) + "/" + idFilename );
 			f.renameTo( newFile );
-			
-			webFileAddress = "/media/?" + AplosAppConstants.FILE_NAME + "=" + aplosWorkingDirectoryEnum.getDirectoryPath(false) + "/" + idFilename;
+
 			String websiteId = req.getParameter("websiteId"); 
 			if( !CommonUtil.isNullOrEmpty( websiteId ) ) {
 				Website website = ApplicationUtil.getAplosContextListener().getWebsite( Long.parseLong( websiteId ) );
 				
 				if( website != null ) {
-					AplosUrl aplosUrl = new AplosUrl( webFileAddress, false );
+					String fileUrl = MediaServlet.getFileUrl(fileDetails, false, null);
+					AplosUrl aplosUrl = new AplosUrl(fileUrl, false );
 					aplosUrl.setHost( website );
 					aplosUrl.setScheme(Protocol.HTTP);
 					webFileAddress = aplosUrl.toString();

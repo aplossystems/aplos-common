@@ -3,19 +3,16 @@ package com.aplos.common.persistence.metadata;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import com.aplos.common.persistence.metadata.ColumnIndex.ColumnIndexType;
 import com.aplos.common.utils.ApplicationUtil;
 
 public class MetaTable {
 	private String name;
-	private List<MetaColumn> columns = new ArrayList<MetaColumn>();
-	private List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
-	private List<ColumnIndex> columnIndexes = new ArrayList<ColumnIndex>();
+	private List<MetaColumn> columns = new ArrayList<>();
+	private List<ForeignKey> foreignKeys = new ArrayList<>();
+	private List<ColumnIndex> columnIndexes = new ArrayList<>();
 	private static final int INDEX_NAME = 6;
 	private static final int PKTABLE_NAME = 3;
 	private static final int PKCOLUMN_NAME = 4;
@@ -40,13 +37,16 @@ public class MetaTable {
 		name = rs.getString( "TABLE_NAME" );
 		
 		rs = meta.getColumns( null, null, name, null );
+		// This is to stop the duplicates that started happening on the new server
+		Set<MetaColumn> columnSet = new HashSet<>();
 		while( rs.next() ) {
-			columns.add( new MetaColumn( meta, rs ) );
+			columnSet.add( new MetaColumn( meta, rs ) );
 		}
 		
 		loadForeignKeys( meta, sort );
 		loadIndexes( meta, sort );
-		
+
+		columns = new ArrayList<>(columnSet);
 		if( sort ) {
 			Collections.sort( columns, new MetaColumnComparator() );
 		}

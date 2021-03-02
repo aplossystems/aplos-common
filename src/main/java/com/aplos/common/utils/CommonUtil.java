@@ -107,6 +107,13 @@ public class CommonUtil {
     	}
     		
     }
+
+    public static boolean validateXss(String content) {
+    	if (content != null) {
+    		return !content.matches("(.*)<[^>]*script(.*)");
+		}
+    	return true;
+	}
     
     public static Cookie findCookie( String cookieName ) {
     	if( JSFUtil.getRequest().getCookies() != null ) {
@@ -167,6 +174,27 @@ public class CommonUtil {
 			return true;
 //		}
     }
+	public static boolean saveBeanWithThrow( AplosAbstractBean aplosAbstractBean ) throws Exception {
+		if( aplosAbstractBean.isReadOnly() ) {
+			throw new Exception( "Read Only" );
+		}
+//			JSFUtil.addMessageForWarning( "This bean is read only and cannot be saved" );
+//			return false;
+//		} else {
+		boolean wasNew = aplosAbstractBean.isNew();
+		try {
+			PersistentBeanSaver.saveBean( aplosAbstractBean );
+		} catch( Exception ex ) {
+			throw ex;
+		}
+		if( aplosAbstractBean.getAfterSaveListener() != null ) {
+			aplosAbstractBean.getAfterSaveListener().actionPerformed(wasNew);
+		}
+
+//			generateHashcode();
+		return true;
+//		}
+	}
 
 	public static boolean isLocalHost( ServletContext servletContext ) {
 		if( servletContext == null || 
@@ -443,7 +471,8 @@ public class CommonUtil {
 	
 	public static String getPathRelativeToServerWorkDir( String directoryPath ) {
 		if( !CommonUtil.isNullOrEmpty(directoryPath) ) {
-			return directoryPath.replace( CommonWorkingDirectory.SERVER_WORK_DIR.getDirectoryPath(false), "" );
+			directoryPath = directoryPath.replace( CommonWorkingDirectory.SERVER_WORK_DIR.getDirectoryPath(false), "" );
+			return directoryPath.replace( CommonWorkingDirectory.SERVER_WORK_DIR.getDirectoryPath(false).replace("//", "/"), "" );
 		} else {
 			return directoryPath;
 		}

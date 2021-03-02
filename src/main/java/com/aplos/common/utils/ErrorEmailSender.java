@@ -28,8 +28,10 @@ import com.aplos.common.beans.communication.AplosEmail;
 import com.aplos.common.beans.communication.MailServerSettings;
 import com.aplos.common.listeners.AplosContextListener;
 import com.aplos.common.module.CommonConfiguration;
+import org.apache.log4j.Logger;
 
 public class ErrorEmailSender {
+	private static Logger logger = Logger.getLogger( ErrorEmailSender.class );
 	private static ConcurrentLinkedQueue<Date> sentMessages = new ConcurrentLinkedQueue<Date>();
 
 	public static synchronized void sendErrorEmail(HttpServletRequest request, AplosContextListener contextListener, Throwable throwable) {
@@ -39,36 +41,26 @@ public class ErrorEmailSender {
 	public static synchronized void sendErrorEmail(HttpServletRequest request, AplosContextListener contextListener, Throwable throwable, String messageHtmlString) {
 		boolean isErrorEmailDisabledHere = false;
 		try {
-			boolean sendErrorEmail = !AplosContextListener.getAplosContextListener().isDebugMode();
+			boolean sendErrorEmail = true;//!AplosContextListener.getAplosContextListener().isDebugMode();
 			if( request != null ) {
 				sendErrorEmail = !CommonUtil.isLocalHost(request.getServletContext());
 			}
 			if( sendErrorEmail ) {
 				/*
-				 * Check the sessionTemp first because checking the tab session calls code which may 
-				 * have triggered the error in the first place.  This can happen if a change has been 
+				 * Check the sessionTemp first because checking the tab session calls code which may
+				 * have triggered the error in the first place.  This can happen if a change has been
 				 * made to CommonConfiguration db structure for example.
 				 */
-				sendErrorEmail = ApplicationUtil.getAplosContextListener().isErrorEmailActivated();
-				ApplicationUtil.getAplosContextListener().setErrorEmailActivated( false );
-				
-				if( sendErrorEmail && (JSFUtil.getSessionTemp() == null || JSFUtil.getTabSession() == null) ) {
-					ApplicationUtil.getAplosContextListener().setErrorEmailActivated( true );
-					Boolean isErrorEmailActivated = (Boolean) JSFUtil.getTabSession().get( AplosScopedBindings.ERROR_EMAIL_ACTIVATED );
-					if( isErrorEmailActivated == null ) {
-						sendErrorEmail = true;
-					} else {
-						sendErrorEmail = isErrorEmailActivated;
-					}
-				} else {
+
+				boolean isErrorEmailActivated = determineIsErrorEmailActivated();
+				if(isErrorEmailActivated) {
 					isErrorEmailDisabledHere = true;
+				} else {
+					sendErrorEmail = false;
 				}
 			}
+
 			if (sendErrorEmail) {
-				if( ApplicationUtil.getAplosContextListener().isErrorEmailActivated() && (JSFUtil.getSessionTemp() == null || JSFUtil.getTabSession() == null) ) {
-					JSFUtil.getTabSession().put( AplosScopedBindings.ERROR_EMAIL_ACTIVATED, false );
-					isErrorEmailDisabledHere = true;
-				}
 				
 				Calendar cal = new GregorianCalendar();
 				StringBuffer datesRemoved = new StringBuffer();
@@ -165,7 +157,7 @@ public class ErrorEmailSender {
 					}
 					AplosEmail aplosEmail = new AplosEmail( emailSubject, stackTraceStrBuf.toString(), false );
 					aplosEmail.addToAddress( errorEmail );
-					aplosEmail.setFromAddress( errorEmail );
+					aplosEmail.setFromAddress( contextListener.getErrorFromEmailAddress() );
 					CommonConfiguration commonConfiguration = CommonConfiguration.getCommonConfiguration(); 
 					if( commonConfiguration != null ) {
 						aplosEmail.setMailServerSettings( CommonConfiguration.getCommonConfiguration().getErrorMailServerSettings() );
@@ -177,6 +169,7 @@ public class ErrorEmailSender {
 					}
 					
 					aplosEmail.setSendingViaQueue(false);
+					logger.error("Sending error email to " + aplosEmail.getFirstToAddress());
 					aplosEmail.sendAplosEmailToQueue( false );
 					sentMessages.add( new Date() );
 				}
@@ -189,13 +182,33 @@ public class ErrorEmailSender {
 			}
 		} finally {
 			if( isErrorEmailDisabledHere ) {
-				if( JSFUtil.getSessionTemp() == null || JSFUtil.getTabSession() == null ) {
-					ApplicationUtil.getAplosContextListener().setErrorEmailActivated( true );
-				} else {
+				logger.error("Reactivating error email in errorEmailSender");
+				AplosContextListener.getAplosContextListener().setErrorEmailActivated(true);
+				if( JSFUtil.getSessionTemp() != null && JSFUtil.getTabSession() != null ) {
 					JSFUtil.getTabSession().put( AplosScopedBindings.ERROR_EMAIL_ACTIVATED, true );
 				}
 			}
 		}
+	}
+
+	public static boolean determineIsErrorEmailActivated() {
+		boolean isErrorEmailActivated = true;
+		if (JSFUtil.getSessionTemp() != null && JSFUtil.getTabSession() != null) {
+			Map<String, Object> tabSession = JSFUtil.getTabSession();
+			Boolean isErrorEmailActivatedBol = (Boolean) tabSession.get(AplosScopedBindings.ERROR_EMAIL_ACTIVATED);
+			if(isErrorEmailActivatedBol != null) {
+				isErrorEmailActivated = isErrorEmailActivatedBol;
+			}
+			logger.error("Send error email activated: " + isErrorEmailActivated);
+
+			JSFUtil.getTabSession().put( AplosScopedBindings.ERROR_EMAIL_ACTIVATED, false );
+			return isErrorEmailActivated;
+		} else {
+			isErrorEmailActivated = ApplicationUtil.getAplosContextListener().isErrorEmailActivated();
+			logger.error("Send error email activated: " + isErrorEmailActivated);
+			ApplicationUtil.getAplosContextListener().setErrorEmailActivated( false );
+		}
+		return isErrorEmailActivated;
 	}
 
 	public static void addUrlHistory( StringBuffer stackTraceStrBuf, HttpServletRequest request ) {

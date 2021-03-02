@@ -5,17 +5,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 
+import com.aplos.common.beans.*;
 import org.apache.commons.io.FileUtils;
 
 import com.aplos.common.aql.BeanDao;
-import com.aplos.common.beans.AplosBean;
-import com.aplos.common.beans.Country;
-import com.aplos.common.beans.Currency;
-import com.aplos.common.beans.Website;
 import com.aplos.common.enums.CommonBundleKey;
 import com.aplos.common.enums.CommonWorkingDirectory;
 import com.aplos.common.interfaces.AplosWorkingDirectoryInter;
@@ -52,7 +50,12 @@ public class CommonModule extends AplosModuleImpl {
 			ApplicationUtil.handleError(ioex);
 		}
 	}
-	
+
+	@Override
+	public AplosWorkingDirectoryInter[] getWorkingDirectories() {
+		return CommonWorkingDirectory.values();
+	}
+
 	@Override
 	public void clearCache() {
 		try {

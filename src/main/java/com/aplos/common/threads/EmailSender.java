@@ -49,9 +49,9 @@ public class EmailSender extends AplosThread {
 					Transport.send(currMessage);
 					currMessage = null;
 				} catch (NoSuchProviderException nspEx) {
-					AplosContextListener.getAplosContextListener().handleError( nspEx );
+					handleError(nspEx);
 				} catch (javax.mail.MessagingException mEx) {
-					AplosContextListener.getAplosContextListener().handleError( mEx );
+					handleError(mEx);
 					if( mEx.getNextException() instanceof java.net.ConnectException ) {
 						sleep( 60 * 1000 );
 					} else if( mEx.getNextException() instanceof java.net.UnknownHostException ) {
@@ -61,10 +61,14 @@ public class EmailSender extends AplosThread {
 					}
 				}
 			} catch( InterruptedException iEx ) {
-				AplosContextListener.getAplosContextListener().handleError( iEx );
+				handleError(iEx);
 				break;
 			}
 		}
+	}
+
+	public void handleError(Exception ex) {
+		AplosContextListener.getAplosContextListener().handleError( ex );
 	}
 
 	

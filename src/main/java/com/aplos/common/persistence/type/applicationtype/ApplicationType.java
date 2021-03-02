@@ -3,6 +3,7 @@ package com.aplos.common.persistence.type.applicationtype;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import com.aplos.common.beans.AplosAbstractBean;
 import com.aplos.common.utils.ApplicationUtil;
@@ -90,5 +91,21 @@ public abstract class ApplicationType {
 
 	public void setDefaultValue(Object defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ApplicationType that = (ApplicationType) o;
+		return columnSize == that.columnSize &&
+				decimalDigits == that.decimalDigits &&
+				isNullable == that.isNullable &&
+				Objects.equals(defaultValue, that.defaultValue);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(columnSize, decimalDigits, isNullable, defaultValue);
 	}
 }

@@ -1,9 +1,8 @@
 package com.aplos.common.module;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,13 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.FileUtils;
-
 import com.aplos.common.beans.AplosAbstractBean;
 import com.aplos.common.beans.Currency;
 import com.aplos.common.beans.communication.AplosEmail;
 import com.aplos.common.beans.communication.InboundSms;
-import com.aplos.common.enums.CommonWorkingDirectory;
+import com.aplos.common.interfaces.AplosWorkingDirectoryInter;
 import com.aplos.common.interfaces.BulkEmailSource;
 import com.aplos.common.listeners.AplosContextListener;
 import com.aplos.common.utils.JSFUtil;
@@ -28,6 +25,7 @@ import com.aplos.common.utils.UserLevelUtil;
 public class AplosModuleFilterer {
 	private List<AplosModule> aplosModuleList;
 	private AplosContextListener aplosContextListener;
+	private Map<String, String> fileDetailKeyDirectories;
 
 	public AplosModuleFilterer( AplosContextListener aplosContextListener ) {
 		this.aplosContextListener = aplosContextListener;
@@ -40,6 +38,20 @@ public class AplosModuleFilterer {
 				aplosModuleList.get( i ).getDatabaseLoader().newTableAdded( tableClass );
 			}
 		}
+	}
+
+	public Map<String, String> getFileDetailKeyDirectories() {
+		if (fileDetailKeyDirectories == null) {
+			fileDetailKeyDirectories = new HashMap<>();
+			for( int i = 0, n = aplosModuleList.size(); i < n; i++ ) {
+				for( AplosWorkingDirectoryInter workingDirectory: aplosModuleList.get( i ).getWorkingDirectories()) {
+					String key = workingDirectory.name();
+					String path = workingDirectory.getDirectoryPath(false);
+					fileDetailKeyDirectories.put(path, key);
+				}
+			}
+		}
+		return fileDetailKeyDirectories;
 	}
 	
 	public void registerInboundSms( InboundSms inboundSms ) {

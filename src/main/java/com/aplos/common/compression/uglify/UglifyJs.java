@@ -19,7 +19,7 @@ public class UglifyJs {
 				reader = new InputStreamReader(getClass().getResourceAsStream(url));
 			}
 		} catch (Exception e) {
-			ApplicationUtil.handleError(e);
+			ApplicationUtil.handleError(e, "Could not read URL " + url);
 		}
 
 		return reader;

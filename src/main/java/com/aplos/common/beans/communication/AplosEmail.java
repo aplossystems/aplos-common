@@ -26,6 +26,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.aplos.common.beans.*;
+import com.aplos.common.listeners.AplosContextListener;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -54,13 +56,6 @@ import com.aplos.common.annotations.persistence.ManyToMany;
 import com.aplos.common.annotations.persistence.ManyToOne;
 import com.aplos.common.annotations.persistence.Transient;
 import com.aplos.common.aql.BeanDao;
-import com.aplos.common.beans.AplosAbstractBean;
-import com.aplos.common.beans.AplosSiteBean;
-import com.aplos.common.beans.CreatedPrintTemplate;
-import com.aplos.common.beans.FileDetails;
-import com.aplos.common.beans.InputStreamDataSource;
-import com.aplos.common.beans.SystemUser;
-import com.aplos.common.beans.Website;
 import com.aplos.common.enums.EmailActionType;
 import com.aplos.common.enums.EmailStatus;
 import com.aplos.common.enums.EmailTemplateEnum;
@@ -550,7 +545,7 @@ public class AplosEmail extends AplosSiteBean {
 		return saveabledAplosEmail.sendAplosEmailToQueue(true);
 	}
 
-	public MimeMessage sendAplosEmailToQueue( boolean saveEmail ) {
+	public MimeMessage sendAplosEmailToQueue( boolean saveEmailAndSendErrors ) {
 		Set<BulkEmailSource> bulkEmailSourceSet = filterMessageSourceList();
 
 		Set<SingleEmailRecord> singleEmailRecordSet = new HashSet<SingleEmailRecord>();
@@ -574,25 +569,29 @@ public class AplosEmail extends AplosSiteBean {
 		try {
 			MimeMessage mimeMessage = null;
 			// Save the details now so that there is an id available for the email viewer
-	        if( saveEmail ) {
+	        if( saveEmailAndSendErrors ) {
 	        	saveDetails();
 	        }
 	        
 		   BulkEmailSender bulkEmailSender = new BulkEmailSender( this, singleEmailRecordSet );
-		   mimeMessage = bulkEmailSender.startSendingEmails( saveEmail );
+		   mimeMessage = bulkEmailSender.startSendingEmails( saveEmailAndSendErrors );
 	        
 			if( mimeMessage != null ) {
 		        setEmailSentDate(new Date());
 			}
-	        if( saveEmail ) {
+	        if( saveEmailAndSendErrors ) {
 				saveDetails();
 	        }
 	        return mimeMessage;
 		} catch (javax.mail.MessagingException mEx) {
-			ApplicationUtil.getAplosContextListener().handleError( mEx );
+			if (saveEmailAndSendErrors) {
+				ApplicationUtil.getAplosContextListener().handleError(mEx);
+			}
 			return null;
 		} catch (IOException ioEx) {
-			ApplicationUtil.getAplosContextListener().handleError( ioEx );
+			if (saveEmailAndSendErrors) {
+				ApplicationUtil.getAplosContextListener().handleError(ioEx);
+			}
 			return null;
 		}
 	}
@@ -692,7 +691,13 @@ public class AplosEmail extends AplosSiteBean {
 		if( isSendingPlainText() && !CommonUtil.isNullOrEmpty(getPlainTextBody()) ) {
 			processedPlainTextBody = emailTemplate.compileContent( singleEmailRecord.getBulkEmailSource(), determinedEmailGenerator, getPlainTextBody(), singleEmailRecord );
 		}
-		
+
+		List<String> additionalCcAddresses = new ArrayList<>();
+
+		if (emailTemplate != null) {
+			emailTemplate.getAdditionalCcAddresses(singleEmailRecord.getBulkEmailSource());
+		}
+
 		String divertEmailAddress = null;
 		if ( ApplicationUtil.getAplosContextListener().isDebugMode() && isDivertingEmailsInDebug() ) {
 			// To stop unwanted external email sending during testing
@@ -703,6 +708,11 @@ public class AplosEmail extends AplosSiteBean {
 				ccAddresses.clear();
 				ccAddresses.add( getDivertEmailAddress() );
 			}
+
+			if( additionalCcAddresses.size() > 0 ) {
+				additionalCcAddresses.clear();
+			}
+
 			if( bccAddresses.size() > 0 ) {
 				bccAddresses.clear();
 				bccAddresses.add( getDivertEmailAddress() );
@@ -727,6 +737,17 @@ public class AplosEmail extends AplosSiteBean {
 				logger.debug( "The cc address '" + ccAddress + "' is invalid please update it." );
 				return null;
 			}	
+		}
+
+		for( String additionalCcAddress : additionalCcAddresses ) {
+			try {
+				mimeMessage.addRecipient(Message.RecipientType.CC, new InternetAddress(additionalCcAddress));
+			}
+			catch( AddressException aex ) {
+				JSFUtil.addMessage( "The cc address '" + additionalCcAddress + "' is invalid please update it." );
+				logger.debug( "The cc address '" + additionalCcAddress + "' is invalid please update it." );
+				return null;
+			}
 		}
 		for( String bccAddress : bccAddresses ) {
 			try {
@@ -794,6 +815,10 @@ public class AplosEmail extends AplosSiteBean {
 				((CreatedPrintTemplate) tempFileDetails).generateAndSavePDFFile();
 				filename = tempFileDetails.getFilename();
 			}
+			if( tempFileDetails instanceof GeneratedFileDetails && CommonUtil.isNullOrEmpty(filename) ) {
+				((GeneratedFileDetails) tempFileDetails).generateAndSaveFile();
+				filename = tempFileDetails.getFilename();
+			}
 			InputStream inputStream = new FileInputStream( tempFileDetails.getFile() );
 			/*
 			 * TODO 
@@ -833,7 +858,15 @@ public class AplosEmail extends AplosSiteBean {
 			singleEmailRecord.setEmailSentDate(new Date());
 			singleEmailRecord.setStatus(SingleEmailRecordStatus.SENT);
         }
-		singleEmailRecord.saveDetails();
+        try {
+			singleEmailRecord.saveDetailsWithThrow();
+		} catch(Exception ex) {
+        	if (getSubject() == null || !getSubject().contains("Error")) {
+				AplosContextListener.getAplosContextListener().handleError(ex, false);
+			} else {
+				System.out.println(ex);
+			}
+		}
 		
         return mimeMessage;
 	}
@@ -875,12 +908,18 @@ public class AplosEmail extends AplosSiteBean {
 		if( fileDetails instanceof CreatedPrintTemplate && CommonUtil.isNullOrEmpty(fileDetails.getFilename()) ) {
 			((CreatedPrintTemplate) fileDetails).generateAndSavePDFFile();
 		}
+		if( fileDetails instanceof GeneratedFileDetails && CommonUtil.isNullOrEmpty(fileDetails.getFilename()) ) {
+			((GeneratedFileDetails) fileDetails).generateAndSaveFile();
+		}
 		fileDetails.redirectToAplosUrl();
 	}
 	
 	public void downloadSaveableAttachment(FileDetails fileDetails) {
 		if( fileDetails instanceof CreatedPrintTemplate && CommonUtil.isNullOrEmpty(fileDetails.getFilename()) ) {
 			((CreatedPrintTemplate) fileDetails).generateAndSavePDFFile();
+		}
+		if( fileDetails instanceof GeneratedFileDetails && CommonUtil.isNullOrEmpty(fileDetails.getFilename()) ) {
+			((GeneratedFileDetails) fileDetails).generateAndSaveFile();
 		}
 		fileDetails.redirectToAplosUrl(true);
 	}
@@ -965,15 +1004,7 @@ public class AplosEmail extends AplosSiteBean {
 	}
 
 	public static String getDivertEmailAddress() {
-		try {
-			if( InetAddress.getLocalHost().getHostName().equalsIgnoreCase( "targaryan-PC" ) ) {
-				return "nick@aplossystems.co.uk";
-			} else {
-				return "info@aplossystems.co.uk";
-			}
-		} catch( UnknownHostException unEx ) {
-			return "info@aplossystems.co.uk";
-		}
+		return "anthony.mayfield.1@gmail.com";
 	}
 	
 	public String getJoinedToAddresses() {

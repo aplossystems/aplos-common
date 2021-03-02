@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.primefaces.model.UploadedFile;
 
 import com.aplos.common.AplosUrl;
@@ -63,6 +64,9 @@ public class FileDetails extends AplosBean {
 	private transient UploadedFile uploadedFile;
 	@Transient
 	private transient FileUploaderInter fileUploader2;
+
+	private String accessKey;
+
 	
 	public FileDetails() {
 		// TODO Auto-generated constructor stub
@@ -139,11 +143,14 @@ public class FileDetails extends AplosBean {
 	public void saveBean(SystemUser currentUser ) {
 		FileDetailsOwnerInter fileDetailsOwnerRef = getFileDetailsOwner();
 		boolean ownerIsNew = false;
-		if( fileDetailsOwner.getFileDetailsOwnerHelper() instanceof SaveableFileDetailsOwnerHelper ) {
+		if( fileDetailsOwner != null && fileDetailsOwner.getFileDetailsOwnerHelper() instanceof SaveableFileDetailsOwnerHelper ) {
 			ownerIsNew = ((SaveableFileDetailsOwnerHelper)fileDetailsOwner.getFileDetailsOwnerHelper()).isNew();
 		} 
 		if ( ownerIsNew ) {
 			setFileDetailsOwner(null);
+		}
+		if (getAccessKey() == null) {
+			setAccessKey(RandomStringUtils.random(16, true, true).toLowerCase());
 		}
 		super.saveBean(currentUser);
 		setFileDetailsOwner( fileDetailsOwnerRef );
@@ -245,7 +252,7 @@ public class FileDetails extends AplosBean {
 	}
 
 	public AplosUrl getAplosUrl( boolean isAttachment ) {
-		String localUrl = MediaServlet.getFileUrl( this, determineFileDetailsDirectory(true), false, MediaFileType.PDF );
+		String localUrl = MediaServlet.getFileUrl( this, false, MediaFileType.PDF );
 		AplosUrl aplosUrl = new AplosUrl( localUrl, false );
 		if( isAttachment ) {
 			aplosUrl.addQueryParameter( AplosAppConstants.ATTACHMENT, true );
@@ -263,22 +270,23 @@ public class FileDetails extends AplosBean {
 	}
 
 	public String getExternalFileUrlByServerUrl() {
-		String localUrl = MediaServlet.getImageUrl( this, determineFileDetailsDirectory(true), false );
+		String localUrl = MediaServlet.getImageUrl( this, false );
 		AplosUrl aplosUrl = new AplosUrl( localUrl, false );
 		String serverAndContext = (String) JSFUtil.getServerUrl() + JSFUtil.getContextPath().replace("/", "");
 		return serverAndContext + aplosUrl.toString();
 	}
 
 	public String getExternalFileUrl() {
-		String localUrl = MediaServlet.getImageUrl( this, determineFileDetailsDirectory(true), false );
+		String localUrl = MediaServlet.getImageUrl( this, false );
 		AplosUrl aplosUrl = new AplosUrl( localUrl, false );
+		aplosUrl.addQueryParameter(AplosAppConstants.ACCESS_KEY, getAccessKey());
 		aplosUrl.setHost( Website.getCurrentWebsiteFromTabSession(), true );
 		aplosUrl.setScheme( Protocol.HTTP );
 		return aplosUrl.toString();
 	}
 
 	public String getFullFileUrl(boolean addContextPath) {
-		return MediaServlet.getImageUrl( this, determineFileDetailsDirectory(true), addContextPath );
+		return MediaServlet.getImageUrl( this, addContextPath );
 	}
 
 	public boolean fileExists( String directory ) {
@@ -401,5 +409,13 @@ public class FileDetails extends AplosBean {
 
 	public void setFileUploader2(FileUploaderInter fileUploader2) {
 		this.fileUploader2 = fileUploader2;
+	}
+
+	public String getAccessKey() {
+		return accessKey;
+	}
+
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
 	}
 }

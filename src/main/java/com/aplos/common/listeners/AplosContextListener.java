@@ -358,7 +358,7 @@ public abstract class AplosContextListener implements ServletContextListener {
 //        WebConfiguration.getInstance(servletContextEvent.getServletContext()).overrideContextInitParameter(WebConfiguration.WebContextInitParameter.FaceletsDefaultRefreshPeriod, "-1");
         
 		try {
-			logger.debug("Context Initialised");
+			logger.info("Context Initialised");
 			
 			aplosContextListener = this;
 			setContext(servletContextEvent.getServletContext());
@@ -891,7 +891,12 @@ public abstract class AplosContextListener implements ServletContextListener {
 		if( errorUrls != null ) {
 			errorUrls += "<br/>External context redirect : " + isExternalContextRedirect;
 		}
-		ErrorEmailSender.sendErrorEmail(httpRequest,this,throwable,errorUrls);
+
+		if (isErrorEmailActivated) {
+			ErrorEmailSender.sendErrorEmail(httpRequest, this, throwable, errorUrls);
+		} else {
+			logger.error("Error not sent because error email disabled");
+		}
 
 		throwable.printStackTrace();
 
@@ -1022,7 +1027,12 @@ public abstract class AplosContextListener implements ServletContextListener {
 
 	public String getErrorEmailAddress() {
 		//TODO: change this to receive error emails for TBP, don't sync
-		return "anthony.mayfield@hotmail.co.uk";
+		return "sysadmin-altruidb@apricity.life";
+	}
+
+	public String getErrorFromEmailAddress() {
+		//TODO: change this to receive error emails for TBP, don't sync
+		return "error-email@altrui.co.uk";
 	}
 
 	public void insertInitialUserLevelsAndUsers() {

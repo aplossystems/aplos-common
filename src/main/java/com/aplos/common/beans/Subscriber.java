@@ -279,4 +279,23 @@ public class Subscriber extends AplosBean implements BulkEmailFinder, BulkSubscr
 	public void setUnsubscribeType(UnsubscribeType unsubscribeType) {
 		this.unsubscribeType = unsubscribeType;
 	}
+
+	public boolean validateXss() {
+		if (!CommonUtil.validateXss(firstName)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(surname)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(emailAddress)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(unsubscribeReason)) {
+			return false;
+		}
+		if (!CommonUtil.validateXss(referrerOther)) {
+			return false;
+		}
+		return true;
+	}
 }

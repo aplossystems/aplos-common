@@ -87,6 +87,7 @@ public final class AplosFaceletCache extends FaceletCache<Facelet> {
             	} catch( FacesException ex ) {
             		// just ignore
             	}
+
                 return new Record(System.currentTimeMillis(), lastModified,
                                   getMemberFactory().newInstance(key), refreshPeriod);
             }

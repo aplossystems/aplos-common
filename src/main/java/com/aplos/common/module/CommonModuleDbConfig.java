@@ -1,38 +1,7 @@
 package com.aplos.common.module;
 
 import com.aplos.common.FacebookPage;
-import com.aplos.common.beans.Address;
-import com.aplos.common.beans.AplosBean;
-import com.aplos.common.beans.AplosTranslation;
-import com.aplos.common.beans.AplosWorkingDirectory;
-import com.aplos.common.beans.BasicContact;
-import com.aplos.common.beans.BasicContactTag;
-import com.aplos.common.beans.ColumnState;
-import com.aplos.common.beans.CompanyDetails;
-import com.aplos.common.beans.Country;
-import com.aplos.common.beans.CountryArea;
-import com.aplos.common.beans.CreatedPrintTemplate;
-import com.aplos.common.beans.CreditCardDetails;
-import com.aplos.common.beans.CreditCardType;
-import com.aplos.common.beans.Currency;
-import com.aplos.common.beans.DataTableState;
-import com.aplos.common.beans.DateRange;
-import com.aplos.common.beans.DynamicBundleEntry;
-import com.aplos.common.beans.DynamicBundleLanguage;
-import com.aplos.common.beans.FileDetails;
-import com.aplos.common.beans.InternationalNumber;
-import com.aplos.common.beans.MenuWizard;
-import com.aplos.common.beans.PageRequest;
-import com.aplos.common.beans.PaymentGatewayPost;
-import com.aplos.common.beans.PostalZone;
-import com.aplos.common.beans.ShoppingCart;
-import com.aplos.common.beans.ShoppingCartItem;
-import com.aplos.common.beans.Subscriber;
-import com.aplos.common.beans.SubscriberReferrer;
-import com.aplos.common.beans.SubscriptionChannel;
-import com.aplos.common.beans.SystemUser;
-import com.aplos.common.beans.VatType;
-import com.aplos.common.beans.Website;
+import com.aplos.common.beans.*;
 import com.aplos.common.beans.cardsave.CardSaveConfigurationDetails;
 import com.aplos.common.beans.cardsave.CardSaveGateway;
 import com.aplos.common.beans.cardsave.directintegration.CardSaveDirectPost;
@@ -159,6 +128,7 @@ public class CommonModuleDbConfig extends ModuleDbConfig {
     	persistentApplication.addPersistentClass( DynamicBundleLanguage.class, true );
     	persistentApplication.addPersistentClass( DynamicBundleEntryTranslation.class, true );
     	persistentApplication.addPersistentClass( CreatedPrintTemplate.class, true );
+		persistentApplication.addPersistentClass( GeneratedFileDetails.class, true );
     	persistentApplication.addPersistentClass( SubscriptionChannel.class, true );
 
     	persistentApplication.addPersistentClass( ForgottenSystemPasswordEmail.class, true );

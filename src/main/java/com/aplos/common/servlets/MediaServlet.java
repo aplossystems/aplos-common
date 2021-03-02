@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.media.jai.JAI;
@@ -27,6 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.aplos.common.listeners.AplosContextListener;
+import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 
 import com.aplos.common.JpegReader;
@@ -65,95 +68,115 @@ public class MediaServlet extends HttpServlet {
 	@Override
 	protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
 		try {
-			String filename = request.getParameter( AplosAppConstants.FILE_NAME );
+			String filePath = request.getParameter( AplosAppConstants.FILE_NAME );
 			String type = request.getParameter( AplosAppConstants.TYPE );
 			boolean fileRestricted = false;
-			if( filename == null ) {
-				String fileDetailsId = request.getParameter( AplosAppConstants.FILE_DETAILS_ID );
-				if( fileDetailsId != null ) {
-					FileDetails fileDetails = null;
-					try {
-						fileDetails = (FileDetails) new BeanDao( FileDetails.class ).get( Long.parseLong( fileDetailsId ) );
-					} catch( NumberFormatException nfex ) {
-						ApplicationUtil.getAplosContextListener().handleError(nfex);
-					}
-
-					if( fileDetails != null ) {
-						if( type == null ) {
-							type = getFileType( fileDetails.getFilename() );
-						}
-	
-						if( type == null ||
-							type.equalsIgnoreCase( MediaFileType.IMAGE.name() ) ||
-							type.equalsIgnoreCase( MediaFileType.LIVEDRIVE_HOSTED_IMAGE.name() )) {
-							writeImage( fileDetails, response, request, false );
-						} else if( MediaFileType.FLASH.name().equalsIgnoreCase( type ) ||
-									MediaFileType.SOUND.name().equalsIgnoreCase( type ) ||
-									MediaFileType.MISC.name().equalsIgnoreCase( type ) ||
-									MediaFileType.PDF.name().equalsIgnoreCase( type ) ||
-									MediaFileType.SOUND.name().equalsIgnoreCase( type ) ) {
-							writeFile( fileDetails.getFile(), fileDetails.getName(), response, request, fileRestricted );
-						}
-					}
-				}
-			} else {
-				filename = URLDecoder.decode( filename, "UTF-8" );
-				if( filename.indexOf( "?" ) > -1 ) {
-					filename = filename.substring( 0, filename.indexOf( "?" ) );
-				}
-
-				if( type == null ) {
-					type = getFileType( filename );
-				}
-				
-				if( filename != null ) {
-//					if (restrictedUrlsCached == null) {
-//						restrictedUrlsCached = ApplicationUtil.getAplosModuleFilterer().getRestrictedMediaPaths();
-//					}
-//					for (String restrictedPath : restrictedUrlsCached) {
-//						if (filename.startsWith(restrictedPath)) {
-							
-							//TODO: SESSION/WINDOWID CHECK
-//							String sessionId = request.getParameter( AplosAppConstants.SESSION_ID );
-//							if (sessionId != null && !sessionId.equals("")) {
-//								HttpSession session = //GET IT SOMEHOW							
-//								String userIdString = request.getParameter( AplosAppConstants.USER_ID );
-//								if (userIdString != null && !userIdString.equals("")) {
-//									
-//									Long userId = Long.parseLong(userIdString);
-//									SystemUser currentUser = (SystemUser) session.getAttribute(CommonUtil.getBinding(SystemUser.class));
-//									if (currentUser != null && currentUser.isLoggedIn() && currentUser.getId().equals(userId)) {
-//										fileRestricted=false;
-//									} else {
-//										fileRestricted=true;
-//									}
-	//
-//								} else {
-//									fileRestricted=true;
-//								}
-//								
-//							} else {
-//								fileRestricted=true;
-//							}
-								
-//							break;
-//						}
-//					}
-					if( type == null ||
-						type.equalsIgnoreCase( MediaFileType.IMAGE.name() ) ||
-						type.equalsIgnoreCase( MediaFileType.LIVEDRIVE_HOSTED_IMAGE.name() )) {
-						writeImage( false, filename, response, request, fileRestricted );
-					} else if( MediaFileType.FLASH.name().equalsIgnoreCase( type ) ||
-								MediaFileType.SOUND.name().equalsIgnoreCase( type ) ||
-								MediaFileType.MISC.name().equalsIgnoreCase( type ) ||
-								MediaFileType.PDF.name().equalsIgnoreCase( type ) ||
-								MediaFileType.SOUND.name().equalsIgnoreCase( type ) ) {
-						writeFile( new File( CommonUtil.appendServerWorkPath( filename ) ), filename, response, request, fileRestricted );
-					}
-				} else if( MediaFileType.BARCODE.name().equalsIgnoreCase( type ) ) {
-					writeBarcode( filename, response, request );
+			FileDetails fileDetails = null;
+			String fileDetailsId = request.getParameter( AplosAppConstants.FILE_DETAILS_ID );
+			if( fileDetailsId != null ) {
+				fileDetails = null;
+				try {
+					fileDetails = (FileDetails) new BeanDao(FileDetails.class).get(Long.parseLong(fileDetailsId));
+				} catch (NumberFormatException nfex) {
+					ApplicationUtil.getAplosContextListener().handleError(nfex);
 				}
 			}
+
+			if (fileDetails == null) {
+				logger.info("Access denied for " + filePath + " no file details found");
+				response.setStatus(HttpStatus.SC_FORBIDDEN);
+				return;
+			}
+
+//			if (filePath != null) {
+//				String accessKey = request.getParameter( AplosAppConstants.ACCESS_KEY );
+//				if (accessKey == null || !accessKey.equals(fileDetails.getAccessKey())) {
+//					logger.info("Access denied for " + filePath + " incorrect access key");
+//					response.setStatus(HttpStatus.SC_FORBIDDEN);
+//					return;
+//				}
+//
+//				filePath = URLDecoder.decode( filePath, "UTF-8" );
+//				if( filePath.indexOf( "?" ) > -1 ) {
+//					filePath = filePath.substring( 0, filePath.indexOf( "?" ) );
+//				}
+//
+//				if( type == null ) {
+//					type = getFileType( filePath );
+//				}
+//
+//				if( filePath != null ) {
+////					if (restrictedUrlsCached == null) {
+////						restrictedUrlsCached = ApplicationUtil.getAplosModuleFilterer().getRestrictedMediaPaths();
+////					}
+////					for (String restrictedPath : restrictedUrlsCached) {
+////						if (filePath.startsWith(restrictedPath)) {
+//
+//					//TODO: SESSION/WINDOWID CHECK
+////							String sessionId = request.getParameter( AplosAppConstants.SESSION_ID );
+////							if (sessionId != null && !sessionId.equals("")) {
+////								HttpSession session = //GET IT SOMEHOW
+////								String userIdString = request.getParameter( AplosAppConstants.USER_ID );
+////								if (userIdString != null && !userIdString.equals("")) {
+////
+////									Long userId = Long.parseLong(userIdString);
+////									SystemUser currentUser = (SystemUser) session.getAttribute(CommonUtil.getBinding(SystemUser.class));
+////									if (currentUser != null && currentUser.isLoggedIn() && currentUser.getId().equals(userId)) {
+////										fileRestricted=false;
+////									} else {
+////										fileRestricted=true;
+////									}
+//					//
+////								} else {
+////									fileRestricted=true;
+////								}
+////
+////							} else {
+////								fileRestricted=true;
+////							}
+//
+////							break;
+////						}
+////					}
+//					if( type == null ||
+//							type.equalsIgnoreCase( MediaFileType.IMAGE.name() ) ||
+//							type.equalsIgnoreCase( MediaFileType.LIVEDRIVE_HOSTED_IMAGE.name() )) {
+//						writeImage( false, filePath, response, request, fileRestricted );
+//					} else if( MediaFileType.FLASH.name().equalsIgnoreCase( type ) ||
+//							MediaFileType.SOUND.name().equalsIgnoreCase( type ) ||
+//							MediaFileType.MISC.name().equalsIgnoreCase( type ) ||
+//							MediaFileType.PDF.name().equalsIgnoreCase( type ) ||
+//							MediaFileType.SOUND.name().equalsIgnoreCase( type ) ) {
+//						writeFile( new File( CommonUtil.appendServerWorkPath( filePath ) ), filePath, response, request, fileRestricted );
+//					}
+//				} else if( MediaFileType.BARCODE.name().equalsIgnoreCase( type ) ) {
+//					writeBarcode( filePath, response, request );
+//				}
+//			} else if( fileDetails != null ) {
+
+				String accessKey = request.getParameter( AplosAppConstants.ACCESS_KEY );
+				if (fileDetails.getFileDetailsOwner() == null || fileDetails.getFileDetailsOwner().allowFileAccess(JSFUtil.getLoggedInUser(request.getSession()))
+					|| (accessKey != null && accessKey.equals(fileDetails.getAccessKey()))) {
+					if (type == null) {
+						type = getFileType(fileDetails.getFilename());
+					}
+
+					if (type == null ||
+							type.equalsIgnoreCase(MediaFileType.IMAGE.name()) ||
+							type.equalsIgnoreCase(MediaFileType.LIVEDRIVE_HOSTED_IMAGE.name())) {
+						writeImage(fileDetails, response, request, false);
+					} else if (MediaFileType.FLASH.name().equalsIgnoreCase(type) ||
+							MediaFileType.SOUND.name().equalsIgnoreCase(type) ||
+							MediaFileType.MISC.name().equalsIgnoreCase(type) ||
+							MediaFileType.PDF.name().equalsIgnoreCase(type) ||
+							MediaFileType.SOUND.name().equalsIgnoreCase(type)) {
+						writeFile(fileDetails.getFile(), fileDetails.getName(), response, request, fileRestricted);
+					}
+				} else {
+					logger.info("Access denied for fileDetails " + fileDetails.getId());
+					response.setStatus(HttpStatus.SC_UNAUTHORIZED);
+				}
+//			}
 		}
 		catch( UnsupportedEncodingException usee ) {
 			logger.warn( usee );
@@ -197,35 +220,15 @@ public class MediaServlet extends HttpServlet {
 		return barcodeImageUrl;
 	}
 
-	public static String getFileUrl(FileDetails fileDetails, String directoryPath, boolean addContextPath, MediaFileType fileType ) {
-		return getFileUrl(fileDetails, directoryPath, addContextPath, fileType, false );
+	public static String getFileUrl(FileDetails fileDetails, boolean addContextPath, MediaFileType fileType ) {
+		return getFileUrl(fileDetails, addContextPath, fileType, false );
 	}
 
-	public static String getFileUrl(FileDetails fileDetails, String directoryPath, boolean addContextPath, MediaFileType fileType, boolean provideDefaultIfMissing ) {
-		return getFileUrl(fileDetails, directoryPath, addContextPath, fileType, provideDefaultIfMissing, true );
-	}
-
-	public static String getFileUrl(FileDetails fileDetails, String directoryPath, boolean addContextPath, MediaFileType fileType, boolean provideDefaultIfMissing, boolean addRandom ) {
+	public static String getFileUrl(FileDetails fileDetails, boolean addContextPath, MediaFileType fileType, boolean provideDefaultIfMissing ) {
 		if( addContextPath ) {
-			return getFileUrl( fileDetails, directoryPath, JSFUtil.getContextPath(), fileType, provideDefaultIfMissing );
+			return getFileUrl( fileDetails, JSFUtil.getContextPath(), fileType, provideDefaultIfMissing );
 		} else {
-			return getFileUrl( fileDetails, directoryPath, "", fileType, provideDefaultIfMissing );
-		}
-	}
-
-	public static String getFileUrl(String imgFileUrl, String directoryPath, boolean addContextPath, MediaFileType fileType ) {
-		return getFileUrl(imgFileUrl, directoryPath, addContextPath, fileType, false );
-	}
-
-	public static String getFileUrl(String imgFileUrl, String directoryPath, boolean addContextPath, MediaFileType fileType, boolean provideDefaultIfMissing ) {
-		return getFileUrl(imgFileUrl, directoryPath, addContextPath, fileType, provideDefaultIfMissing, true );
-	}
-
-	public static String getFileUrl(String imgFileUrl, String directoryPath, boolean addContextPath, MediaFileType fileType, boolean provideDefaultIfMissing, boolean addRandom ) {
-		if( addContextPath ) {
-			return getFileUrl( imgFileUrl, directoryPath, JSFUtil.getContextPath(), fileType, provideDefaultIfMissing );
-		} else {
-			return getFileUrl( imgFileUrl, directoryPath, "", fileType, provideDefaultIfMissing );
+			return getFileUrl( fileDetails, "", fileType, provideDefaultIfMissing );
 		}
 	}
 
@@ -235,10 +238,6 @@ public class MediaServlet extends HttpServlet {
 
 	public static String getFileUrl(String imgFileUrl, String directoryPath, String contextPath, MediaFileType fileType, boolean provideDefaultIfMissing ) {
 		return getFileUrl(imgFileUrl, directoryPath, contextPath, false, fileType, provideDefaultIfMissing);
-	}
-
-	public static String getFileUrl(String imgFileUrl, String directoryPath, String contextPath, boolean addRandom, MediaFileType fileType ) {
-		return getFileUrl(imgFileUrl, directoryPath, contextPath, addRandom, fileType, true );
 	}
 
 	public static String getFileUrl(String imgFileUrl, String directoryPath, String contextPath, boolean addRandom, MediaFileType fileType, boolean provideDefaultIfMissing ) {
@@ -274,15 +273,6 @@ public class MediaServlet extends HttpServlet {
 				if( addRandom ) {
 					urlBuf.append( "&random=" ).append( new Double(Math.random()*10000+1).intValue() );
 				}
-//				if (JSFUtil.getTabSession() != null) {
-//					urlBuf.append( "&" ).append( AplosAppConstants.SESSION_ID ).append( "=" ).append( JSFUtil.getSessionTemp().getId() );
-//				}
-//				if (JSFUtil.getWindowId() != null) {
-//					urlBuf.append( "&" ).append( AplosAppConstants.WINDOW_ID ).append( "=" ).append( JSFUtil.getWindowId() );
-//				}
-//				if (JSFUtil.getCurrentUser() != null && JSFUtil.getCurrentUser().isLoggedIn()) {
-//					urlBuf.append( "&" ).append( AplosAppConstants.USER_ID ).append( "=" ).append( JSFUtil.getCurrentUser().getId() );
-//				}
 				return urlBuf.toString();
 			} catch (UnsupportedEncodingException usee) {
 				return "";
@@ -290,19 +280,19 @@ public class MediaServlet extends HttpServlet {
 		}
 	}
 
-	public static String getImageUrl(FileDetails fileDetails, String directoryPath, boolean addContextPath ) {
-		return getImageUrl(fileDetails, directoryPath, addContextPath, true );
+	public static String getImageUrl(FileDetails fileDetails, boolean addContextPath ) {
+		return getImageUrl(fileDetails, addContextPath, true );
 	}
 
-	public static String getImageUrl(FileDetails fileDetails, String directoryPath, boolean addContextPath, boolean provideDefaultImageIfMissing ) {
+	public static String getImageUrl(FileDetails fileDetails, boolean addContextPath, boolean provideDefaultImageIfMissing ) {
 		if( addContextPath ) {
-			return getFileUrl( fileDetails, directoryPath, JSFUtil.getContextPath(), MediaFileType.IMAGE, provideDefaultImageIfMissing );
+			return getFileUrl( fileDetails, JSFUtil.getContextPath(), MediaFileType.IMAGE, provideDefaultImageIfMissing );
 		} else {
-			return getFileUrl( fileDetails, directoryPath, "", MediaFileType.IMAGE, provideDefaultImageIfMissing );
+			return getFileUrl( fileDetails, "", MediaFileType.IMAGE, provideDefaultImageIfMissing );
 		}
 	}
 
-	public static String getFileUrl(FileDetails fileDetails, String directoryPath, String contextPath, MediaFileType fileType, boolean provideDefaultIfMissing ) {
+	public static String getFileUrl(FileDetails fileDetails, String contextPath, MediaFileType fileType, boolean provideDefaultIfMissing ) {
 		if ((fileDetails == null || fileDetails.getFilename() == null || fileDetails.getFilename().equals("")) && !provideDefaultIfMissing) {
 			return "";
 		} else {
@@ -314,18 +304,19 @@ public class MediaServlet extends HttpServlet {
 				}
 				
 				urlBuf.append( "/media/" + fileDetails.getId() + "." + fileDetails.getExtension() + "?" );
+				urlBuf.append( AplosAppConstants.FILE_DETAILS_ID ).append( "=" ).append( fileDetails.getId() );
 				
 				if( fileDetails == null || fileDetails.getFileDetailsOwner() == null || (FileDetails.getSaveableFileDetailsOwner( fileDetails ) != null && FileDetails.getSaveableFileDetailsOwner( fileDetails ).isNew()) ) {
-					urlBuf.append( AplosAppConstants.FILE_NAME ).append( "=" );
+					urlBuf.append("&").append( AplosAppConstants.FILE_NAME ).append( "=" );
 					if (provideDefaultIfMissing && (fileDetails == null || CommonUtil.isNullOrEmpty( fileDetails.getFilename() ) ) ) {
 						urlBuf.append( "images/missing-image.png" );
 					} else {
 						urlBuf.append( URLEncoder.encode(fileDetails.determineFileDetailsDirectory(false).replace("//", "/") + fileDetails.getFilename(), "UTF-8") );
-					}	
-				} else {
-					urlBuf.append( AplosAppConstants.FILE_DETAILS_ID ).append( "=" ).append( fileDetails.getId() );
-					urlBuf.append( "&version=" ).append( fileDetails.getVersion() );
+					}
+					urlBuf.append("&").append( AplosAppConstants.ACCESS_KEY ).append( "=" ).append( fileDetails.getAccessKey() );
 				}
+
+				urlBuf.append( "&version=" ).append( fileDetails.getVersion() );
 	
 				if( fileType != null ) {
 					urlBuf.append( "&" ).append( AplosAppConstants.TYPE ).append( "=" ).append( fileType.name() );
@@ -333,15 +324,6 @@ public class MediaServlet extends HttpServlet {
 				if (provideDefaultIfMissing) {
 					urlBuf.append( "&provideDefaultIfMissing=" ).append( provideDefaultIfMissing );
 				}
-//				if (JSFUtil.getTabSession() != null) {
-//					urlBuf.append( "&" ).append( AplosAppConstants.SESSION_ID ).append( "=" ).append( JSFUtil.getSessionTemp().getId() );
-//				}
-//				if (JSFUtil.getWindowId() != null) {
-//					urlBuf.append( "&" ).append( AplosAppConstants.WINDOW_ID ).append( "=" ).append( JSFUtil.getWindowId() );
-//				}
-//				if (JSFUtil.getCurrentUser() != null && JSFUtil.getCurrentUser().isLoggedIn()) {
-//					urlBuf.append( "&" ).append( AplosAppConstants.USER_ID ).append( "=" ).append( JSFUtil.getCurrentUser().getId() );
-//				}
 				return urlBuf.toString();
 			} catch (UnsupportedEncodingException usee) {
 				return "";
@@ -436,7 +418,7 @@ public class MediaServlet extends HttpServlet {
 		String filename = null;
 		String fileFormat = null;
 		boolean ignoreParams = false;
-		
+
 		if( resizedImgFile != null && resizedImgFile.exists() ) {
 			filename = CommonUtil.getPathRelativeToServerWorkDir( resizedImgFile.getAbsolutePath() );
 			fileFormat = ImageUtil.getFormatInFile(resizedImgFile);
@@ -469,6 +451,7 @@ public class MediaServlet extends HttpServlet {
 		} else {
 			imageFile = new File( CommonUtil.appendServerWorkPath( filename ) );
 		}
+
 		//return a placeholder image to stop the page falling over
 		if (fileRestricted) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -614,7 +597,6 @@ public class MediaServlet extends HttpServlet {
 		String filename = fileDetails.determineFileDetailsDirectory(false) + fileDetails.getFilename();
 		File imageFile = new File( CommonUtil.appendServerWorkPath( filename ) );
 		InputStream stream=null;
-		BufferedImage writeImage = null;
 		String fileFormat = null;
 		if( stream != null ) {
 			fileFormat = ImageUtil.getFormatFromStream(stream);

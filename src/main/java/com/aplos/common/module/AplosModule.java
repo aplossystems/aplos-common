@@ -52,6 +52,7 @@ public interface AplosModule {
 	public void configureArchivableTables();
 	public void clearCache();
 	public void loadupClearCache();
+	public AplosWorkingDirectoryInter[] getWorkingDirectories();
 
 	//  This is to retrieve project specific objects from non-implementation projects
 	public SelectItem[] getCountrySelectItems();

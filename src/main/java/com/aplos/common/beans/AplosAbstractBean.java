@@ -538,6 +538,10 @@ public abstract class AplosAbstractBean implements Serializable, Cloneable, Disp
 		return CommonUtil.saveBean(this);
 	}
 
+	public boolean saveDetailsWithThrow() throws Exception {
+		return CommonUtil.saveBeanWithThrow(this);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof AplosAbstractBean)) {

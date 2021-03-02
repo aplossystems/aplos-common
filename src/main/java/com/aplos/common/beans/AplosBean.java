@@ -84,9 +84,12 @@ public abstract class AplosBean extends AplosAbstractBean {
 	}
 
 	public void redirectToEditPage() {
-		AplosBean aplosBean = this.getSaveableBean();
-		if( aplosBean.isArchived() ) {
-			aplosBean.unarchive();
+		AplosBean aplosBean = this;
+		if (this.getPersistentClass() != null) {
+			aplosBean = this.getSaveableBean();
+			if (aplosBean.isArchived()) {
+				aplosBean.unarchive();
+			}
 		}
 		aplosBean.addToScope( BackingPage.determineScope( getEditPageClass(), getClass() ) );
 		JSFUtil.redirect( getEditPageClass() );
