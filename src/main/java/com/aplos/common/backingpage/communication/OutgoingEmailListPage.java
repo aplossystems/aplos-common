@@ -2,10 +2,12 @@ package com.aplos.common.backingpage.communication;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import com.aplos.common.interfaces.EmailFolder;
 import org.primefaces.model.SortOrder;
 
 import com.aplos.common.AplosLazyDataModel;
@@ -46,8 +48,12 @@ public class OutgoingEmailListPage extends AplosEmailListPage {
 			if( clearWhereCriteria ) {
 				getBeanDao().clearWhereCriteria();
 			}
-			getBeanDao().addWhereCriteria( "bean.emailType != " + EmailType.INCOMING.ordinal() );
+			addSpecificWhereCriteria();
 			return super.load(first, pageSize, sortField, sortOrder, filters, false, clearSelectJoin );
+		}
+
+		protected void addSpecificWhereCriteria() {
+			getBeanDao().addWhereCriteria( "bean.emailType != " + EmailType.INCOMING.ordinal() );
 		}
 	}
 }

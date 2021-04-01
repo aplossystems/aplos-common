@@ -247,7 +247,7 @@ public abstract class AplosEmailListPage extends ListPage {
 		private static final long serialVersionUID = 7229178100132302261L;
 		private EmailTemplate emailTemplate;
 		private List<EmailTemplate> otherEmailTemplates = new ArrayList<EmailTemplate>();
-		private Set<EmailFolder> emailFolders = new HashSet<EmailFolder>();
+		protected Set<EmailFolder> emailFolders = new HashSet<EmailFolder>();
 		private MailServerSettings mailServerSettings;
 
 		public AplosEmailLdm(DataTableState dataTableState, BeanDao beanDao) {
