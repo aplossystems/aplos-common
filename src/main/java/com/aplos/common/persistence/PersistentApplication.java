@@ -439,9 +439,9 @@ public class PersistentApplication {
 				getCpds().setMinPoolSize(5); 
 				getCpds().setAcquireIncrement(5); 
 				getCpds().setMaxPoolSize(20);
-				getCpds().setIdleConnectionTestPeriod(540);
-				getCpds().setCheckoutTimeout(600);
-				getCpds().setUnreturnedConnectionTimeout(1200);
+				getCpds().setIdleConnectionTestPeriod(5400);
+				getCpds().setCheckoutTimeout(6000);
+				getCpds().setUnreturnedConnectionTimeout(12000);
 				getCpds().setDebugUnreturnedConnectionStackTraces(true);
 				getCpds().setPreferredTestQuery("select 1;");
 				getCpds().setTestConnectionOnCheckout(true);
@@ -478,9 +478,9 @@ public class PersistentApplication {
 					getArchiveCpds().setMinPoolSize(5); 
 					getArchiveCpds().setAcquireIncrement(5); 
 					getArchiveCpds().setMaxPoolSize(20);
-					getArchiveCpds().setIdleConnectionTestPeriod(540);
-					getArchiveCpds().setCheckoutTimeout(600);
-					getArchiveCpds().setUnreturnedConnectionTimeout(1200);
+					getArchiveCpds().setIdleConnectionTestPeriod(5400);
+					getArchiveCpds().setCheckoutTimeout(6000);
+					getArchiveCpds().setUnreturnedConnectionTimeout(12000);
 					getArchiveCpds().setDebugUnreturnedConnectionStackTraces(true);
 					getArchiveCpds().setPreferredTestQuery("select 1;");
 					getArchiveCpds().setTestConnectionOnCheckout(true);
