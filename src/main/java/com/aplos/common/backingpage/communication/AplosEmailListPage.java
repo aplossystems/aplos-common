@@ -248,6 +248,7 @@ public abstract class AplosEmailListPage extends ListPage {
 		private EmailTemplate emailTemplate;
 		private List<EmailTemplate> otherEmailTemplates = new ArrayList<EmailTemplate>();
 		protected Set<EmailFolder> emailFolders = new HashSet<EmailFolder>();
+		protected Set<EmailFolder> restrictedEmailFolders = new HashSet<EmailFolder>();
 		private MailServerSettings mailServerSettings;
 
 		public AplosEmailLdm(DataTableState dataTableState, BeanDao beanDao) {
@@ -334,6 +335,21 @@ public abstract class AplosEmailListPage extends ListPage {
 				}
 				getBeanDao().addWhereCriteria( folderWhereCriteriaBuf.toString() );
 			}
+			if( getRestrictedEmailFolders().size() > 0 ) {
+				getBeanDao().addQueryTable( "efl", "bean.emailFolders");
+				StringBuffer folderWhereCriteriaBuf = new StringBuffer();
+				for( EmailFolder tempEmailFolder : getRestrictedEmailFolders() ) {
+					if( folderWhereCriteriaBuf.length() > 0 ) {
+						folderWhereCriteriaBuf.append( " AND " );
+					}
+					folderWhereCriteriaBuf.append( "(efl.id IS NULL OR efl.id != " );
+					folderWhereCriteriaBuf.append( tempEmailFolder.getId() );
+					folderWhereCriteriaBuf.append( " OR efl.class != '" );
+					folderWhereCriteriaBuf.append( tempEmailFolder.getClass().getSimpleName() );
+					folderWhereCriteriaBuf.append( "' OR efl.class IS NULL)" );
+				}
+				getBeanDao().addWhereCriteria( "(" + folderWhereCriteriaBuf.toString() + ")" );
+			}
 			if( filters.containsKey( "toAddress:toAddress" ) || (sortField != null && sortField.contains( "'toAddress:toAddress'" ) ) ) {
 				getBeanDao().addQueryTable( "toAddress", "bean.toAddresses");
 			}
@@ -395,6 +411,14 @@ public abstract class AplosEmailListPage extends ListPage {
 
 		public void setOtherEmailTemplates(List<EmailTemplate> otherEmailTemplates) {
 			this.otherEmailTemplates = otherEmailTemplates;
+		}
+
+		public Set<EmailFolder> getRestrictedEmailFolders() {
+			return restrictedEmailFolders;
+		}
+
+		public void setRestrictedEmailFolders(Set<EmailFolder> restrictedEmailFolders) {
+			this.restrictedEmailFolders = restrictedEmailFolders;
 		}
 	}
 }
