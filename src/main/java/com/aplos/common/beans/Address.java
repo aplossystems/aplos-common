@@ -122,26 +122,24 @@ public class Address extends AplosBean {
 		return true;
 	}
 
-	public boolean encodeAgainstXss() {
-		CommonUtil.encodeAgainstXss(companyName);
-		CommonUtil.encodeAgainstXss(contactFirstName);
-		CommonUtil.encodeAgainstXss(contactSurname);
-		CommonUtil.encodeAgainstXss(line1);
-		CommonUtil.encodeAgainstXss(line2);
-		CommonUtil.encodeAgainstXss(line3);
-		CommonUtil.encodeAgainstXss(city);
-		CommonUtil.encodeAgainstXss(state);
-		CommonUtil.encodeAgainstXss(postcode);
-		CommonUtil.encodeAgainstXss(phone);
-		CommonUtil.encodeAgainstXss(phone2);
-		CommonUtil.encodeAgainstXss(mobile);
-		CommonUtil.encodeAgainstXss(fax);
+	public void encodeAgainstXss() {
+		this.companyName = CommonUtil.encodeAgainstXss(companyName);
+		this.contactFirstName = CommonUtil.encodeAgainstXss(contactFirstName);
+		this.contactSurname = CommonUtil.encodeAgainstXss(contactSurname);
+		this.line1 = CommonUtil.encodeAgainstXss(line1);
+		this.line2 = CommonUtil.encodeAgainstXss(line2);
+		this.line3 = CommonUtil.encodeAgainstXss(line3);
+		this.city = CommonUtil.encodeAgainstXss(city);
+		this.state = CommonUtil.encodeAgainstXss(state);
+		this.postcode = CommonUtil.encodeAgainstXss(postcode);
+		this.phone = CommonUtil.encodeAgainstXss(phone);
+		this.phone2 = CommonUtil.encodeAgainstXss(phone2);
+		this.mobile = CommonUtil.encodeAgainstXss(mobile);
+		this.fax = CommonUtil.encodeAgainstXss(fax);
 
 		if (subscriber != null) {
 			subscriber.encodeAgainstXss();
 		}
-
-		return true;
 	}
 
 	public void copy( Address srcAddress ) {
