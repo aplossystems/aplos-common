@@ -39,7 +39,17 @@ public class AplosWorkingDirectory extends AplosBean implements FileDetailsOwner
 			aplosWorkingDirectoryEnumMap.put( getId(), aplosWorkingDirectoryEnum );
 		}
 	}
-	
+
+	@Override
+	public boolean allowFileAccess(SystemUser currentUser) {
+		if (aplosWorkingDirectoryEnumMap.get(getId()).isRestricted()) {
+			if (currentUser == null || currentUser.getUserLevel().getClearanceExceedsMinimum(500)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public void superSaveBean(SystemUser currentUser) {
 		super.saveBean(currentUser);

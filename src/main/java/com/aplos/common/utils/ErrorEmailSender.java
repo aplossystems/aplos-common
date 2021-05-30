@@ -40,6 +40,8 @@ public class ErrorEmailSender {
 
 	public static synchronized void sendErrorEmail(HttpServletRequest request, AplosContextListener contextListener, Throwable throwable, String messageHtmlString) {
 		boolean isErrorEmailDisabledHere = false;
+
+
 		try {
 			boolean sendErrorEmail = true;//!AplosContextListener.getAplosContextListener().isDebugMode();
 			if( request != null ) {

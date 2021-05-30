@@ -4,18 +4,11 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.aplos.common.annotations.persistence.*;
 import org.apache.log4j.Logger;
 
-import com.aplos.common.annotations.persistence.Cascade;
-import com.aplos.common.annotations.persistence.Column;
-import com.aplos.common.annotations.persistence.EnumType;
-import com.aplos.common.annotations.persistence.Enumerated;
 import com.aplos.common.aql.selectcriteria.SelectCriteria;
 import com.aplos.common.beans.AplosAbstractBean;
 import com.aplos.common.persistence.PersistableTable;
@@ -182,6 +175,16 @@ public class FieldInfo {
 		}
 		if( isUnique() ) {
 			columnIndexes.add( new ColumnIndex( this, ColumnIndexType.UNIQUE ) );
+		}
+
+		if (field != null && field.getAnnotation(Index.class) != null) {
+			Index index = field.getAnnotation(Index.class);
+			ColumnIndex columnIndex = new ColumnIndex(this, ColumnIndexType.INDEX);
+			columnIndex.setIndexName(index.name());
+			if (index.columnNames() != null && index.columnNames().length > 0) {
+				columnIndex.setColumnNames(Arrays.asList(index.columnNames()));
+			}
+			columnIndexes.add(columnIndex);
 		}
 	}
 	

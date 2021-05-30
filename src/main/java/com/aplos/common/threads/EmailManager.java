@@ -81,11 +81,13 @@ public class EmailManager extends AplosThread {
 				
 			} catch( InterruptedException iEx ) {
 				ApplicationUtil.handleError( iEx );
+				isDownloadJobInQueue = false;
 				break;
 			} catch( Exception ex ) {
 				ApplicationUtil.handleError( ex );
+				isDownloadJobInQueue = false;
 				break;
-			} 
+			}
 		}
 	}
 	

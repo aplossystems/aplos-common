@@ -114,6 +114,13 @@ public class CommonUtil {
 		}
     	return true;
 	}
+
+	public static boolean encodeAgainstXss(String content) {
+		if (content != null) {
+			content.replaceAll("<", "&lt");
+		}
+		return true;
+	}
     
     public static Cookie findCookie( String cookieName ) {
     	if( JSFUtil.getRequest().getCookies() != null ) {

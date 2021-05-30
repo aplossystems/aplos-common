@@ -122,6 +122,28 @@ public class Address extends AplosBean {
 		return true;
 	}
 
+	public boolean encodeAgainstXss() {
+		CommonUtil.encodeAgainstXss(companyName);
+		CommonUtil.encodeAgainstXss(contactFirstName);
+		CommonUtil.encodeAgainstXss(contactSurname);
+		CommonUtil.encodeAgainstXss(line1);
+		CommonUtil.encodeAgainstXss(line2);
+		CommonUtil.encodeAgainstXss(line3);
+		CommonUtil.encodeAgainstXss(city);
+		CommonUtil.encodeAgainstXss(state);
+		CommonUtil.encodeAgainstXss(postcode);
+		CommonUtil.encodeAgainstXss(phone);
+		CommonUtil.encodeAgainstXss(phone2);
+		CommonUtil.encodeAgainstXss(mobile);
+		CommonUtil.encodeAgainstXss(fax);
+
+		if (subscriber != null) {
+			subscriber.encodeAgainstXss();
+		}
+
+		return true;
+	}
+
 	public void copy( Address srcAddress ) {
 		copyAddressOnly( srcAddress );
 		setContactFirstName( srcAddress.getContactFirstName() );

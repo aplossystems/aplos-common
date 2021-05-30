@@ -4,8 +4,13 @@ import com.aplos.common.LabeledEnumInter;
 import com.aplos.common.persistence.fieldinfo.FieldInfo;
 import com.aplos.common.persistence.fieldinfo.ForeignKeyFieldInfo;
 import com.aplos.common.utils.ApplicationUtil;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ColumnIndex {
+
 	public enum ColumnIndexType implements LabeledEnumInter {
 		PRIMARY ( "PRIMARY" ),  
 		INDEX ( "INDEX" ),
@@ -23,20 +28,22 @@ public class ColumnIndex {
 	}
 	private ColumnIndexType type;
 	private FieldInfo fieldInfo;
-	private String columnName;
+	private List<String> columnNames = new ArrayList<>();
 	private String indexName;
 	private boolean isForeignKeyIndex = false;
 	
 	public ColumnIndex( String indexName, String columnName, ColumnIndexType columnIndexType ) {
 		setIndexName( indexName );
 		this.type = columnIndexType;
-		this.columnName = columnName;
+		this.getColumnNames().clear();
+		this.getColumnNames().add(columnName);
 	}
 	
 	public ColumnIndex( FieldInfo fieldInfo, ColumnIndexType columnIndexType ) {
 		this.setFieldInfo(fieldInfo);
 		this.type = columnIndexType;
-		this.columnName = fieldInfo.getSqlName();
+		this.getColumnNames().clear();
+		this.getColumnNames().add(fieldInfo.getSqlName());
 		String indexName = getColumnName();
 		if( getType().equals( ColumnIndexType.UNIQUE ) ) {
 			indexName = createUniqueIndexName( indexName ); 
@@ -73,7 +80,7 @@ public class ColumnIndex {
 		} 
 		strBuf.append( "INDEX " ).append( determineIndexName( ownerTableName ) ).append( " ON " );
 		strBuf.append( ownerTableName );
-		strBuf.append( " (" ).append( getFieldInfo().getSqlName() ).append( ")" );
+		strBuf.append( " (" ).append(StringUtils.join(this.columnNames, ",")).append( ")" );
 		ApplicationUtil.executeSql( strBuf.toString() );
 	}
 	
@@ -101,11 +108,11 @@ public class ColumnIndex {
 	}
 
 	public String getColumnName() {
-		return columnName;
-	}
-
-	public void setColumnName(String columnName) {
-		this.columnName = columnName;
+		if(getColumnNames().size() > 0) {
+			return getColumnNames().get(0);
+		} else {
+			return null;
+		}
 	}
 
 	public void setIndexName(String indexName) {
@@ -118,5 +125,13 @@ public class ColumnIndex {
 
 	public void setForeignKeyIndex(boolean isForeignKeyIndex) {
 		this.isForeignKeyIndex = isForeignKeyIndex;
+	}
+
+	public List<String> getColumnNames() {
+		return columnNames;
+	}
+
+	public void setColumnNames(List<String> columnNames) {
+		this.columnNames = columnNames;
 	}
 }

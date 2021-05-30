@@ -298,4 +298,13 @@ public class Subscriber extends AplosBean implements BulkEmailFinder, BulkSubscr
 		}
 		return true;
 	}
+
+	public boolean encodeAgainstXss() {
+		CommonUtil.encodeAgainstXss(firstName);
+		CommonUtil.encodeAgainstXss(surname);
+		CommonUtil.encodeAgainstXss(emailAddress);
+		CommonUtil.encodeAgainstXss(unsubscribeReason);
+		CommonUtil.encodeAgainstXss(referrerOther);
+		return true;
+	}
 }

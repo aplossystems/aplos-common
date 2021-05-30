@@ -93,225 +93,22 @@ public class IncomingEmailJob implements EmailManagerJob {
 			profile.add(UIDFolder.FetchProfileItem.UID);
 			Message[] messages = folder.getMessages();
 			folder.fetch(messages,profile);
-			String messageUids[] = new String[ messages.length ];
 			System.err.println("Found " + messages.length + " new messages");
 			if( messages.length > 0 ) {
 				Map<String,Message> messageMap = new HashMap<String,Message>();
-				StringBuffer parameterNamesBuf = new StringBuffer();
 				List<String> duplicateUids = new ArrayList<String>(); // just for testing a bug
-	
-				BeanDao aplosEmailDao = new BeanDao( AplosEmail.class );
+
 				for (int i = 0; i < messages.length; i++) {
-					messageUids[ i ] = folder.getUID(messages[i]);
-					if( messageMap.put( messageUids[ i ], messages[i] ) != null ) {
-						duplicateUids.add( messageUids[ i ] );
+					String messageUid = folder.getUID(messages[i]);
+					if( messageMap.put( messageUid, messages[i] ) != null ) {
+						duplicateUids.add( messageUid );
 					}
-					parameterNamesBuf.append( ":param" ).append( i ).append( "," );
-					aplosEmailDao.setNamedParameter( "param" + i, messageUids[ i ] );
 				}
-				
 				if( duplicateUids.size() != 0 ) {
-					ApplicationUtil.handleError( new Exception( StringUtils.join( duplicateUids.toArray( new String[ 0 ] ) ) ) );
+					ApplicationUtil.handleError( new Exception( StringUtils.join( duplicateUids.toArray( new String[ 0 ] ) ) ), false );
 				}
-				aplosEmailDao.setIsReturningActiveBeans(null);
-				aplosEmailDao.setSelectCriteria( "bean.uid, bean.plainTextBody, bean.htmlBody, bean.id, bean.incomingReadRetryCount, bean.isIncomingEmailDeleted" );
-				aplosEmailDao.setWhereCriteria( "bean.emailType = " + EmailType.INCOMING.ordinal() );
-				if (messageUids.length == 1) {
-					aplosEmailDao.addWhereCriteria("bean.uid = " + parameterNamesBuf.substring(0, parameterNamesBuf.length() - 1));
-				} else {
-					aplosEmailDao.addWhereCriteria("bean.uid IN (" + parameterNamesBuf.substring(0, parameterNamesBuf.length() - 1) + ")");
-				}
-
-				List<Object[]> aplosEmailObjList;
-				try {
-					aplosEmailObjList = aplosEmailDao.getBeanResults();
-				} catch(Exception ex) {
-					System.err.println("About to print error for incoming email");
-					System.err.println(aplosEmailDao.createProcessedBeanDao().getSelectSql());
-					throw ex;
-				}
-				
-				Map<Long,Message> missingContentMessageMap = new HashMap<Long,Message>();
-				
-				String tempMessageUid;
-				for( int i = 0, n = aplosEmailObjList.size(); i < n; i++ ) {
-					tempMessageUid = String.valueOf( aplosEmailObjList.get( i )[ 0 ] );
-					if( CommonUtil.isNullOrEmpty( (String) aplosEmailObjList.get( i )[ 1 ] )
-							&& CommonUtil.isNullOrEmpty( (String) aplosEmailObjList.get( i )[ 2 ] ) ) {
-						if( ((Integer) aplosEmailObjList.get( i )[ 4 ]) < 5 && !((Boolean) aplosEmailObjList.get( i )[ 5 ]) ) {
-							missingContentMessageMap.put( (Long) aplosEmailObjList.get( i )[ 3 ], messageMap.get( tempMessageUid ) );
-						}
-					}
-					messageMap.remove( tempMessageUid );
-				}
-				
-				BeanDao aplosEmailCheckDao = new BeanDao( AplosEmail.class );
-				aplosEmailCheckDao.setIsReturningActiveBeans(null);
-				aplosEmailCheckDao.addWhereCriteria( "bean.uid = :uid" );
-				Message tempMessage;
-				String tempSubject;
-
-				System.err.println("About to process " + messageMap.keySet().size() + " new messages");
-				int processedEmailCount = 0;
-				for ( String tempUid : messageMap.keySet()) {
-					tempMessage = messageMap.get( tempUid );
-					if( !tempMessage.isSet( Flag.DELETED ) ) {
-						/*
-						 * This check was added in after 1000 emails were added as duplicates to Altrui
-						 * , I'm not sure how this could have happened with the above code so I put in
-						 * this check to make sure it doesn't happen again and to send information if it 
-						 * trys.
-						 */
-						aplosEmailCheckDao.setNamedParameter( "uid", tempUid );
-						if( aplosEmailCheckDao.getAll().size() > 0 ) {
-							ApplicationUtil.handleError( "Tried to download duplicate email - uid:" + tempUid , false );
-							continue;
-						}
-						AplosEmail aplosEmail = new AplosEmail();
-						try {
-							fixIncorrectContentTypes(tempMessage);
-							aplosEmail.setUid(tempUid);
-							aplosEmail.setEmailType( EmailType.INCOMING );
-							aplosEmail.setFromAddress(getFromAddress(tempMessage));
-							if( deletableEmailAddressMap.get( aplosEmail.getFromAddress() ) != null ) {
-								aplosEmail.setHardDeleteDate( deletableEmailAddressMap.get( aplosEmail.getFromAddress() ) );
-							}
-			
-							// to list
-							String[] toArray = tempMessage.getHeader( getHeaderName(Message.RecipientType.TO) );
-//							Address[] toArray = tempMessage.getRecipients(Message.RecipientType.TO);
-							if( toArray != null ) {
-								for (String to : toArray) {
-									decodeAddress(to, aplosEmail.getToAddresses());
-								}
-							} else {
-								aplosEmail.getToAddresses().add(mailServerSettings.getEmailAddress());
-							}
-			
-							// cc list
-							String[] ccArray = null;
-							try {
-								ccArray = tempMessage.getHeader( getHeaderName(Message.RecipientType.CC) );
-							} catch (Exception e) {
-								ccArray = null;
-							}
-							if (ccArray != null) {
-								for (String cc : ccArray) {
-									decodeAddress(cc, aplosEmail.getCcAddresses());
-								}
-							}
-			
-							// subject
-							tempSubject = tempMessage.getSubject();
-							if( !CommonUtil.isNullOrEmpty(tempSubject) && tempSubject.length() > 190 ) {
-								tempSubject = tempSubject.substring( 0, 191 );
-							}
-							aplosEmail.setSubject(tempSubject);
-			
-							Date receivedDate = tempMessage.getReceivedDate();
-							// received date
-							if (receivedDate == null && tempMessage.getHeader("Delivery-Date") != null ) {
-								String s = tempMessage.getHeader("Delivery-Date")[ 0 ];
-								if (s != null) {
-								    try {
-								    	receivedDate = mailDateFormat.parse(s);
-								    } catch (ParseException pex) {
-								    	ApplicationUtil.handleError( pex );
-								    }
-								}
-							} 
-							
-							if( receivedDate == null ) {
-								receivedDate = tempMessage.getSentDate();
-							}
-			
-							aplosEmail.setEmailSentDate( receivedDate );
-			
-							// body and attachments
-							aplosEmail.setHtmlBody("");
-
-							Object content = tempMessage.getContent();
-							if (content instanceof java.lang.String) {
-								aplosEmail.setHtmlBody((String) content);
-							} else if (content instanceof Multipart) {
-								processMultipart( (Multipart) content, aplosEmail ); 
-							} // end messages for loop
-			
-							BasicEmailFolder inboxEmailFolder = CommonConfiguration.getCommonConfiguration().getInboxEmailFolder();
-							aplosEmail.getEmailFolders().clear();
-							aplosEmail.addEmailFolder( inboxEmailFolder );
-							aplosEmail.setMailServerSettings(mailServerSettings);
-							
-							aplosEmail.saveDetails();
-							registerIncomingEmail(aplosEmail);
-							
-							StringBuffer testStrBuf = new StringBuffer();
-							testStrBuf.append( aplosEmail.getId() ).append( " " );
-							testStrBuf.append( FormatUtil.formatDateTimeForDB( new Date() ) );
-							if( !CommonUtil.isNullOrEmpty( aplosEmail.getHtmlBody() ) ) {
-								if( aplosEmail.getHtmlBody().length() > 20 ) {
-									testStrBuf.append( " ; " ).append( aplosEmail.getHtmlBody().substring(0, 20).replace( "\n", " " ) );
-								} else {
-									testStrBuf.append( " ; " ).append( aplosEmail.getHtmlBody() );
-								}
-							} else {
-								testStrBuf.append( " Empty Html" );
-							}
-							if( !CommonUtil.isNullOrEmpty( aplosEmail.getPlainTextBody() ) ) {
-								if( aplosEmail.getPlainTextBody().length() > 20 ) {
-									testStrBuf.append( " ; " ).append( aplosEmail.getPlainTextBody().substring(0, 20).replace( "\n", " " ) );
-								} else {
-									testStrBuf.append( " ; " ).append( aplosEmail.getPlainTextBody() );
-								}
-							} else {
-								testStrBuf.append( " Empty plain text body" );
-							}
-							System.err.println( testStrBuf.toString() );
-							logger.info( testStrBuf.toString() );
-							
-							// Finally delete the message from the server.
-							if( mailServerSettings.isDeletingEmailsFromServer() ) {
-								tempMessage.setFlag(Flags.Flag.DELETED, true);
-							}
-							processedEmailCount++;
-						} catch (Exception e) {
-//							HibernateUtil.getCurrentSession().clear();
-							ApplicationUtil.handleError( e );
-						}
-//						HibernateUtil.startNewTransaction();
-					}
-				}
-				System.err.println("Processed " + processedEmailCount + " new messages");
-				
-				for ( Long aplosEmailId : missingContentMessageMap.keySet()) {
-					tempMessage = missingContentMessageMap.get( aplosEmailId );
-					AplosEmail aplosEmail = new BeanDao( AplosEmail.class ).get( aplosEmailId ).getSaveableBean();
-
-					try {
-						if( tempMessage != null ) {
-							// body and attachments
-							aplosEmail.setHtmlBody("");
-							Object content = tempMessage.getContent();
-							if (content instanceof java.lang.String) {
-			
-								aplosEmail.setHtmlBody((String) content);
-			
-							} else if (content instanceof Multipart) {
-								processMultipart( (Multipart) content, aplosEmail ); 
-							} // end messages for loop
-							registerIncomingEmail(aplosEmail);
-						} else {
-							aplosEmail.setIncomingEmailDeleted( true );
-						}
-						
-						aplosEmail.setIncomingReadRetryCount( aplosEmail.getIncomingReadRetryCount() + 1 );
-						aplosEmail.saveDetails();
-					} catch (Exception e) {
-//						HibernateUtil.getCurrentSession().clear();
-						ApplicationUtil.handleError( e );
-					}
-//					HibernateUtil.startNewTransaction();
-				}
+	
+				processEmailBatch(mailServerSettings, folder, messages);
 			}
 		} catch (Exception e) {
 			ApplicationUtil.handleError( e, false );
@@ -328,6 +125,219 @@ public class IncomingEmailJob implements EmailManagerJob {
 			} catch( MessagingException mEx ) {
 				ApplicationUtil.handleError( mEx, false );
 			}
+		}
+	}
+
+	private void processEmailBatch(MailServerSettings mailServerSettings, POP3Folder folder, Message[] messages) throws MessagingException {
+		BeanDao aplosEmailDao = new BeanDao( AplosEmail.class );
+		Map<String,Message> messageMap = new HashMap<String,Message>();
+		String messageUids[] = new String[ messages.length ];
+		StringBuffer parameterNamesBuf = new StringBuffer();
+		for (int i = 0; i < messages.length; i++) {
+			messageUids[ i ] = folder.getUID(messages[i]);
+			messageMap.put( messageUids[ i ], messages[i] );
+			parameterNamesBuf.append( ":param" ).append( i ).append( "," );
+			aplosEmailDao.setNamedParameter( "param" + i, messageUids[ i ] );
+		}
+
+		aplosEmailDao.setIsReturningActiveBeans(null);
+		aplosEmailDao.setSelectCriteria( "bean.uid, bean.plainTextBody, bean.htmlBody, bean.id, bean.incomingReadRetryCount, bean.isIncomingEmailDeleted" );
+		aplosEmailDao.setWhereCriteria( "bean.emailType = " + EmailType.INCOMING.ordinal() );
+		if (messageUids.length == 1) {
+			aplosEmailDao.addWhereCriteria("bean.uid = " + parameterNamesBuf.substring(0, parameterNamesBuf.length() - 1));
+		} else {
+			aplosEmailDao.addWhereCriteria("bean.uid IN (" + parameterNamesBuf.substring(0, parameterNamesBuf.length() - 1) + ")");
+		}
+
+		List<Object[]> aplosEmailObjList;
+		try {
+			aplosEmailObjList = aplosEmailDao.getBeanResults();
+		} catch(Exception ex) {
+			System.err.println("About to print error for incoming email");
+			System.err.println(aplosEmailDao.createProcessedBeanDao().getSelectSql());
+			throw ex;
+		}
+
+		Map<Long,Message> missingContentMessageMap = new HashMap<Long,Message>();
+
+		String tempMessageUid;
+		for( int i = 0, n = aplosEmailObjList.size(); i < n; i++ ) {
+			tempMessageUid = String.valueOf( aplosEmailObjList.get( i )[ 0 ] );
+			if( CommonUtil.isNullOrEmpty( (String) aplosEmailObjList.get( i )[ 1 ] )
+					&& CommonUtil.isNullOrEmpty( (String) aplosEmailObjList.get( i )[ 2 ] ) ) {
+				if( ((Integer) aplosEmailObjList.get( i )[ 4 ]) < 5 && !((Boolean) aplosEmailObjList.get( i )[ 5 ]) ) {
+					missingContentMessageMap.put( (Long) aplosEmailObjList.get( i )[ 3 ], messageMap.get( tempMessageUid ) );
+				}
+			}
+			messageMap.remove( tempMessageUid );
+		}
+
+		BeanDao aplosEmailCheckDao = new BeanDao( AplosEmail.class );
+		aplosEmailCheckDao.setIsReturningActiveBeans(null);
+		aplosEmailCheckDao.addWhereCriteria( "bean.uid = :uid" );
+		Message tempMessage;
+		String tempSubject;
+
+		System.err.println("About to process " + messageMap.keySet().size() + " new messages");
+		int processedEmailCount = 0;
+		for ( String tempUid : messageMap.keySet()) {
+			tempMessage = messageMap.get( tempUid );
+			if( !tempMessage.isSet( Flag.DELETED ) ) {
+				/*
+				 * This check was added in after 1000 emails were added as duplicates to Altrui
+				 * , I'm not sure how this could have happened with the above code so I put in
+				 * this check to make sure it doesn't happen again and to send information if it
+				 * trys.
+				 */
+				aplosEmailCheckDao.setNamedParameter( "uid", tempUid );
+				if( aplosEmailCheckDao.getAll().size() > 0 ) {
+					ApplicationUtil.handleError( "Tried to download duplicate email - uid:" + tempUid , false );
+					continue;
+				}
+				AplosEmail aplosEmail = new AplosEmail();
+				try {
+					fixIncorrectContentTypes(tempMessage);
+					aplosEmail.setUid(tempUid);
+					aplosEmail.setEmailType( EmailType.INCOMING );
+					aplosEmail.setFromAddress(getFromAddress(tempMessage));
+					if( deletableEmailAddressMap.get( aplosEmail.getFromAddress() ) != null ) {
+						aplosEmail.setHardDeleteDate( deletableEmailAddressMap.get( aplosEmail.getFromAddress() ) );
+					}
+
+					// to list
+					String[] toArray = tempMessage.getHeader( getHeaderName(Message.RecipientType.TO) );
+//							Address[] toArray = tempMessage.getRecipients(Message.RecipientType.TO);
+					if( toArray != null ) {
+						for (String to : toArray) {
+							decodeAddress(to, aplosEmail.getToAddresses());
+						}
+					} else {
+						aplosEmail.getToAddresses().add(mailServerSettings.getEmailAddress());
+					}
+
+					// cc list
+					String[] ccArray = null;
+					try {
+						ccArray = tempMessage.getHeader( getHeaderName(Message.RecipientType.CC) );
+					} catch (Exception e) {
+						ccArray = null;
+					}
+					if (ccArray != null) {
+						for (String cc : ccArray) {
+							decodeAddress(cc, aplosEmail.getCcAddresses());
+						}
+					}
+
+					// subject
+					tempSubject = tempMessage.getSubject();
+					if( !CommonUtil.isNullOrEmpty(tempSubject) && tempSubject.length() > 190 ) {
+						tempSubject = tempSubject.substring( 0, 191 );
+					}
+					aplosEmail.setSubject(tempSubject);
+
+					Date receivedDate = tempMessage.getReceivedDate();
+					// received date
+					if (receivedDate == null && tempMessage.getHeader("Delivery-Date") != null ) {
+						String s = tempMessage.getHeader("Delivery-Date")[ 0 ];
+						if (s != null) {
+							try {
+								receivedDate = mailDateFormat.parse(s);
+							} catch (ParseException pex) {
+								ApplicationUtil.handleError( pex, false );
+							}
+						}
+					}
+
+					if( receivedDate == null ) {
+						receivedDate = tempMessage.getSentDate();
+					}
+
+					aplosEmail.setEmailSentDate( receivedDate );
+
+					// body and attachments
+					aplosEmail.setHtmlBody("");
+
+					Object content = tempMessage.getContent();
+					if (content instanceof java.lang.String) {
+						aplosEmail.setHtmlBody((String) content);
+					} else if (content instanceof Multipart) {
+						processMultipart( (Multipart) content, aplosEmail );
+					} // end messages for loop
+
+					BasicEmailFolder inboxEmailFolder = CommonConfiguration.getCommonConfiguration().getInboxEmailFolder();
+					aplosEmail.getEmailFolders().clear();
+					aplosEmail.addEmailFolder( inboxEmailFolder );
+					aplosEmail.setMailServerSettings(mailServerSettings);
+
+					aplosEmail.saveDetails();
+					registerIncomingEmail(aplosEmail);
+
+					StringBuffer testStrBuf = new StringBuffer();
+					testStrBuf.append( aplosEmail.getId() ).append( " " );
+					testStrBuf.append( FormatUtil.formatDateTimeForDB( new Date() ) );
+					if( !CommonUtil.isNullOrEmpty( aplosEmail.getHtmlBody() ) ) {
+						if( aplosEmail.getHtmlBody().length() > 20 ) {
+							testStrBuf.append( " ; " ).append( aplosEmail.getHtmlBody().substring(0, 20).replace( "\n", " " ) );
+						} else {
+							testStrBuf.append( " ; " ).append( aplosEmail.getHtmlBody() );
+						}
+					} else {
+						testStrBuf.append( " Empty Html" );
+					}
+					if( !CommonUtil.isNullOrEmpty( aplosEmail.getPlainTextBody() ) ) {
+						if( aplosEmail.getPlainTextBody().length() > 20 ) {
+							testStrBuf.append( " ; " ).append( aplosEmail.getPlainTextBody().substring(0, 20).replace( "\n", " " ) );
+						} else {
+							testStrBuf.append( " ; " ).append( aplosEmail.getPlainTextBody() );
+						}
+					} else {
+						testStrBuf.append( " Empty plain text body" );
+					}
+					System.err.println( testStrBuf.toString() );
+					logger.info( testStrBuf.toString() );
+
+					// Finally delete the message from the server.
+					if( mailServerSettings.isDeletingEmailsFromServer() ) {
+						tempMessage.setFlag(Flags.Flag.DELETED, true);
+					}
+					processedEmailCount++;
+				} catch (Exception e) {
+//							HibernateUtil.getCurrentSession().clear();
+					ApplicationUtil.handleError( e, false );
+				}
+//						HibernateUtil.startNewTransaction();
+			}
+		}
+		System.err.println("Processed " + processedEmailCount + " new messages");
+
+		for ( Long aplosEmailId : missingContentMessageMap.keySet()) {
+			tempMessage = missingContentMessageMap.get( aplosEmailId );
+			AplosEmail aplosEmail = new BeanDao( AplosEmail.class ).get( aplosEmailId ).getSaveableBean();
+
+			try {
+				if( tempMessage != null ) {
+					// body and attachments
+					aplosEmail.setHtmlBody("");
+					Object content = tempMessage.getContent();
+					if (content instanceof java.lang.String) {
+
+						aplosEmail.setHtmlBody((String) content);
+
+					} else if (content instanceof Multipart) {
+						processMultipart( (Multipart) content, aplosEmail );
+					} // end messages for loop
+					registerIncomingEmail(aplosEmail);
+				} else {
+					aplosEmail.setIncomingEmailDeleted( true );
+				}
+
+				aplosEmail.setIncomingReadRetryCount( aplosEmail.getIncomingReadRetryCount() + 1 );
+				aplosEmail.saveDetails();
+			} catch (Exception e) {
+//						HibernateUtil.getCurrentSession().clear();
+				ApplicationUtil.handleError( e, false );
+			}
+//					HibernateUtil.startNewTransaction();
 		}
 	}
 	
@@ -349,7 +359,7 @@ public class IncomingEmailJob implements EmailManagerJob {
 				InternetHeaders internetHeaders = (InternetHeaders) field.get(part);
 				internetHeaders.setHeader( headerName, value);
 			} catch( Exception ex ) {
-				ApplicationUtil.handleError( ex );
+				ApplicationUtil.handleError( ex, false );
 			}
 		} else {
 			part.setHeader( headerName, value );

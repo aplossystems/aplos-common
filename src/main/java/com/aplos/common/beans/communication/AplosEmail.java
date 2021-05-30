@@ -138,7 +138,7 @@ public class AplosEmail extends AplosSiteBean {
 	private AplosEmail forwardedEmail;
 	private Integer sendStartIdx;
 	private Integer maxSendQuantity;
-	@Index(name="uidIndex")
+	@Index(name="uidIndex", columnNames={"uid", "emailType"})
 	private String uid;
 	private int incomingReadRetryCount = 0;
 	
