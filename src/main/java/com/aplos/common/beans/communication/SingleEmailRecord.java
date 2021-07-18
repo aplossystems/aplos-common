@@ -59,8 +59,10 @@ public class SingleEmailRecord extends AplosAbstractBean {
 	
 	public SingleEmailRecord( AplosEmail aplosEmail, BulkEmailSource bulkEmailSource ) {
 		setAplosEmail( aplosEmail );
-		getToAddresses().add(bulkEmailSource.getEmailAddress());
-		setBulkEmailSource(bulkEmailSource);
+		if (bulkEmailSource != null) {
+			getToAddresses().add(bulkEmailSource.getEmailAddress());
+			setBulkEmailSource(bulkEmailSource);
+		}
 
 		for( FileDetails tempFileDetails : aplosEmail.getSaveableAttachments() ) {
 			if( tempFileDetails instanceof CreatedPrintTemplate && getAplosEmail().getEmailTemplate() != null ) {
